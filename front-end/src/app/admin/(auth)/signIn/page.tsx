@@ -1,0 +1,90 @@
+'use client'
+
+import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
+import React, { useEffect ,useState} from 'react'
+import Image from 'next/image'
+import sideImage from '../../../../../public/Images/Untitled-design.jpg'
+import Link from 'next/link'
+import Form from '@/app/components/Form'
+import { signInSchema } from '@/app/utils/validationSchemas'
+import { ValidationError } from 'yup'
+import { signIn } from '@/services/authServices/adminAuthService'
+
+
+
+export interface IsignIn{
+    name:String,
+    password:String,
+}
+
+export default function Page() {
+    const signInFields = [
+        {name:'email',type:"email",label:'Email',placeHolder:"Enter your email",required:true},
+        {name:'password',type:"password",label:'Password',placeHolder:"Enter your password",required:true},
+    ]
+    const router = useRouter()
+    const { toast} = useToast()
+
+    const [ error,setError] = useState('')
+    useEffect(() => {
+        setTimeout(() => {
+            setError('')
+        },3000)
+    })
+
+    const handleSubmit = async(formData:IsignIn):Promise<void> => {
+        console.log("admin form data :",formData)
+        await signInSchema.validate(formData , {abortEarly:true})
+        try {
+            const admin = await signIn(formData)
+            console.log('admin Response :',admin)
+
+            if(admin.message === 'Authentication failed..!'){
+                toast({
+                    title:admin.message,
+                    description:admin.message,
+                    variant:'destructive'
+                })
+                setError(admin.message)
+            }
+            toast({
+                title:"Success",
+                description:admin.message,
+                className:'toast-success'
+            })
+            router.replace('/admin/dashboard/userManagment')
+        } catch (error:any) {
+            setError(error.message)
+        }
+    }
+
+
+    return (
+        <div className='min-h-screen flex items-center justify-center bg[var(--background)]'>
+        <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full  m-4 p-4 border shadow-sm shadow-gray-700 rounded-lg overflow-hidden'>
+            {/* Form Section */}
+            <div className='w-full md:w-1/2 h-full'>
+                <div className='mb-24'>
+                    <h1 className='text-2xl font-bold text-center m-2'>Admin Sign In</h1>
+                </div>
+                <div className=''>
+                    {error === 'User login success' ?
+                    <p className='text-red-600'>{error}</p>:
+                    <p className='text-green-600'>{error}</p> }
+                </div>
+                <Form fields={signInFields} onSubmit={handleSubmit} />
+                
+            </div>
+            {/* Image Section */}
+            <div className='hidden md:block md:w-1/2 h-full relative flex-col items-center'>
+                <Image src={sideImage}
+                    alt='Login Page Illustrator'
+                    fill
+                    style={{objectFit:'contain'}}
+                    priority/>
+            </div>
+        </div>
+    </div>
+    )
+}

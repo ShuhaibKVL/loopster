@@ -1,0 +1,26 @@
+
+export const isVerifiedJwt = async():Promise<boolean> => {
+    console.log("inside middleware")
+
+    try {
+        const res = await fetch('http://localhost:5000/api/user/verifyjwt',{
+            method:'POST',
+            credentials:'include',
+            // headers:{
+            //     'Content-Type':'application/json'
+            // },
+            // body:JSON.stringify(accessToken)
+        });
+
+        const response = await res.json()
+        console.log("Resoponse of JWT verifaication :",response)
+        if(response.message !== 'Token Valid.'){
+            return false
+        } 
+        else{
+            return true
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}

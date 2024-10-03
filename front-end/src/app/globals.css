@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+:root {
+  --color-bg:#F0EFF4;
+  --secondary-bg:#fff
+  --color-foreign:#000000
+}
+
+[data-theme='dark'] {
+  --color-bg:#000000;
+  --secondary-bg:#0e182d
+  --color-foreign:#F0EFF4
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-foreign);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+.scrollable {
+  overflow-y: auto; /* Enables vertical scrolling */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hides scrollbar in IE and Edge */
+}
+
+/* For WebKit browsers */
+.scrollable::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in Chrome, Safari, and Opera */
+}
+
+.toast-success {
+  @apply bg-green-100 border-green-500 text-green-700;
+}
+
