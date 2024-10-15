@@ -11,7 +11,7 @@ import {
 import Counter from '@/app/components/Counter'
 import { useSearchParams , useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
-import { resendOtp, verifyOtp } from '@/services/authServices/userAuthService'
+import otpService from '@/services/authServices/otpService'
 
 
 export default function page() {
@@ -21,6 +21,7 @@ export default function page() {
     const [ otp , setOtp ] = useState('')
     const [error, setError] = useState('')
     const [ email , setEmail ] = useState('')
+    const [ resetCounterComponent , setResetCounterCp ] = useState(false)
 
     const { toast } = useToast()
 
@@ -53,13 +54,13 @@ export default function page() {
         }
         console.log("otp :",otp,"userData :",email)
         try {
-            const result = await verifyOtp(email,otp)
+            const result = await otpService.verifyOtp(email,otp)
             console.log("result :",result)
-            if(result.message === 'Invalid otp..!'){
+            if(!result.status){
                 toast({
-                    variant:'destructive',
                     title: 'Failed',
                     description: result.message,
+                    className:'toast-failed'
                 })
             }else{
                 toast({
@@ -77,15 +78,17 @@ export default function page() {
     async function handleResendOtp():Promise<void> {
         console.log("invoked")
         try {
-            const response = await resendOtp(email)
+            const response = await otpService.resendOtp(email)
             console.log("resend otp response :",response)
+            setResetCounterCp((prev) => !prev)
             toast({
                 title: 'Success',
                 description: response.message,
                 className:"toast-success"
             })
         } catch (error) {
-            
+            console.log(error)
+            setError('Otp resend failed.')
         }
     }
 
@@ -100,7 +103,7 @@ export default function page() {
                     </div>
                     
                     <div className=''><p className='text-red-600'>{error}</p></div>
-                    <div className='flex justify-center'><Counter /></div>
+                    <div className='flex justify-center'><Counter initialMinutes={2} resetTrigger={resetCounterComponent} /></div>
                     <div className='w-full flex justify-center min-h-20'>
                     
                     <InputOTP maxLength={6}

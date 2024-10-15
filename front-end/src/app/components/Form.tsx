@@ -1,58 +1,53 @@
-'use client'
-
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+// Form.tsx
+import React from 'react';
 import '../globals.css'
 
-
-// Define a type for form fields
-interface FormField {
+interface Field {
   name: string;
-  type: string;
   label: string;
-  placeholder?: string;
-  required?: boolean;
+  type: string;
 }
 
 interface FormProps {
-  fields: FormField[];
-  onSubmit: (formData: { [key: string]: any }) => void;
+  fields: Field[];
+  onSubmit: (data: any) => void;
+  fieldErrors?: { [key: string]: string }; // Make fieldErrors optional
 }
 
-const Form: React.FC<FormProps> = ({ fields, onSubmit }) => {
-  const [formData, setFormData] = useState<{ [key: string]: any }>({});
+const Form: React.FC<FormProps> = ({ fields, onSubmit, fieldErrors }) => {
+  const [formData, setFormData] = React.useState<any>({});
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit}>
       {fields.map((field) => (
-        <div key={field.name}>
-          <label htmlFor={field.name} className="block font-medium text-gray-700">
-            {field.label}
-          </label>
+        <div key={field.name} className="mb-4">
+          <div className="flex justify-between items-center">
+            <label htmlFor={field.name} className="block font-medium text-gray-700">
+              {field.label}
+            </label>
+            {fieldErrors && fieldErrors[field.name] && (
+            <p className="text-red-600 text-sm md:text-md">{fieldErrors[field.name]}</p>
+            )}
+          </div>
           <input
-            id={field.name}
-            name={field.name}
             type={field.type}
-            placeholder={field.placeholder}
-            required={field.required}
-            className="mt-1 block w-full p-2 text-black border border-gray-300 rounded-lg"
+            name={field.name}
+            id={field.name}
             onChange={handleChange}
+            className="mt-1 block w-full border rounded-md shadow-sm focus:ring-secondary"
           />
         </div>
       ))}
-      <button type="submit" className='w-full py-2 text-white px-4 rounded-md bg-primary hover:bg-secondary transition'>
+      <button type="submit" className="bg-primary text-white py-2 px-4 rounded w-full">
         Submit
       </button>
     </form>

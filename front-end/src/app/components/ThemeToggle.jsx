@@ -4,12 +4,14 @@ export default function ThemeToggle() {
     const [theme, setTheme] = useState('light');
 
     useEffect(() => {
+        console.log('>>>>>> Theme useEffect invoked',)
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
 
 
 
     const toggleTheme = () => {
+        console.log('theme setting invoked',theme ,"set to opposite ")
         setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 

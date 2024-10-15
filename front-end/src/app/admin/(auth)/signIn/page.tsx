@@ -9,22 +9,27 @@ import Link from 'next/link'
 import Form from '@/app/components/Form'
 import { signInSchema } from '@/app/utils/validationSchemas'
 import { ValidationError } from 'yup'
-import { signIn } from '@/services/authServices/adminAuthService'
+// import { signIn } from '@/services/authServices/adminAuthService'
+import adminAuthService from '@/services/admin/adminAuthService'
+import { useDispatch } from 'react-redux'
+import { login } from '@/lib/redux/features/auth/adminSlice'
+import adminWithAuth from '@/app/contexts/adminWithAuth'
 
 
 
 export interface IsignIn{
-    name:String,
+    email:String,
     password:String,
 }
 
-export default function Page() {
+const Page =() => {
     const signInFields = [
         {name:'email',type:"email",label:'Email',placeHolder:"Enter your email",required:true},
         {name:'password',type:"password",label:'Password',placeHolder:"Enter your password",required:true},
     ]
     const router = useRouter()
     const { toast} = useToast()
+    const dispatch = useDispatch()
 
     const [ error,setError] = useState('')
     useEffect(() => {
@@ -33,11 +38,11 @@ export default function Page() {
         },3000)
     })
 
-    const handleSubmit = async(formData:IsignIn):Promise<void> => {
+    const handleSubmit = async(formData:{ [key: string]: any; }):Promise<void> => {
         console.log("admin form data :",formData)
         await signInSchema.validate(formData , {abortEarly:true})
         try {
-            const admin = await signIn(formData)
+            const admin = await adminAuthService.signIn(formData)
             console.log('admin Response :',admin)
 
             if(admin.message === 'Authentication failed..!'){
@@ -47,13 +52,23 @@ export default function Page() {
                     variant:'destructive'
                 })
                 setError(admin.message)
+                return
             }
+
             toast({
                 title:"Success",
                 description:admin.message,
                 className:'toast-success'
             })
-            router.replace('/admin/dashboard/userManagment')
+
+            const payload = {
+                email : admin.email,
+                accessToken :admin.accessToken
+            }
+
+            dispatch(login(payload))
+            
+            router.replace('/admin/dashboard')
         } catch (error:any) {
             setError(error.message)
         }
@@ -61,8 +76,8 @@ export default function Page() {
 
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg[var(--background)]'>
-        <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full  m-4 p-4 border shadow-sm shadow-gray-700 rounded-lg overflow-hidden'>
+        <div className='min-h-screen flex items-center justify-center bg-[var(--color-bg)]'>
+        <div className='flex flex-col md:flex-row items-center justify-center bg-[var(--secondary-bg)] max-w-4xl w-full m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
             {/* Form Section */}
             <div className='w-full md:w-1/2 h-full'>
                 <div className='mb-24'>
@@ -88,3 +103,5 @@ export default function Page() {
     </div>
     )
 }
+
+export default adminWithAuth(Page , false)

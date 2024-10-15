@@ -42,3 +42,21 @@ export const signInSchema = yup.object().shape({
             .required('Password is required')
 })
 
+export const editProfileSchema = yup.object().shape({
+        fullName:yup
+                .string()
+                .matches(/^[A-Za-z]+$/,"Full name should only contain alphabets")
+                .required('Full name is required'),
+    
+        userName:yup
+                .string()
+                .matches(/^[A-Za-z0-9_-]+$/,'User name only contain alphabets,numbers,dashes,and underscores')
+                .required('Username is required'),
+    
+        email:yup
+                .string()
+                .email('Enter a valid email')
+                .required('Email is required'),
+    
+    })
+

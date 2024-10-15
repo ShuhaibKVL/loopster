@@ -8,6 +8,9 @@ interface CustomRequest extends Request {
 }
 
 export const isVerifiedJwt = async(req:CustomRequest , res:Response):Promise<any> => {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+    console.log('req :',req)
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     const { accessToken} = req.body
     const token = req.cookies.accessToken
 

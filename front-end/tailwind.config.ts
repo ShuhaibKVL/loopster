@@ -15,6 +15,11 @@ const config: Config = {
 			fontFamily: {
 			sans: ['Inter', 'sans-serif'],
 			},
+			fontSize : {
+				sm:'10px',
+				md:'14px',
+				lg:'16px'
+			}
 		},
 		keyframes: {
 			"caret-blink": {

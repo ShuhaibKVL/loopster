@@ -1,5 +1,5 @@
 
-export const isVerifiedJwt = async():Promise<boolean> => {
+export const isVerifiedJwt = async():Promise<any> => {
     console.log("inside middleware")
 
     try {

@@ -1,106 +1,16 @@
-import { createUser, findUserByEmailOrUserName, isExistUser, isVerified } from "../repositories/userRepository";
+// import { createUser, findUserByEmailOrUserName, isExistUser, isVerified } from "../repositories/userRepository";
 import User, { IUser } from '../models/userModel'
 import bcrypt from 'bcryptjs'
 import { generateOtp } from '../utils/otpGenerator'
 import { mailSender } from "../utils/mailSender";
-import { verify_Otp } from "../repositories/otpRepository";
+// import { verify_Otp } from "../repositories/otpRepository";
 import jwt from 'jsonwebtoken'
+import { IUserService } from '../interfaces/IUserService';
+import { IUserRepository } from '../interfaces/IUserRepository';
+import { ObjectId } from 'mongoose';
+import { IS3Service } from '../interfaces/S3/IS3Service';
+import { string } from 'yup';
 
-
-export const signUpUser = async (userData:IUser):Promise<boolean> => {
-    console.log("user data inside service layer :",userData)
-
-    // Check userName or email all ready existed..
-    const isExisted = await findUserByEmailOrUserName(userData.email,userData.userName)
-    if(isExisted){
-        console.log("all ready existed...")
-        throw new Error('User with this email or username already exists');
-    }
-    console.log("sender email :",userData.email)
-    const newUser = await createUser(userData)
-    console.log("newUser",newUser)
-
-    const otp = await generateOtp(userData.email)
-    console.log("otp :",otp)
-    const emailBody = `<h4>confirm your password</h4>
-            <p>Here is your one time  OTP code :</p>
-            <h2 style ="color:yellow;">OTP : ${otp.otp}</h2>
-            <p>Do not share the otp anywhere</p>`
-
-    const sendEmail = await mailSender(
-        userData.email,
-        "Verification Email Loopster.ltd",
-        emailBody
-    )
-    if(sendEmail){
-        return true
-    }
-    return false
-}
-
-export const verifyOtpUser = async (email:string,otp:string):Promise<boolean | null> => {
-    const isVerified = await verify_Otp(email,otp)
-    console.log("isVerified :",isVerified)
-    return isVerified
-}
-
-export const resent_Otp = async (email:string):Promise<boolean> => {
-    const otp = await generateOtp(email)
-    console.log("otp :",otp)
-    const emailBody = `<h4>confirm your password</h4>
-            <p>Here is your one time  OTP code :</p>
-            <h2 style ="color:yellow;">OTP : ${otp.otp}</h2>
-            <p>Do not share the otp anywhere</p>`
-
-    const sendEmail = await mailSender(
-        email,
-        "Verification Email Loopster.ltd",
-        emailBody
-    )
-    if(sendEmail){
-        return true
-    }
-    return false
-}
-
-export const registerNewUser = async(email:string):Promise<IUser> => {
-    return await isVerified(email)
-}
-
-export const signInUser = async (userData:IUser):Promise<object | boolean | string> => {
-
-    const { email , password } = userData
-
-    const isExist = await isExistUser(email)
-    if(!isExist){
-        return false
-    }
-    const isPasswordMatch = await bcrypt.compare(password,isExist.password)
-    if(isPasswordMatch){
-        const accessToken = jwt.sign({
-            username:isExist.userName,
-            email:isExist.email
-        },process.env.JWT_SECRET as string ,
-        {expiresIn:'10m'}
-        )
-
-        const refreshToken = jwt.sign({
-            email:isExist.email,
-        },process.env.JWT_SECRET as string ,
-        {expiresIn:'1d'}
-        )
-
-        const data = {
-            userData :isExist,
-            accessToken:accessToken,
-            refreshToken:refreshToken
-        }
-            
-        return data
-    }else{
-        return "Invalid Password"
-    }
-}
 
 export const deleteUnverifiedUsers = async () => {
     try {
@@ -120,4 +30,55 @@ export const deleteUnverifiedUsers = async () => {
         throw error;
     }
 };
+
+
+export class userServices implements IUserService {
+    constructor(
+        private userRepository:IUserRepository,
+        private s3Service : IS3Service
+    ){}
+
+    async findUserByEmail(email: string): Promise<any> {
+        console.log('user service findUseByEmail')
+        return await this.userRepository.findByEmail(email)
+    }
+
+    async findUserByUserName(userName: string): Promise<any> {
+        console.log('user service findUseByUserName')
+        return await this.userRepository.findByUserName(userName)
+    }
+
+    async createUser(userData: IUser): Promise<any> {
+        console.log('user service createUser')
+        return await this.userRepository.create(userData)
+    }
+
+    async verifyUser(_id: ObjectId): Promise<void> {
+        return await this.userRepository.verifyUser(_id)
+    }
+
+    async findUserById(_id: string): Promise<any> {
+        return await this.userRepository.findById(_id)
+    }
+
+    async uploadProfileImage(userId: string, file: Buffer, fileName: string): Promise<any> {
+        console.log('upload image service invoked...')
+        // Upload to S3
+        const imageUrl = await this.s3Service.uploadFile(file, fileName);
+        console.log('imgUrl :',imageUrl)
+
+        // Update the user's profile with the new image URL
+        const updatedUser = await this.userRepository.updateProfileImage(userId, imageUrl);
+        console.log('updatedUser :',updatedUser)
+        return updatedUser;
+    }
+
+    async updateProfile(userId: string, formData: FormData): Promise<any> {
+        return await this.userRepository.findByIdAndUpdate(userId,formData)
+    }
+
+    async findLatestUsers(userId:string): Promise<any> {
+        return await this.userRepository.findLatestUsers(userId)
+    }
+}
 

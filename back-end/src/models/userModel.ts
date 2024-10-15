@@ -7,6 +7,9 @@ export interface IUser extends Document {
     fullName:string,
     userName:string,
     email:string,
+    profileImage?:string,
+    follow?:number,
+    followers?:number
     password:string,
     isList?:boolean,
     isBlocked?:boolean,
@@ -17,12 +20,16 @@ const userSchema = new mongoose.Schema({
     fullName:{type:String,required:true},
     userName:{type:String,required:true,unique:true},
     email:{type:String,required:true,unique:true},
+    profileImage:{type:String,default:''},
+    follow:{type:Number,default:0},
+    followers:{type:Number,default:0},
     password:{type:String,required:true},
     isList:{type:Boolean,default:true},
     isBlocked:{type:Boolean,default:false},
     isVerified:{type:Boolean,default:false},
     createdAt:{type:Date,default:Date.now}
 },{timestamps:true})
+
 
 userSchema.pre<IUser>('save',async function(next) {
     if(this.isModified('password') || this.isNew){
