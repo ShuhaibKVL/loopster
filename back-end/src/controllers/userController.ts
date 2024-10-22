@@ -1,148 +1,175 @@
 import { IUser } from "../models/userModel"
-import { registerNewUser, resent_Otp, signInUser, signUpUser, verifyOtpUser } from "../services/userServices"
-import { Request,Response } from "express"
+import { NextFunction, Request,Response } from "express"
 import { signInSchema, signUpSchema } from "../utils/validationSchemas"
 import { ValidationError } from "yup"
+import { IUserController } from "../interfaces/IUserController"
+import { IUserService } from "../interfaces/IUserService"
+import { IAuthService } from "../interfaces/IAuthService"
+import { IEmailService } from "../interfaces/IEmailService"
+import { SuccessMessages } from "../enums/successMessages"
+import { ErrorMessages } from "../enums/errorMessages"
+import { HttpStatus } from "../enums/httpStatus"
+import { generateOtp } from "../utils/otpGenerator"
+import { IOtpService } from "../interfaces/IOtpService"
+import { IFollowService } from "../interfaces/follow/IFollowService"
 
+export class UserController{
+    constructor(
+        private userService:IUserService,
+        private authService:IAuthService,
+        private emailService:IEmailService,
+        private otpService : IOtpService,
+        private followService : IFollowService
+    ){}
 
-export const signUp= async (req:Request,res:Response):Promise<void> => {
-    try {
-        const userData = req.body
+    async signUp(req: Request, res: Response): Promise<void> {
+        try {
+            const userData : IUser = req.body
+            //Validate the form
+            await signUpSchema.validate(userData , {abortEarly:false})
 
-        await signUpSchema.validate(userData ,{abortEarly:true})
-
-        const newUser = await signUpUser(userData)
-        console.log("response inside userController :",newUser)
-        if(newUser){
-            res.status(201).json({message:'Otp successfully send to your email.',user:userData})
-        }
-    } catch (error:any) {
-        console.log("1",error.message)
-        if(error instanceof ValidationError) {
-            const validationErrors = error.inner.map((err:any) => err.message).join(', ')
-            console.log("validationErrors :",validationErrors)
-            res.status(400).json({
-                success:false,
-                errors:error.errors
-            })
-        }
-        if (!res.headersSent) {  // This check prevents sending multiple responses
-            if (error.message.includes('already exists')) {
-                console.log("2",error.message)
-                res.status(409).json({ message: error.message });
-            } else {
-                res.status(400).json({ message: error.message });
+            const isExistUserEmail = await this.userService.findUserByEmail(userData.email)
+            console.log('isExistUserEmail :',isExistUserEmail)
+            if(isExistUserEmail){
+                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.EMAIL_ALREADY_EXIST , status:false})
+                return;
+            }
+            const isExistUserName = await this.userService.findUserByUserName(userData.userName)
+            if(isExistUserName){
+                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.USERNAME_ALREADY_EXIST ,status:false})
+                return;
+            }
+            const newUser = await this.userService.createUser(userData)
+            const otp = await this.otpService.generateAndSaveOtp(userData.email)
+            const emailSend = await this.emailService.sendVerificationEmail(userData.email,otp)
+            res.status(HttpStatus.CREATED).json({
+                message:SuccessMessages.EMAIL_SENT+ ' , Please check your email.',
+                status:true,user:userData.email})
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                const validationErrors = error.inner.map((err) => ({
+                    path: err.path,
+                    message: err.message
+                }));
+                res.status(HttpStatus.BAD_REQUEST).json({
+                    success: false,
+                    errors: validationErrors
+                });
             }
         }
     }
-}
 
-export const verifyOtp = async (req:Request,res:Response):Promise<void> => {
-    try {
-        const { email, otp } = req.body
-        console.log(email,otp ,"<<< inside controller")
-
-        const isVerified = await verifyOtpUser(email,otp)
-        console.log("isVerified",isVerified)
-        if(!isVerified){
-            res.status(401).json({message:"Invalid otp..!"})
-        }else{
-            const newUser = await registerNewUser(email)
-            console.log("new User :",newUser)
-            res.status(200).json({message:`${newUser.fullName}Account registration success.`})
-        }
-    }catch(error:any) {
-        console.log(error)
-        res.status(500).json({message:error.message})
-    }
-}
-
-export const resentOtp = async(req:Request,res:Response):Promise<void> => {
-    console.log("resent otp invoked")
-    try {
-    const {email} = req.body
-    console.log("email :",email)
-        const response = await resent_Otp(email)
-        if(response){
-            res.status(201).json({message:"Otp recent successfully"})
-        }else{
-            res.status(400).json({message:"OTP recent failed"})
-        }
-    } catch (error:any) {
-        console.log(error)
-        res.status(500).json({message:error.message})
-    }
-}
-
-export const signIn = async (req:Request,res:Response):Promise<void> =>{
-    try {
-        const userData = req.body
-
-        await signInSchema.validate(userData ,{abortEarly:true})
-        
-        const isExistUser : any = await signInUser(userData)
-
-        if(!isExistUser){
-            res.status(401).json({message:"Invalid credential..!",user:false})
-        }else if(isExistUser === 'Invalid Password'){
-            res.status(401).json({message:isExistUser})
-        }
-        const { refreshToken , accessToken , ...user } = isExistUser
-        const { fullName , userName,_id} = user.userData
-
-        res.cookie('accessToken',accessToken,
-            {
-            httpOnly:false,
-            secure:false,
-            sameSite:'lax',
-            maxAge:600000,
-        }
-    )
-    // console.log("000",req.cookies)
-    // res.cookie('accessToken', accessToken, { /* options */ });
-    // console.log(">>>>",res.getHeader('Set-Cookie'));
-
-        res.status(200).json({
-            message:'User Login success',
-            accessToken:accessToken,
-            userData:{
-                _id:_id,
-                firstName:fullName,
-                userName:userName
+    async signIn(req: Request, res: Response): Promise<void> {
+        try {
+            const userData  = req.body
+            //validate the form
+            await signInSchema.validate(userData ,{abortEarly:true})
+            const isExistUser = await this.userService.findUserByEmail(userData.email)
+            if(!isExistUser){
+                res.status(HttpStatus.OK).json({message:ErrorMessages.USER_NOT_FOUND ,status:false})
+                return;
             }
-        })
-    } catch (error:any) {
-        if(error instanceof ValidationError) {
-            const validationErrors = error.inner.map((err:any) => err.message).join(', ')
-            console.log("validationErrors :",validationErrors)
-            res.status(400).json({
+            const isPasswordMatch = await this.authService.verifyPassword(userData.password , isExistUser.password)
+            if(!isPasswordMatch){
+                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.PASSWORD_NOT_MATCH ,status:false})
+                return
+            }
+
+            const token = this.authService.generateToken(isExistUser._id,'1h')
+
+            res.status(HttpStatus.OK).json({
+                message:SuccessMessages.LOGIN_SUCCESSFUL,
+                accessToken:token,
+                userData:{
+                    _id:isExistUser._id,
+                    firstName:isExistUser.fullName,
+                    userName:isExistUser.userName
+                },
+                status:true})
+        } catch (error) {
+            if(error instanceof ValidationError) {
+                const validationErrors = error.inner.map((err:any) => err.message).join(', ')
+                res.status(HttpStatus.BAD_REQUEST).json({
                 success:false,
                 errors:error.errors
-            })
+                })
+            }
         }
-        console.log(error)
-        res.status(500).json({message:error.message})
-        
     }
-}
 
-export const logout_User = async(req:Request , res:Response):Promise<void> => {
-    try {
-        res.cookie('accessToken','',{maxAge:0})
-
-        res.status(200).json({message:"success"})
-
-    } catch (error:any) {
-        res.status(400).json({message:error.message})
+    logout(req: Request, res: Response): Promise<void> {
+        return Promise.resolve()
     }
-}
 
-export const user = async(req:Request , res:Response):Promise<void> => {
-    try {
-        console.log("Authenticated....")
-    } catch (error:any) {
-        res.status(404).json({message:error.message})
+    async getUser(req: Request, res: Response): Promise<void> {
+        const userId = req.params.userId
+        try {
+            const user = await this.userService.findUserById(userId)
+            if(!user){
+                res.status(HttpStatus.NOT_FOUND).json({
+                    message:ErrorMessages.USER_NOT_FOUND,
+                    status:false
+                })
+            }
+            res.status(HttpStatus.OK).json({
+                message:SuccessMessages.USER_FETCHED,
+                userData:user,
+                status:true
+            })
+        } catch (error:any) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+        }
     }
+
+    async uploadProfileImage(req: Request, res: Response): Promise<void> {
+        try {
+            console.log('upload profile function invoked')
+            const userId = req.params.userId
+            const file = req.file?.buffer; // Assuming you are using multer middleware to handle file uploads
+            const fileName = `profile-images/${userId}-${Date.now()}.jpeg`; // Customize file name as needed
+            console.log(userId,"<>",file,"<>",fileName)
+
+            if (!file) {
+                console.log('else')
+                res.status(HttpStatus.BAD_REQUEST).json({ message: 'No file uploaded' });
+                return;
+            }
+            console.log('file :',file)
+            const updateUser = await this.userService.uploadProfileImage(userId,file,fileName)
+
+            res.status(HttpStatus.OK).json({data :updateUser,status:true})
+
+        } catch (error) {
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to update image url',status:false})
+        }
+    }
+
+    async updateProfile(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = req.params.userId
+            const formData  = req.body
+
+            const updateProfile = await this.userService.updateProfile(userId,formData)
+            res.status(HttpStatus.OK).json({data:updateProfile,status:true})
+
+        } catch (error) {
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to update profile',status:false})
+        }
+    }
+
+    // to get latest users on feed recommended section
+    async getLatestUsers(req:Request , res:Response) {
+        try {
+            const { userId } = req.body
+            const latestUsers = await this.userService.findLatestUsers(userId)
+            if(latestUsers){
+                res.status(HttpStatus.OK).json({data:latestUsers})
+            }
+        } catch (error) {
+            
+        }
+    }
+
 }
 
 

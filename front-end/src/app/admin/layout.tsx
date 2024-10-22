@@ -21,11 +21,7 @@ export default function RootLayout({
 
     return (
         <div>
-        <nav className="w-full h-14 border">
-
-        </nav>
         {children}
-        
         <Toaster />
         </div>
     );

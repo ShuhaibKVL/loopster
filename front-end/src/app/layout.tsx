@@ -25,11 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} rounded-sm`}>
-        <ReduxProvider>
-          <ThemeProvider>
-          {children}
-        </ThemeProvider>
-        </ReduxProvider>
+          <ReduxProvider>
+            {/* <ThemeProvider> */}
+              {children}
+            {/* </ThemeProvider> */}
+          </ReduxProvider>
         <Toaster />
       </body>
     </html>

@@ -3,32 +3,31 @@
 import Image from 'next/image'
 import Form from '@/app/components/Form'
 import "../../globals.css";
-import { signIn } from '@/services/authServices/userAuthService';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast"
 import { signInSchema } from '@/app/utils/validationSchemas';
 import { ValidationError } from 'yup';
 import Link from 'next/link';
-import { UseSelector , useDispatch, useSelector } from 'react-redux';
-import { login } from '@/lib/features/auth/userSlice';
-import { RootState } from '@/lib/store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '@/lib/redux/features/auth/userSlice';
+import userAuthService from '@/services/user/userAuthService';
+import withAuth from '@/app/contexts/withAuth';
 
-export interface signIn{
-    name:String,
+
+export interface IsignIn{
+    email:String,
     password:String,
 }
 
-export default function Page() {
+const Page = () => {
     const signInFields = [
-        {name:'email', type:"email",label:'Email',placeHolder:"Enter your email",required:true},
-        {name:'password',type:"password",label:'Password',placeHolder:"Enter your password",required:true},
+        {name:'email', type:"email",label:'Email',placeHolder:"Enter your email"},
+        {name:'password',type:"password",label:'Password',placeHolder:"Enter your password"},
     ]
     const router = useRouter()
     const { toast} = useToast()
     const dispatch = useDispatch()
-
-    const isAuthenticated = useSelector((state:RootState) => state.user.isAuthenticated)
 
     const [ error , setError ] = useState('')
 
@@ -38,23 +37,37 @@ export default function Page() {
         },3000)
     })
 
-    const handleSubmit = async(formData:Object) => {
-
-        await signInSchema.validate(formData, {abortEarly:true})
+    const handleSubmit = async(formData:IsignIn) => {
+        console.log('formData :',formData)
+        if(formData?.email.length <= 1 ){
+            setError('Please enter your valid email')
+            return
+        }
+        if(formData?.password.length <= 1){
+            setError('Please enter your password')
+            return
+        }
 
         try {
-            const user =  await signIn(formData)
+            const user =  await userAuthService.signIn(formData)
             console.log("user",user,)
 
             setError(user.message)
-            if(user.message === 'User Login success'){
+            if(user.status){
                 toast({
                     title: 'Success',
                     description: user.message,
                     className:"toast-success"
                 })
 
-                dispatch(login(user))
+                const userData ={
+                    user:user?.userData,
+                    accessToken:user?.accessToken
+                }
+
+                console.log("user data >>>>>",userData)
+
+                dispatch(login(userData))
                 router.replace('/feed')
 
                 // router.push('/feed')
@@ -62,9 +75,9 @@ export default function Page() {
                 // Handle validation errors
                 user.errors.forEach((error:any) => {
                     toast({
-                    variant: 'destructive',
                     title: 'Validation Error',
-                    description: error,
+                    description: user.message,
+                    className:'toast-failed'
                 });
             })}
         } catch (error:any) {
@@ -79,17 +92,17 @@ export default function Page() {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg[var(--background)]'>
-            <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full  m-4 p-4 border shadow-sm shadow-gray-700 rounded-lg overflow-hidden'>
+        <div className='min-h-screen flex items-center justify-center bg[var(--color-bg)'>
+            <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full bg-[var(--secondary-bg)] m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
                 {/* Form Section */}
                 <div className='w-full md:w-1/2 h-full'>
                     <div className='mb-24'>
                         <h1 className='text-2xl font-bold text-center m-2'> Sign In</h1>
                     </div>
-                    <div className=''>
-                        {error === 'User login success' ?
-                        <p className='text-red-600'>{error}</p>:
-                        <p className='text-green-600'>{error}</p> }
+                    <div className='h-5 overflow-hidden'>
+                        {error === 'Login successful' ?
+                        <p className='text-green-600'>{error}</p>:
+                        <p className='text-red-600'>{error}</p> }
                     </div>
                     <Form fields={signInFields} onSubmit={handleSubmit} />
                     <p className='text-right w-full p-4'>
@@ -98,24 +111,24 @@ export default function Page() {
                     </span>
                         <Link href='/signUp'> Create account</Link>
                     </p>
-                </div>
+                </div>  
                 {/* Image Section */}
-                <div className='hidden md:block md:w-1/2 h-full relative flex-col items-center'>
-                
-                <Image src='/Images/LogowithTitle.png'
+                <div className='hidden md:block md:w-1/2 h-full bg-[var(--secondary-bg)]'>
+                        <div className='h-full w-full border-yellow-800 flex items-center justify-center'>
+                        <Image src='/Images/iPhone14Pro.png'
                         alt='Login Page Illustrator'
                         width={100}
-                        height={50}
-                        className='align-middle'
-                        style={{objectFit:'contain'}}
-                        priority/>
-                    <Image src='/Images/iPhone14Pro.png'
-                        alt='Login Page Illustrator'
-                        fill
-                        style={{objectFit:'contain'}}
-                        priority/>
+                        height={500}
+                        sizes='100vw'
+                        quality={100}
+                        priority
+                        style={{width:'100%',height:'100%'}}
+                        />
+                        </div>
                 </div>
             </div>
         </div>
     )
 }
+
+export default withAuth(Page,false)

@@ -1,33 +1,42 @@
 'use client'
-import React from 'react'
 
-import homeIcon from '../../../public/Images/fluent--home-20-regular.png'
-import messageIcon from '../../../public/Images/uil--message.png'
-import bellIcon from '../../../public/Images/bitcoin-icons--bell-outline (1).png'
-import bookMarkIcon from '../../../public/Images/material-symbols-light--bookmark-outline (1).png'
+import React, { ReactNode, useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
-import Image from 'next/image'
-import Font from 'next/font'
-import {useRouter} from 'next/navigation'
+export interface INavItems {
+    name: string,
+    icon: ReactNode,
+    path: string
+}
 
-export default function SideBar() {
-    const router = useRouter()
-    const navItems = [
-        {name:'Home',icon:homeIcon , path:'/feed'},
-        {name:'Messages',icon:messageIcon , path:'/messages'},
-        {name:'Notification',icon:bellIcon , path:'/notifications'},
-        {name:'Book Mark',icon:bookMarkIcon , path:'/bookmarks'},
-        // {name:'Gemini',icon:starIcon , path:'/gemini'},
-    ]
+interface SideBarProps {
+    navItems: INavItems[];
+}
+
+export default function SideBar({ navItems }: SideBarProps) {
+    const router = useRouter();
+    const currentPath = usePathname()
+    console.log('currentPath :',currentPath)
+
     return (
-    <div className='w-full h-full flex flex-col gap-2 p-2'>
-        {navItems.map((item) => (
-        <div key={item.name} className='flex p-2 border items-center justify-center lg:justify-start rounded-full lg:rounded-md '
-            onClick={() =>  router.push(item.path)}>
-            <Image src={item.icon} width={30} alt={`${item.name}`} className='lg:hidden' />
-            <h2 className='hidden lg:block' >{item.name}</h2>
+        <div className='w-full h-full flex flex-col gap-2 p-2'>
+            {navItems.map((item: INavItems) => {
+                const isActive = currentPath === item.path; // Check if the current path is active
+                return (
+                    <div
+                        key={item.name}
+                        className={`h-14 flex p-2 border items-center justify-center lg:justify-start rounded-md cursor-pointer 
+                        ${isActive ? 'bg-primary text-white' : 'hover:bg-gray-200'} transition-colors duration-200`} // Apply styles for hover and active states
+                        onClick={() => router.push(item.path)}
+                    >
+                        {/* Render the icon as a React component */}
+                        <div className='md:hidden'>
+                            {item.icon}
+                        </div>
+                        <h2 className='hidden md:block'>{item.name}</h2>
+                    </div>
+                )
+            })}
         </div>
-        ))}
-    </div>
     )
 }

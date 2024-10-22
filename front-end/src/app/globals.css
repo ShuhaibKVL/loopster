@@ -9,15 +9,15 @@
 }
 
 :root {
-  --color-bg:#F0EFF4;
-  --secondary-bg:#fff
-  --color-foreign:#000000
+  --color-bg:#e7e7e7;
+  --secondary-bg:#ffff;
+  --color-foreign:#000000;
 }
 
 [data-theme='dark'] {
   --color-bg:#000000;
-  --secondary-bg:#0e182d
-  --color-foreign:#F0EFF4
+  --secondary-bg:#0e182d;
+  --color-foreign:#F0EFF4;
 }
 
 body {
@@ -46,5 +46,14 @@ body {
 
 .toast-success {
   @apply bg-green-100 border-green-500 text-green-700;
+}
+
+.toast-failed {
+  @apply bg-red-100 border-red-500 text-red-800;
+}
+
+.no-scroll-tabs [role="tabpanel"] {
+  overflow: visible !important;
+  height: auto !important;
 }
 

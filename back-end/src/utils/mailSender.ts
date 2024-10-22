@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 
 export const mailSender = async(email:string , title:string , body:string):Promise<any> => {
+    console.log(email,title,body)
     try {
         // Transporter to send email
         let transporter = nodemailer.createTransport({
@@ -24,6 +25,6 @@ export const mailSender = async(email:string , title:string , body:string):Promi
         return info
 
     } catch (error:any) {
-        console.log("error on mailSender",error.message)
+        console.log("error on mailSender",error)
     }
 }

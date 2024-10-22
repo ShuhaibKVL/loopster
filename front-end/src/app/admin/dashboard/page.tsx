@@ -1,9 +1,14 @@
+'use client'
+
+import adminWithAuth from '@/app/contexts/adminWithAuth'
 import React from 'react'
 
-export default function Page() {
+const Page = () => {
     return (
     <div>
         Admin Dashboard
     </div>
     )
 }
+
+export default adminWithAuth(Page , true)

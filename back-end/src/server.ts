@@ -1,12 +1,13 @@
 import cors from 'cors'
 import express , { Request , Response } from 'express'
 import globalErrorMiddleware from './middleware/globalErrorMiddleware'
-import connectDB from './db/database'
+import connectDB from './config/db/database'
 import dotenv from 'dotenv'
-import userRoutes from './routes/userRoutes'
+import userRoutes from './routes/user/userRoutes'
 import cookieParser from 'cookie-parser'
 // import './cron/deleteUnverifiedUsers'
-import adminRoutes from './routes/adminRoutes'
+import adminRoutes from './routes/admin/adminRoutes'
+import postRoutes from './routes/user/postRoutes'
 
 dotenv.config()
 
@@ -26,6 +27,7 @@ app.use(cookieParser())
 
 app.use(cors(corsOptions))
 
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
@@ -36,5 +38,6 @@ connectDB().catch(err => {
 
 app.use('/api/user',userRoutes)
 app.use('/api/admin',adminRoutes)
+app.use('/api/post',postRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

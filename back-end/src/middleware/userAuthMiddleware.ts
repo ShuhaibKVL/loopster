@@ -1,22 +1,29 @@
 import { Request , Response , NextFunction } from "express";
 import jwt from 'jsonwebtoken'
+import { HttpStatus } from "../enums/httpStatus";
+import { ErrorMessages } from "../enums/errorMessages";
 
 export const authorize = async (req:Request , res:Response , next:NextFunction) => {
     try {
-        const accessToken = req.cookies['accessToken']
-        if (!accessToken) {
-            return res.status(401).json({ message: 'Unauthorized: No token provided' });
+        const authHeader = req.headers['authorization'];
+        console.log("authHeader :",authHeader)
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: ErrorMessages.TOKEN_NOT_FONT});
         }
-        const claims = jwt.verify(accessToken, process.env.JWT_SECRET as string)
+        const token = authHeader.split(' ')[1]
+        console.log("token after extract :",token,"<<<<<<<<</")
+        const claims = jwt.verify(token, process.env.JWT_SECRET as string)
         console.log("claims :",claims)
 
         if(!claims){
-            res.status(403).json({message:'Unauthorized request'})
+            res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})
+            return;
         }
         next()
         
     } catch (error : any) {
         console.log(error.message)
-        res.status(403).json({message:"Unauthorized user."})
+        res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})
     }
 }
