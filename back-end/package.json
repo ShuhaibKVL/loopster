@@ -31,6 +31,7 @@
     "nodemailer": "^6.9.15",
     "otp-generator": "^4.0.1",
     "react-hook-form": "^7.53.0",
+    "unsplash-js": "^7.0.19",
     "yup": "^1.4.0"
   },
   "devDependencies": {

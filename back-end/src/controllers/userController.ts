@@ -125,7 +125,7 @@ export class UserController{
         try {
             console.log('upload profile function invoked')
             const userId = req.params.userId
-            const file = req.file?.buffer; // Assuming you are using multer middleware to handle file uploads
+            const file = req.file?.buffer;
             const fileName = `profile-images/${userId}-${Date.now()}.jpeg`; // Customize file name as needed
             console.log(userId,"<>",file,"<>",fileName)
 

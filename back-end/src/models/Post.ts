@@ -3,15 +3,19 @@ import mongoose , {Schema} from 'mongoose'
 export interface IPost extends Document{
     userId:string,
     content:string,
-    mediaType:"none" | "video" | "img",
+    mediaType:"none" | "video" | "image",
     mediaUrl?:string,
+    isList?:boolean,
+    isReported?:boolean
 }
 
 const PostSchema : Schema = new mongoose.Schema<IPost>({
     userId:{type:String,required:true},
     content:{type:String,required:true},
     mediaType:{type:String ,default:'none'},
-    mediaUrl:{type:String}
+    mediaUrl:{type:String},
+    isList:{type:Boolean,default:true},
+    isReported:{type:Boolean,default:false}
 },{timestamps:true})
 
 PostSchema.pre('save',function(next) {

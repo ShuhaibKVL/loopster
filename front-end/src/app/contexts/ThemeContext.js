@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useLayoutEffect, useState } from 'react'
 
 export const ThemeContext = createContext()
 
@@ -8,7 +8,7 @@ export const ThemeProvider = ({children}) => {
     const [ theme, setTheme] = useState('light');
     console.log("theme :",theme,"localStorage.g :")
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         console.log(">>>",localStorage.getItem('theme'))
         const savedTheme = localStorage.getItem('theme')
         if(savedTheme){

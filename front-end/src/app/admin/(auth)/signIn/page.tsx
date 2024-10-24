@@ -4,12 +4,9 @@ import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
 import React, { useEffect ,useState} from 'react'
 import Image from 'next/image'
-import sideImage from '../../../../../public/Images/Untitled-design.jpg'
-import Link from 'next/link'
+import logoWithTitle from '../../../../../public/Images/LogowithTitle.png'
 import Form from '@/app/components/Form'
 import { signInSchema } from '@/app/utils/validationSchemas'
-import { ValidationError } from 'yup'
-// import { signIn } from '@/services/authServices/adminAuthService'
 import adminAuthService from '@/services/admin/adminAuthService'
 import { useDispatch } from 'react-redux'
 import { login } from '@/lib/redux/features/auth/adminSlice'
@@ -93,7 +90,7 @@ const Page =() => {
             </div>
             {/* Image Section */}
             <div className='hidden md:block md:w-1/2 h-full relative flex-col items-center'>
-                <Image src={sideImage}
+                <Image src={logoWithTitle}
                     alt='Login Page Illustrator'
                     fill
                     style={{objectFit:'contain'}}

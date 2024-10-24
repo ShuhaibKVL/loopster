@@ -1,5 +1,4 @@
 import { Router } from 'express'
-
 import FollowController from '../../controllers/followController'
 import { OtpController } from '../../controllers/otpController'
 import { UserController } from '../../controllers/userController'
@@ -46,9 +45,5 @@ router.post('/latest-users',userController.getLatestUsers.bind(userController))
 
 router.post('/follow-user',followController.follow.bind(followController))
 router.delete('/unfollow-user',followController.unFollow.bind(followController))
-
-
-
-
 
 export default router

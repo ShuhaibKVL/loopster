@@ -14,7 +14,6 @@ export const authorize = async (req:Request , res:Response , next:NextFunction) 
         const token = authHeader.split(' ')[1]
         console.log("token after extract :",token,"<<<<<<<<</")
         const claims = jwt.verify(token, process.env.JWT_SECRET as string)
-        console.log("claims :",claims)
 
         if(!claims){
             res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})

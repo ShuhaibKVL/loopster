@@ -11,6 +11,8 @@ import FollowUnFollow from './FollowUnFollow'
 import FollowButton from './FollowHandleButton'
 import FollowHandleButton from './FollowHandleButton'
 import UnFollowHandleButton from './UnFollowHandelButton'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/lib/redux/store/store'
 
 
 export interface IUserHeader {
@@ -38,6 +40,9 @@ export default function UserHeader({
     followersCount,
     onUserUpdate
 }:IUserHeader) {
+
+    const userId = useSelector((state:RootState) => state.user.userId)
+    console.log('userId :',userId,">  user id :",_id)
     return (
     <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
@@ -47,8 +52,8 @@ export default function UserHeader({
                     <Avatar >
                         {imgUrl !== '' ? (
                             <AvatarImage
-                            src= {imgUrl}// Image URL for the user profile
-                            alt="PR" // Accessible alt text
+                            src= {imgUrl}
+                            alt="PR"
                             className=''
                         />
                         ) : (
@@ -59,8 +64,8 @@ export default function UserHeader({
                     </Avatar>
                 </div>
             </HoverCardTrigger >
+            {userId !== _id ? (
             <HoverCardContent className='bg-[var(--secondary-bg)]' >
-
                 {/* The React Framework – created and maintained by @vercel. */}
                 <div className="flex items-center gap-4">
                 <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full border">
@@ -73,22 +78,22 @@ export default function UserHeader({
                     <AvatarFallback>{<AvatarSkelton />}</AvatarFallback>
                     </Avatar>
                 </div>
-            <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>
                 <p className='font-mono'>{userName || 'userName'}</p>
-            </div>
-            </div>
-            <FollowUnFollow follow={followedCount} followers={followersCount} />
+                </div>
+                </div>
+                <FollowUnFollow follow={followedCount} followers={followersCount} />
 
-            {/* Follow / UnFollow section */}
-            {isFollowed ? (
+                {/* Follow / UnFollow section */}
+                {isFollowed ? (
                 <UnFollowHandleButton following={_id} onUserUpdate={onUserUpdate} />
-            ) : (
+                ) : (
                 <FollowHandleButton following={_id}  onUserUpdate={onUserUpdate} />
-            )}
-                
-
+                )}
                 </HoverCardContent>
+            ) : ('')}
+            
             </HoverCard>
             <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>

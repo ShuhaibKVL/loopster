@@ -25,13 +25,12 @@ export class UserRepository implements IUserRepository {
     }
 
     async findById(_id: string): Promise<any> {
-        console.log('findById invoked')
         try {
             return await User.aggregate([
                 { $match: { _id: new mongoose.Types.ObjectId(_id) } },
                 {
                     $lookup: {
-                        from: 'follows', // Adjust to your actual collection name
+                        from: 'follows',
                         let: { userId: '$_id' },
                         pipeline: [
                             {
@@ -62,9 +61,29 @@ export class UserRepository implements IUserRepository {
                 {
                     $unwind: {
                         path: '$counts',
-                        preserveNullAndEmptyArrays: true // Allow for cases where counts might be empty
+                        preserveNullAndEmptyArrays: true
                     }
                 },
+                {
+                    $lookup: {
+                        from: 'posts',
+                        let: { userId: '$_id' },
+                        pipeline: [
+                            {
+                                $sort:{createdAt:-1}
+                            },
+                            { $match: { isList:true } },
+                            {
+                                $match: {
+                                    $expr: {
+                                    $eq: [{ $toObjectId: '$userId' }, '$$userId']
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'posts'
+                    }
+                    },
                 {
                     $project : {password : 0}
                 }
@@ -88,8 +107,8 @@ export class UserRepository implements IUserRepository {
     async findByIdAndUpdate(userId: string, formData: FormData): Promise<any> {
         const updatedUser = await User.findByIdAndUpdate(
             userId, 
-            { $set: formData }, // Update only the fields that are present in updatedProfileData
-            { new: true, runValidators: true }  // `new: true` returns the updated document, `runValidators` ensures the schema validation runs
+            { $set: formData },
+            { new: true, runValidators: true }
         );
         return updatedUser
     }
@@ -105,71 +124,71 @@ export class UserRepository implements IUserRepository {
     const users = await User.aggregate([
         {
             $lookup: {
-                from: 'follows', // The name of your follow collection
+                from: 'follows',
                 let: { currentUserId: new mongoose.Types.ObjectId(userId), fetchedUserId: '$_id' },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
                                 $and: [
-                                    { $eq: ['$follower', '$$currentUserId'] }, // Matches the follower ID
-                                    { $eq: ['$following', '$$fetchedUserId'] } // Matches the following ID
+                                    { $eq: ['$follower', '$$currentUserId'] },
+                                    { $eq: ['$following', '$$fetchedUserId'] }
                                 ]
                             }
                         }
                     },
-                    { $project: { _id: 1 } } // Only return the _id to check existence
+                    { $project: { _id: 1 } }
                 ],
-                as: 'followInfo' // This will hold the result of the lookup
+                as: 'followInfo'
             }
         },
         {
             $addFields: {
-                isFollowed: { $gt: [{ $size: '$followInfo' }, 0] } // Set isFollowed to true if there are any matches
+                isFollowed: { $gt: [{ $size: '$followInfo' }, 0] }
             }
         },
         {
             $lookup: {
-                from: 'follows', // The same follows collection
+                from: 'follows',
                 let: { fetchedUserId: '$_id' },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
-                                $eq: ['$following', '$$fetchedUserId'] // Count the number of followers for this user
+                                $eq: ['$following', '$$fetchedUserId']
                             }
                         }
                     },
                     {
-                        $count: 'followersCount' // Count the followers
+                        $count: 'followersCount'
                     }
                 ],
-                as: 'followers' // Store the result in 'followers'
+                as: 'followers'
             }
         },
         {
             $lookup: {
-                from: 'follows', // The same follows collection
+                from: 'follows',
                 let: { fetchedUserId: '$_id' },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
-                                $eq: ['$follower', '$$fetchedUserId'] // Count the number of followed users
+                                $eq: ['$follower', '$$fetchedUserId']
                             }
                         }
                     },
                     {
-                        $count: 'followedCount' // Count the followed users
+                        $count: 'followedCount'
                     }
                 ],
-                as: 'followed' // Store the result in 'followed'
+                as: 'followed'
             }
         },
         {
             $addFields: {
-                followersCount: { $ifNull: [{ $arrayElemAt: ['$followers.followersCount', 0] }, 0] }, // Get followers count
-                followedCount: { $ifNull: [{ $arrayElemAt: ['$followed.followedCount', 0] }, 0] } // Get followed count
+                followersCount: { $ifNull: [{ $arrayElemAt: ['$followers.followersCount', 0] }, 0] },
+                followedCount: { $ifNull: [{ $arrayElemAt: ['$followed.followedCount', 0] }, 0] }
             }
         },
         {
@@ -177,11 +196,11 @@ export class UserRepository implements IUserRepository {
         },
         {
             $sort: {
-                createdAt: -1 // Sort by createdAt in descending order
+                createdAt: -1
             }
         },
         {
-            // Exclude sensitive fields from the result
+            
             $project: {
                 followInfo: 0,
                 password: 0,

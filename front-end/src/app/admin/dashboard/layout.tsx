@@ -2,7 +2,6 @@
 
 import SideBar, { INavItems } from '@/app/components/SideBar'
 import React from 'react'
-import ExitIcon from '@radix-ui/react-icons'
 import { DashboardIcon } from '@radix-ui/react-icons'
 import {
     Tooltip,
@@ -23,11 +22,10 @@ export default function Layout({
 }>) {
 
     const navItems:INavItems[] = [
-        {name:'Home',icon:<DashboardIcon/> , path:'/admin/dashboard'},
+        {name:'Dashboard',icon:<DashboardIcon/> , path:'/admin/dashboard'},
         {name:'User Management',icon:<DashboardIcon/> , path:'/admin/dashboard/userManagement'},
-        {name:'Notification',icon:<DashboardIcon/>,path:'/notifications'},
+        {name:'Post Management',icon:<DashboardIcon/>,path:'/admin/dashboard/postManagement'},
         {name:'Book Mark',icon:<DashboardIcon/>,path:'/bookmarks'},
-        // {name:'Gemini',icon:starIcon , path:'/gemini'},
     ]
 
     const dispatch = useDispatch()

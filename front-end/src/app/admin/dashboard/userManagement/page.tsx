@@ -21,6 +21,10 @@ import {
 } from "@/components/ui/tooltip"
 import adminWithAuth from '@/app/contexts/adminWithAuth';
 import { confirmAction } from '@/app/components/ConfirmationModal';
+import AvatarComponent from '@/app/components/Avatar';
+import AvatarSkelton from '@/app/components/skeltons/AvatarSkelton';
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
+import { AvatarFallback } from '@/components/ui/avatar';
 
 const Page = () => {
     const [ users , setUsers] = useState<IsignupUserInterface[]>([])
@@ -34,14 +38,12 @@ const Page = () => {
         console.log('fin users function')
         const data = await userManagementService.getAllUsers();
         console.log('data:', data.userData);
-        setUsers(data.userData); // Set userData correctly
+        setUsers(data.userData);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     }
     
-        
-
     async function handleBlock(userId:string,actionVerb :string ,fullName:string) {
 
       const willProceed = await confirmAction({
@@ -89,7 +91,19 @@ const Page = () => {
           <TableBody>
             {users.map((user:IsignupUserInterface) => (
               <TableRow key={user._id}>
-              <TableCell className="font-medium"><div className='w-10 h-10 rounded-full border bg-white'></div></TableCell>
+              <TableCell className="font-medium">
+                    <div className='w-10 h-10 rounded-full overflow-hidden'>
+                      {user.profileImage ? 
+                      (<Avatar>
+                        <AvatarImage
+                          src= {user?.profileImage}
+                          alt="PR"
+                        />
+                        </Avatar>) :
+                         (<AvatarSkelton />)
+                         }
+                    </div>
+              </TableCell>
               <TableCell>{user.fullName}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell className="text-right mr-3 flex justify-around items-center">
@@ -128,13 +142,8 @@ const Page = () => {
           </TableBody>
         </Table>
         ) : (
-          <p className='w-full text-center p-2'>No users found</p> // Display a message when no users
+          <p className='w-full text-center p-2'>No users found</p>
         )}
-        <h1>PENDING TASK</h1>
-        <h1>-----------------</h1>
-        <h1>USER PROFILE UPDATE IMAGE UPDATE </h1>
-        <h1>FOLLOW UNFOLLOW</h1>
-        <h1>FOLLOWED / RECOMMENTED USERS</h1>  
     </div>
     )
 }

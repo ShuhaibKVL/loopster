@@ -1,8 +1,10 @@
+'use client'
+
 import { logout } from "@/lib/redux/features/auth/userSlice";
 import store, { RootState } from "@/lib/redux/store/store";
 import isTokenExpired from "@/lib/utils/isTokenExpired";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 
 const restrictedRoutes = ['/signIn', '/signUp', '/signUp/otp', '/'];
@@ -14,7 +16,7 @@ const RequiresAuth = (props: any) => {
     const router = useRouter();
     const accessToken = useSelector((state: RootState) => state.user?.accessToken);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (accessToken) {
             const isExpired = isTokenExpired(accessToken);
             if (isExpired) {

@@ -10,6 +10,7 @@ export class FollowRespository implements IFollowRepository {
     }
 
     async delete(data:IFollow): Promise<any> {
+        console.log('delete follow invoked')
         return await Follow.deleteOne(data)
     }
 

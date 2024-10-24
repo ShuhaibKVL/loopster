@@ -5,7 +5,7 @@ import { logout } from '@/lib/redux/features/auth/userSlice'
 import  Router from 'next/navigation'
 
 // Base URL
-const BASE_URL = 'http://localhost:5000'
+export const BASE_URL = 'http://localhost:5000'
 
 // Public URL for unauthenticated user request (signIn/ signUp)
 export const user_publicApi = axios.create({
@@ -89,7 +89,6 @@ userApi.interceptors.response.use(
             store.dispatch(logout())
 
             Router.redirect('/signIn')
-            // Router.replace('/signIn')
         }
 
         return Promise.reject(error)
@@ -129,7 +128,6 @@ postApi.interceptors.response.use(
             store.dispatch(logout())
 
             Router.redirect('/signIn')
-            // Router.replace('/signIn')
         }
 
         return Promise.reject(error)

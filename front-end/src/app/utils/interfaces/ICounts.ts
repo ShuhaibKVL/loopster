@@ -1,4 +1,4 @@
 export interface ICounts {
-    followedCount: number;
-    followersCount: number;
+    follow: number;
+    followers: number;
 }

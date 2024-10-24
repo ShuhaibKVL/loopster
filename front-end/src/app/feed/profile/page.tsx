@@ -2,12 +2,11 @@
 
 import React, { useEffect } from 'react'
 import Image from 'next/image'
-import defaultProfiel from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+import defaultProfile from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
 import { Button } from '@/components/ui/button'
 import {Pencil2Icon  } from '@radix-ui/react-icons'
 import {UploadIcon} from '@radix-ui/react-icons'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '@/lib/redux/features/auth/userSlice'
 import { RootState } from '@/lib/redux/store/store'
 import withAuth from '@/app/contexts/withAuth'
 import { useState } from 'react'
@@ -17,12 +16,12 @@ import { ISignUp_user } from '@/app/(auth)/signUp/page'
 import Form from '@/app/components/Form'
 import { editProfileSchema } from '@/app/utils/validationSchemas'
 import { ValidationError } from 'yup'
-import Toast from '@/app/components/Toast'
-import { title } from 'process'
 import { useToast } from '@/hooks/use-toast'
 import { confirmAction } from '@/app/components/ConfirmationModal'
 import { IUserWithCounts } from '@/app/utils/interfaces/IUserWIthCounts'
-
+import PostContentContainer from '@/app/components/post_components/PostContentContainer'
+import ReusableDropdown from '@/app/components/DropDownMenu'
+import postService from '@/services/user/post/postServices'
 
 
 const Page = () => {
@@ -31,7 +30,7 @@ const Page = () => {
     const userId = useSelector((state:RootState) => state.user.userId)
 
     const [userData, setUserData] = useState<IUserWithCounts | null>(null);
-    const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfiel)
+    const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfile)
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
     const [ error , setError ] = useState('')
     const  { toast } = useToast()
@@ -44,15 +43,12 @@ const Page = () => {
 
     async function getUserData(userId :string){
         const user = await userAuthService.user(userId)
-        console.log(user,"<< user ")
         setUserData(user?.userData[0])
-        console.log('user data :>>>...',userData)
     }
 
     useEffect(() => {
         if(userId){
             getUserData(userId)
-            
         }
     },[userId])
 
@@ -68,10 +64,6 @@ const Page = () => {
         },3000)
     },[error])
 
-    function handleLogout(){
-        console.log('handle logout function invoked')
-        dispatch(logout())
-    }
 
     const handleUploadClick = () => {
         fileInputRef.current?.click() // Trigger the file input click
@@ -150,13 +142,34 @@ const Page = () => {
             console.log(error)
         }
     }
+
+    // Handel post delete
+    const handleDelete = async (postId:string) => {
+
+        const willProceed = await confirmAction({
+            title: `Are you sure to delete ?`,
+            text: `Once deleted, you are not able to return..!`,
+            icon: 'warning',
+        });
+        if(willProceed){
+            const response = await postService.deletePost(postId)
+            console.log('post delete response :',response)
+            if(response?.status){
+                toast({
+                    title: 'Failed',
+                    description: response?.message,
+                    className:"toast-failed"
+                })
+            }
+            getUserData(userId)
+        }
+    }
     
     return (
     <div className='p-5 space-y-10'>
         <div className="relative w-[250px] h-[250px] m-auto group overflow-hidden">
         <Image
-        
-        src={userData?.profileImage || defaultProfiel}
+        src={userData?.profileImage || defaultProfile}
         width={250}
         height={250}
         className="border rounded-full shadow-sm hover:opacity-80"
@@ -181,15 +194,15 @@ const Page = () => {
     <section className='flex items-center justify-center gap-x-9 w-full'>
     <div className='space-y-2'>
         <p className='px-5 border rounded-lg py-1 font-bold'>Following</p>
-        <p className='text-center'>{userData?.counts?.followedCount}</p>
+        <p className='text-center'>{userData?.follow}</p>
     </div>
     <div className='space-y-2'>
         <p className='px-5 border rounded-lg py-1 font-bold'>Followers</p>
-        <p className='text-center'>{userData?.counts?.followersCount}</p>
+        <p className='text-center'>{userData?.followers}</p>
     </div>
     </section>
         {/* user Details and edit section */}
-        <div className='relative p-5 border rounded-sm space-y-1 overflow-hidden'>
+        <div className='relative p-5 border rounded-lg space-y-1 overflow-hidden'>
             <Button onClick={handleEditContainer} className='border-2 absolute right-5 ' variant={'ghost'} size='icon'>
                 <Pencil2Icon />
             </Button>
@@ -197,16 +210,6 @@ const Page = () => {
                 <h2 className='font-bold'>{userData?.userName}</h2>
                 <p className='font-thin'>@{userData?.fullName}</p>
             </section>
-            <pre>
-                Lorem ipsum dolor, sit amet consectetur,
-            </pre>
-            <pre>
-                adipisicing elit. Mollitia nam inventore,
-            </pre>
-            <button className='border-2 absolute right-5 bottom-0 p-1 rounded'
-                onClick={handleLogout}>
-                logout
-            </button>
         </div>
         {/* Edit profile container */}
         <div className={`relative editProfileModal ${editProfileModal} border rounded-md p-5`}>
@@ -217,7 +220,33 @@ const Page = () => {
         </div>
         {/* User Posts */}
         <section>
-            <h2 className='w-full p-2 text-center border rounded-lg'>Your Posts</h2>
+            <h2 className='w-full p-2 text-center border rounded-lg mb-2 bg-[var(--color-bg)]'>Your Posts</h2>
+            <div className='flex flex-col rounded-sm gap-2 p-2'>
+            
+                {userData?.posts.length !== 0 ? (
+                    userData?.posts.map((post) => (
+                        <div className='relative'>
+                            <div className='absolute z-50 top-2 -right-2'>
+                            <ReusableDropdown
+                                options={[
+                                    { label: 'Delete', action: () => handleDelete(post?._id) }
+                                ]}
+                                postId={post?._id}
+                            />
+                            </div>
+                        <PostContentContainer 
+                        key={post?._id}
+                        mediaUrl={post?.mediaUrl}
+                        content={post?.content}
+                        mediaType={post?.mediaType}
+                        time={post?.createdAt}
+                        />
+                        </div>
+                    ))
+                ) : (
+                    <p>No more posts</p>
+                )}
+            </div>
         </section>
     </div>
     )

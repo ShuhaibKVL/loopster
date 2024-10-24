@@ -16,13 +16,12 @@ const initialState:userState = {
     userId:''
 }
 
-// console.log("Before : state on userSlice :",initialState)
 const userAuthReducer = createSlice({
     name:'userAuth',
     initialState,
     reducers:{
         login : (state , action) =>{
-            console.log('inside login in slice :',action.payload)
+           console.log('inside login in slice :',action.payload)
             state.accessToken = action.payload.accessToken
             state.isAuthenticated = true
             state.user = action.payload.user.userName
@@ -37,8 +36,6 @@ const userAuthReducer = createSlice({
         }
     },
 })
-
-// console.log("After : state on userSlice :",initialState)
 
 export const { login, logout } = userAuthReducer.actions
 export default userAuthReducer.reducer

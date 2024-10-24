@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 // import './cron/deleteUnverifiedUsers'
 import adminRoutes from './routes/admin/adminRoutes'
 import postRoutes from './routes/user/postRoutes'
+import unsplashRoutes from './routes/user/unsplashRoutes'
 
 dotenv.config()
 
@@ -33,11 +34,12 @@ app.use(express.urlencoded({extended:true}))
 
 connectDB().catch(err => {
     console.log("Data base connection error throw :",err.message)
-    return 
+    return
 })
 
 app.use('/api/user',userRoutes)
 app.use('/api/admin',adminRoutes)
 app.use('/api/post',postRoutes)
+app.use('/api/unsplash',unsplashRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

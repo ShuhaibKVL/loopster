@@ -3,7 +3,7 @@ export interface IsignupUserInterface{
     fullName:string,
     userName:string,
     email:string,
-    imgUrl?:string,
+    profileImage?:string,
     password:string,
     isList?:boolean,
     isBlocked?:boolean,
