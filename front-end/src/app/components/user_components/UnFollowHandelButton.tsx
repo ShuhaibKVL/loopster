@@ -1,16 +1,22 @@
+
 import { Button } from '@/components/ui/button'
 import { RootState } from '@/lib/redux/store/store'
 import followService from '@/services/folllow/followService'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { confirmAction } from '../ConfirmationModal'
+import { fetchLatestPosts } from '@/lib/redux/features/postSlice'
+import { useAppDispatch } from '@/hooks/typedUseDispatch'
+import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 
 interface IFollowUserIds{
     following:string,
-    onUserUpdate:() =>void
+    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
 }
-export default function UnFollowHandleButton({following,onUserUpdate}:IFollowUserIds) {
+export default function UnFollowHandleButton({following,refetchPosts}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
+
+    const dispatch = useAppDispatch()
 
     async function handleUnFollow(){
         if(!userId && following){
@@ -24,15 +30,14 @@ export default function UnFollowHandleButton({following,onUserUpdate}:IFollowUse
         });
     
         if(willProceed){
-
             const newFollowDoc = {
                 follower : userId,
                 following: following
             }
 
             const follow = await followService.unFollow(newFollowDoc)
-            console.log('follow :',follow)
-            onUserUpdate()
+            // dispatch(fetchLatestPosts({userId}))
+            await refetchPosts()
         }
         
     }

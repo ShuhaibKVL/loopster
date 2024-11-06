@@ -2,7 +2,7 @@ import React from 'react'
 
 interface IFollowUnfollow{
     follow:number,
-    followers:number
+    followers:number,
 }
 export default function FollowUnFollow({follow , followers}:IFollowUnfollow) {
     return (

@@ -1,18 +1,43 @@
 import { IPostRepository } from "../../interfaces/posts/IPostRepository";
 import { IPostService } from "../../interfaces/posts/IPostServices";
+import { IS3Service } from "../../interfaces/S3/IS3Service";
 import { IPost } from "../../models/Post";
+import { IReport } from "../../models/Report";
 
 export class PostService implements IPostService {
     constructor(
-        private userRepository : IPostRepository
+        private postRepository : IPostRepository,
+        private s3Service : IS3Service
     ){}
 
-    async createPost(data: IPost): Promise<any> {
-        console.log('create post service invoked')
-        return await this.userRepository.create(data)
+    async createPost(data: IPost ,file : Buffer,fileName:string): Promise<any> {
+        console.log('create post service invoked',data)
+        const imageUrl = await this.s3Service.uploadFile(file,fileName)
+        data.mediaUrl = imageUrl
+        if(imageUrl){
+            return await this.postRepository.create(data)
+        }
+        return false
     }
 
-    async deletePost(data: IPost): Promise<any> {
-        
+    async deletePost(postId: string): Promise<any> {
+        return await this.postRepository.delete(postId)
+    }
+
+    async reportPost(data: IReport): Promise<unknown> {
+        return await this.postRepository.report(data)
+    }
+
+    async getLatestPosts(userId: string,page:number): Promise<any> {
+        console.log('latest post service invoked',page)
+        return await this.postRepository.findLatestPosts(userId,page)
+    } 
+    
+    async getFollowedUsersPosts(userId: string, page: number): Promise<any> {
+        return await this.postRepository.findFollowedUserPost(userId,page)
+    }
+
+    async getBookMarkedPosts(userId: string,page:number): Promise<unknown> {
+        return await this.postRepository.findBookMarkedPosts(userId,page)
     }
 }

@@ -12,6 +12,7 @@ class UserAuthService implements IUserAuthService{
 
     async signIn(userData: IsignIn): Promise<any> {
         const response = await user_publicApi.post('/signIn',userData)
+        console.log("response :",response)
         return response.data
     }
 

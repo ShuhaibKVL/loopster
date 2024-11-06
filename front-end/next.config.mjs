@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    images: {
-        domains: ['loopster1.s3.amazonaws.com']
-    }
-};
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
-export default nextConfig;
+const nextConfig = withBundleAnalyzer({
+  enabled: process.env.NEXT_PUBLIC_ANALYZE==='true',  // Enable analysis when ANALYZE env variable is true
+});
+
+export default {
+    ...nextConfig,
+    images: {
+    domains: ['loopster1.s3.amazonaws.com'],  // Allow images from your S3 bucket
+    },
+};

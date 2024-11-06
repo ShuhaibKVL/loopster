@@ -1,6 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { confirmAction } from '@/app/components/ConfirmationModal';
+import Pagination from '@/app/components/Pagination';
+import AvatarSkelton from '@/app/components/skeltons/AvatarSkelton';
+import adminWithAuth from '@/app/contexts/adminWithAuth';
 import {
     Table,
     TableBody,
@@ -9,39 +12,39 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
-import userManagementService from '@/services/admin/userManagementService';
-import Link from 'next/link';
-import { IsignupUserInterface } from '@/app/utils/interfaces/IsignupUserInterface';
+} from "@/components/ui/table";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import adminWithAuth from '@/app/contexts/adminWithAuth';
-import { confirmAction } from '@/app/components/ConfirmationModal';
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { IsignupUserInterface } from '@/lib/utils/interfaces/IsignupUserInterface';
+import userManagementService from '@/services/admin/userManagementService';
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
+import { useEffect, useState } from 'react';
 
 const Page = () => {
     const [ users , setUsers] = useState<IsignupUserInterface[]>([])
+    const [ totalPages , setTotalPages ]= useState(1)
+    const [ currentPage , setCurrentPage ] =useState(1)
 
     useEffect(() => {
       findUsers()
     },[])
   
-    async function findUsers(){
+    async function findUsers(page=1){
       try {
         console.log('fin users function')
-        const data = await userManagementService.getAllUsers();
+        const data = await userManagementService.getAllUsers(page);
         console.log('data:', data.userData);
-        setUsers(data.userData); // Set userData correctly
+        setUsers(data?.userData?.users);
+        setTotalPages(data?.userData?.totalPages)
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     }
     
-        
-
     async function handleBlock(userId:string,actionVerb :string ,fullName:string) {
 
       const willProceed = await confirmAction({
@@ -52,7 +55,7 @@ const Page = () => {
 
       if(willProceed){
         await userManagementService.handleBlockUnBlock(userId)
-        findUsers()
+        findUsers(currentPage)
       }
     }
 
@@ -66,18 +69,24 @@ const Page = () => {
 
       if(willProceed){
         await userManagementService.handleListUnList(userId)
-        findUsers()
+        findUsers(currentPage)
       }
+    }
+
+    function onSelectPage(page:number){
+        findUsers(page)
+        setCurrentPage(page)
     }
 
     console.log('users :',users)
     
     return (
-    <div className='w-full p-5'>
+    <div className='w-full p-5 min-h-[90vh] flex flex-col justify-between'>
+      <div>
         <h1 className='w-full text-center p-2'>User Management</h1>
         {users.length > 0 ? (
           <Table>
-          <TableCaption>...</TableCaption>
+          <TableCaption></TableCaption>
           <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]"></TableHead>
@@ -89,7 +98,19 @@ const Page = () => {
           <TableBody>
             {users.map((user:IsignupUserInterface) => (
               <TableRow key={user._id}>
-              <TableCell className="font-medium"><div className='w-10 h-10 rounded-full border bg-white'></div></TableCell>
+              <TableCell className="font-medium">
+                    <div className='w-10 h-10 rounded-full overflow-hidden'>
+                      {user.profileImage ? 
+                      (<Avatar>
+                        <AvatarImage
+                          src= {user?.profileImage}
+                          alt="PR"
+                        />
+                        </Avatar>) :
+                         (<AvatarSkelton />)
+                         }
+                    </div>
+              </TableCell>
               <TableCell>{user.fullName}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell className="text-right mr-3 flex justify-around items-center">
@@ -128,13 +149,15 @@ const Page = () => {
           </TableBody>
         </Table>
         ) : (
-          <p className='w-full text-center p-2'>No users found</p> // Display a message when no users
+          <p className='w-full text-center p-2'>No users found</p>
         )}
-        <h1>PENDING TASK</h1>
-        <h1>-----------------</h1>
-        <h1>USER PROFILE UPDATE IMAGE UPDATE </h1>
-        <h1>FOLLOW UNFOLLOW</h1>
-        <h1>FOLLOWED / RECOMMENTED USERS</h1>  
+        </div>
+        <div className=''>
+          <Pagination
+          pages={totalPages}
+          onSelect={onSelectPage}
+          />
+        </div>
     </div>
     )
 }

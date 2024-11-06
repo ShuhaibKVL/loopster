@@ -5,9 +5,10 @@ import connectDB from './config/db/database'
 import dotenv from 'dotenv'
 import userRoutes from './routes/user/userRoutes'
 import cookieParser from 'cookie-parser'
-// import './cron/deleteUnverifiedUsers'
+import './cron/deleteUnverifiedUsers'
 import adminRoutes from './routes/admin/adminRoutes'
 import postRoutes from './routes/user/postRoutes'
+import unsplashRoutes from './routes/user/unsplashRoutes'
 
 dotenv.config()
 
@@ -17,8 +18,6 @@ const port = 5000
 const corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-    optionsSuccessStatus: 200,
-    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 
@@ -33,11 +32,12 @@ app.use(express.urlencoded({extended:true}))
 
 connectDB().catch(err => {
     console.log("Data base connection error throw :",err.message)
-    return 
+    return
 })
 
 app.use('/api/user',userRoutes)
 app.use('/api/admin',adminRoutes)
 app.use('/api/post',postRoutes)
+app.use('/api/unsplash',unsplashRoutes)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

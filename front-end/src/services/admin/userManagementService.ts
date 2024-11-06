@@ -2,8 +2,8 @@ import { admin_publicApi, adminApi} from "../apis/axiosInstance";
 import { IUserManagementService } from "./interfaces/IUsermanagementService";
 
 export class UserManagementService implements IUserManagementService{
-    async getAllUsers(): Promise<any> {
-        const response = await adminApi.get('/users')
+    async getAllUsers(page:number): Promise<any> {
+        const response = await adminApi.get(`/users?page=${page}`)
         return response.data
     }
 

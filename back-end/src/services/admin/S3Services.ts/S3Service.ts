@@ -10,16 +10,9 @@ export class S3Service implements IS3Service {
     private bucketName: string;
 
     constructor() {
-        console.log('AWS_REGION:', process.env.BUCKET_REGION);
-        console.log('AWS_ACCESS_KEY_ID:', process.env.ACCESS_KEY);
-        console.log('AWS_SECRET_ACCESS_KEY:', process.env.SECRET_ACCESS_KEY);
-        console.log('AWS_BUCKET_NAME:', process.env.AWS_BUCKET_NAME);
         const region = process.env.BUCKET_REGION;
         const accessKeyId = process.env.ACCESS_KEY;
         const secretAccessKey = process.env.SECRET_ACCESS_KEY;
-
-        console.log('inside S3Service :region :',region,"accessKey :",accessKeyId,"secretKey :",secretAccessKey)
-
         // Check if any required environment variable is undefined
         if (!region || !accessKeyId || !secretAccessKey || !process.env.AWS_BUCKET_NAME) {
             throw new Error('AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_BUCKET_NAME must be set in the environment variables');

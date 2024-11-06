@@ -12,11 +12,12 @@
   --color-bg:#e7e7e7;
   --secondary-bg:#ffff;
   --color-foreign:#000000;
+  --hover-card:#f4f4f4;
 }
 
 [data-theme='dark'] {
   --color-bg:#000000;
-  --secondary-bg:#0e182d;
+  --secondary-bg:#0b0c0d;
   --color-foreign:#F0EFF4;
 }
 

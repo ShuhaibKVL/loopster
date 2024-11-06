@@ -66,16 +66,28 @@ export class UserController{
             await signInSchema.validate(userData ,{abortEarly:true})
             const isExistUser = await this.userService.findUserByEmail(userData.email)
             if(!isExistUser){
-                res.status(HttpStatus.OK).json({message:ErrorMessages.USER_NOT_FOUND ,status:false})
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:ErrorMessages.USER_NOT_FOUND ,status:false})
                 return;
             }
             const isPasswordMatch = await this.authService.verifyPassword(userData.password , isExistUser.password)
             if(!isPasswordMatch){
-                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.PASSWORD_NOT_MATCH ,status:false})
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:ErrorMessages.PASSWORD_NOT_MATCH ,status:false})
                 return
             }
 
+            if(isExistUser?.isBlocked){
+                console.log('admin blocked ',userData?.email)
+                res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.BLOCKED,status:false})
+            }   
+
             const token = this.authService.generateToken(isExistUser._id,'1h')
+
+            res.cookie('accessToken', token, {
+                httpOnly: true,      // Helps prevent XSS attacks
+                secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+                maxAge: 60 * 60 * 1000, // 1 hour
+                sameSite: 'strict', // CSRF protection
+            });
 
             res.status(HttpStatus.OK).json({
                 message:SuccessMessages.LOGIN_SUCCESSFUL,
@@ -83,9 +95,11 @@ export class UserController{
                 userData:{
                     _id:isExistUser._id,
                     firstName:isExistUser.fullName,
-                    userName:isExistUser.userName
+                    userName:isExistUser.userName,
+                    profileImg:isExistUser?.profileImage
                 },
                 status:true})
+
         } catch (error) {
             if(error instanceof ValidationError) {
                 const validationErrors = error.inner.map((err:any) => err.message).join(', ')
@@ -125,7 +139,7 @@ export class UserController{
         try {
             console.log('upload profile function invoked')
             const userId = req.params.userId
-            const file = req.file?.buffer; // Assuming you are using multer middleware to handle file uploads
+            const file = req.file?.buffer;
             const fileName = `profile-images/${userId}-${Date.now()}.jpeg`; // Customize file name as needed
             console.log(userId,"<>",file,"<>",fileName)
 

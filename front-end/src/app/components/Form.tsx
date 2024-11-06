@@ -6,6 +6,8 @@ interface Field {
   name: string;
   label: string;
   type: string;
+  placeHolder?:string;
+  value?:string;
 }
 
 interface FormProps {
@@ -42,6 +44,8 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, fieldErrors }) => {
             type={field.type}
             name={field.name}
             id={field.name}
+            placeholder={field?.placeHolder}
+            value={field?.value}
             onChange={handleChange}
             className="mt-1 block w-full border rounded-md shadow-sm focus:ring-secondary"
           />

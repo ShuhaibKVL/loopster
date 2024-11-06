@@ -11,6 +11,11 @@ import FollowUnFollow from './FollowUnFollow'
 import FollowButton from './FollowHandleButton'
 import FollowHandleButton from './FollowHandleButton'
 import UnFollowHandleButton from './UnFollowHandelButton'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/lib/redux/store/store'
+import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
+import defaultUserAvatar from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+import { BiSolidUserCircle } from "react-icons/bi";
 
 
 export interface IUserHeader {
@@ -21,9 +26,9 @@ export interface IUserHeader {
     follow:number,
     followers:number,
     isFollowed:boolean,
-    onUserUpdate:() => void,
     followedCount:number,
-    followersCount:number
+    followersCount:number,
+    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
 }
 
 export default function UserHeader({
@@ -36,59 +41,64 @@ export default function UserHeader({
     isFollowed,
     followedCount,
     followersCount,
-    onUserUpdate
+    refetchPosts
 }:IUserHeader) {
+
+    const userId = useSelector((state:RootState) => state?.user?.userId)
+
     return (
     <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
-        <HoverCard>
-            <HoverCardTrigger>
-                <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full border">
+        <HoverCard >
+            <HoverCardTrigger className='z-50'>
+                <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full">
                     <Avatar >
-                        {imgUrl !== '' ? (
+                        {imgUrl !== '' ? (<>
                             <AvatarImage
-                            src= {imgUrl}// Image URL for the user profile
-                            alt="PR" // Accessible alt text
-                            className=''
-                        />
-                        ) : (
-                            <AvatarFallback>
-                                {<AvatarSkelton />}
-                            </AvatarFallback>
+                                src= {imgUrl}
+                                alt="PR"
+                                className=''
+                            />
+                        </>
+                        ) : ( 
+                            <BiSolidUserCircle className='text-[var(--hover-card)] w-full h-full object-contain' />
                         )}
                     </Avatar>
                 </div>
             </HoverCardTrigger >
-            <HoverCardContent className='bg-[var(--secondary-bg)]' >
-
-                {/* The React Framework – created and maintained by @vercel. */}
+            {userId !== _id ? (
+            <HoverCardContent className='bg-[var(--secondary-bg)] z-50' >
                 <div className="flex items-center gap-4">
-                <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full border">
+                <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full">
                     <Avatar >
-                    <AvatarImage
-                        src={imgUrl} // Image URL for the user profile
-                        alt="PR" // Accessible alt text
-                        className='overflow-hidden object-contain'
-                    />
-                    <AvatarFallback>{<AvatarSkelton />}</AvatarFallback>
+                    {imgUrl !== '' ? (<>
+                            <AvatarImage
+                                src= {imgUrl}
+                                alt="PR"
+                                className='overflow-hidden object-cover'
+                            />
+                        </>
+                        ) : ( 
+                            <BiSolidUserCircle className='text-[var(--hover-card)] w-full h-full object-contain' />
+                        )}
                     </Avatar>
                 </div>
-            <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>
                 <p className='font-mono'>{userName || 'userName'}</p>
-            </div>
-            </div>
-            <FollowUnFollow follow={followedCount} followers={followersCount} />
+                </div>
+                </div>
+                <FollowUnFollow follow={followedCount} followers={followersCount} />
 
-            {/* Follow / UnFollow section */}
-            {isFollowed ? (
-                <UnFollowHandleButton following={_id} onUserUpdate={onUserUpdate} />
-            ) : (
-                <FollowHandleButton following={_id}  onUserUpdate={onUserUpdate} />
-            )}
-                
-
+                {/* Follow / UnFollow section */}
+                {isFollowed ? (
+                <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} />
+                ) : (
+                <FollowHandleButton following={_id} refetchPosts={refetchPosts} />
+                )}
                 </HoverCardContent>
+            ) : ('')}
+            
             </HoverCard>
             <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>

@@ -3,13 +3,17 @@ import { RootState } from '@/lib/redux/store/store'
 import followService from '@/services/folllow/followService'
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { useAppDispatch } from '@/hooks/typedUseDispatch'
+import { fetchLatestPosts } from '@/lib/redux/features/postSlice'
+import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 
 interface IFollowUserIds{
     following:string,
-    onUserUpdate:() => void
+    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
 }
-export default function FollowHandleButton({following,onUserUpdate}:IFollowUserIds) {
+export default function FollowHandleButton({following,refetchPosts}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
+    const dispatch = useAppDispatch()
 
     async function handleFollow(){
         if(!userId && following){
@@ -20,8 +24,8 @@ export default function FollowHandleButton({following,onUserUpdate}:IFollowUserI
             following: following
         }
         const follow = await followService.follow(newFollowDoc)
-        console.log('follow :',follow)
-        onUserUpdate()
+        await refetchPosts()
+        // dispatch(fetchLatestPosts({userId}))
         
     }
     return (

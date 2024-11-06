@@ -11,18 +11,17 @@ import {
 } from "@/components/ui/hover-card"
 import ThemeToggle from './ThemeToggle'
 import Link from 'next/link'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store/store'
-import { logout } from '@/lib/redux/features/auth/userSlice'
 
 
 export default function Navbar() {
     const  isAuthenticated = useSelector((state:RootState) => state.user.isAuthenticated);
     console.log("isAuthenticated in Navbar:",isAuthenticated)
-    const [ userData , setUserData] = useState({image:'/jkdh'})
+    const user = useSelector((state:RootState) => state.user.user)
 
     return (
-    <div className='z-auto w-full h-full flex items-center px-24 justify-between overflow-hidden'>
+    <div className='z-auto w-full h-full flex items-center px-14 sm:px-24 justify-between overflow-hidden'>
         <Image
         src={logo}
         width={120}
@@ -33,17 +32,10 @@ export default function Navbar() {
         {isAuthenticated ? (
             <HoverCard>
             <HoverCardTrigger>
-            <div className='w-10 h-10 rounded-full border mr-3 overflow-hidden'>
-                <Image
-                src={defaultProfile}
-                alt={`${userData.image}`}
-                width={60}
-                height={60}
-                />
-            </div>
+                <Link href={'/feed/profile'} ><p>{user}</p></Link>
             </HoverCardTrigger>
             <HoverCardContent>
-            <Link href={'/feed/profile'} ><button className='border w-full rounded-sm'>Profile</button></Link>
+                <Link href={'/feed/profile'} ><button className='border w-full rounded-sm'>Profile</button></Link>
             </HoverCardContent>
             </HoverCard>
         ):(
@@ -55,7 +47,9 @@ export default function Navbar() {
             </HoverCardContent>
             </HoverCard>
         )}
-        <ThemeToggle />
+        <div className='hidden md:block'>
+            <ThemeToggle />
+        </div>
         </div>
     </div>
     )

@@ -1,0 +1,18 @@
+'use client'
+
+import React from 'react'
+import { QueryClient ,QueryClientProvider } from '@tanstack/react-query'
+
+export default function TanStackQueryClientProvider({children,
+}: Readonly<{
+    children: React.ReactNode;
+}>) {
+    console.log('Tan stack query client invoked...')
+    const queryClient = new QueryClient()
+  return (
+    <QueryClientProvider client={queryClient} >
+        {children}
+    </QueryClientProvider>
+      
+  )
+}

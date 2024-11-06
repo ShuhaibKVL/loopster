@@ -5,7 +5,8 @@ export interface userState{
     isAuthenticated:boolean,
     loading:boolean,
     user:any,
-    userId:string
+    userId:string,
+    userProfile:string
 }
 
 const initialState:userState = {
@@ -13,20 +14,21 @@ const initialState:userState = {
     isAuthenticated:false,
     loading:true,
     user:null,
-    userId:''
+    userId:'',
+    userProfile:''
 }
 
-// console.log("Before : state on userSlice :",initialState)
 const userAuthReducer = createSlice({
     name:'userAuth',
     initialState,
     reducers:{
         login : (state , action) =>{
-            console.log('inside login in slice :',action.payload)
+           console.log('inside login in slice :',action.payload)
             state.accessToken = action.payload.accessToken
             state.isAuthenticated = true
             state.user = action.payload.user.userName
             state.userId = action.payload.user._id
+            state.userProfile = action.payload.user.profileImg
         },
         logout : (state) => {
             state.accessToken = ''
@@ -34,11 +36,10 @@ const userAuthReducer = createSlice({
             state.loading = true
             state.user = null
             state.userId = ''
+            state.userProfile = ''
         }
     },
 })
-
-// console.log("After : state on userSlice :",initialState)
 
 export const { login, logout } = userAuthReducer.actions
 export default userAuthReducer.reducer

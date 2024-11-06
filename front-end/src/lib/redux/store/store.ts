@@ -4,10 +4,12 @@ import { persistStore , persistReducer } from 'redux-persist'
 
 import userAuthReducer from '../features/auth/userSlice'
 import adminAuthReducer from '../features/auth/adminSlice'
+import postReducer from '../features/postSlice'
 
 const rootReducer = combineReducers({
     user:userAuthReducer,
     admin:adminAuthReducer,
+    post:postReducer
 })
 
 const persistConfig = {
@@ -23,5 +25,6 @@ const store = configureStore({
 
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch
 export default store;
 

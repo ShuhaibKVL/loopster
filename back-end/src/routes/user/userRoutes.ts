@@ -1,5 +1,4 @@
 import { Router } from 'express'
-
 import FollowController from '../../controllers/followController'
 import { OtpController } from '../../controllers/otpController'
 import { UserController } from '../../controllers/userController'
@@ -20,13 +19,16 @@ const router:Router = Router()
 
 const userRepository = new UserRepository()
 const s3Service = new S3Service()
-const userService = new userServices(userRepository,s3Service)
+export const userService = new userServices(userRepository,s3Service)
 const authService = new AuthService()
 const emailService = new EmailService()
+
 const otpRepository = new OtpRepository()
 const otpService = new OtpService(otpRepository)
+
 const followRepository = new FollowRespository()
 const followService = new FollowService(followRepository)
+
 const userController = new UserController(userService , authService , emailService,otpService,followService)
 const otpController = new OtpController(otpService,emailService,userService)
 const followController = new FollowController(followService)
@@ -46,9 +48,5 @@ router.post('/latest-users',userController.getLatestUsers.bind(userController))
 
 router.post('/follow-user',followController.follow.bind(followController))
 router.delete('/unfollow-user',followController.unFollow.bind(followController))
-
-
-
-
 
 export default router

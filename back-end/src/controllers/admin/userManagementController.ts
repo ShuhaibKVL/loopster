@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { IUserManagementController } from "../../interfaces/admin/userManagment/IUserManagementController";
 import { IUserManagementService } from "../../interfaces/admin/userManagment/IUserManagmentService";
 import { HttpStatus } from "../../enums/httpStatus";
-import { SuccessMessages } from "../../enums/successMessages";
 import { ErrorMessages } from "../../enums/errorMessages";
 
 export class UserManagementController implements IUserManagementController {
@@ -14,7 +13,8 @@ export class UserManagementController implements IUserManagementController {
     async getAllUsers(req: Request, res: Response): Promise<void> {
         console.log('get all users invoked ')
         try {
-            const users = await this.userManagementService.getAllUsers()
+            const page = req.query.page
+            const users = await this.userManagementService.getAllUsers(Number(page))
             if(!users){
                 res.status(HttpStatus.BAD_REQUEST)
             }

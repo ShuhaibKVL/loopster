@@ -1,9 +1,4 @@
 import { Response,Request, NextFunction } from "express"
-import { 
-    // adminSignIn,
-     getAllUsers,
-      IAdmin 
-    } from "../../services/admin/adminServices"
 import { IAdminController } from "../../interfaces/admin/IAdminController"
 import { IAdminService } from "../../interfaces/admin/IAdminService"
 import { HttpStatus } from "../../enums/httpStatus"
@@ -25,10 +20,9 @@ export class AdminController implements IAdminController {
             console.log('admin :',admin)
             if(admin){
                 const token = this.authService.generateToken(formData.email,'1h')
-
-                res.status(HttpStatus.OK).json({message:SuccessMessages.LOGIN_SUCCESSFUL,email:formData.email,accessToken:token,})
+                res.status(HttpStatus.OK).json({message:SuccessMessages.LOGIN_SUCCESSFUL,email:formData.email,accessToken:token,status:true})
             }else{
-                res.status(HttpStatus.UNAUTHORIZED).json({message:ErrorMessages.INVALID_CREDENTIAL})
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:ErrorMessages.INVALID_CREDENTIAL})
             }
         } catch (error:any) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)

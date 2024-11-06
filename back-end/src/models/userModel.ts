@@ -13,7 +13,8 @@ export interface IUser extends Document {
     password:string,
     isList?:boolean,
     isBlocked?:boolean,
-    isVerified?:boolean
+    isVerified?:boolean,
+    reportedPosts?:string[]
 }
 
 const userSchema = new mongoose.Schema({
@@ -27,6 +28,7 @@ const userSchema = new mongoose.Schema({
     isList:{type:Boolean,default:true},
     isBlocked:{type:Boolean,default:false},
     isVerified:{type:Boolean,default:false},
+    reportedPosts:{type:Array,required:false},
     createdAt:{type:Date,default:Date.now}
 },{timestamps:true})
 
