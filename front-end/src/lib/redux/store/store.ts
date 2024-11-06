@@ -4,12 +4,12 @@ import { persistStore , persistReducer } from 'redux-persist'
 
 import userAuthReducer from '../features/auth/userSlice'
 import adminAuthReducer from '../features/auth/adminSlice'
-import postSlice from '../features/postSlice'
+import postReducer from '../features/postSlice'
 
 const rootReducer = combineReducers({
     user:userAuthReducer,
     admin:adminAuthReducer,
-    post:postSlice
+    post:postReducer
 })
 
 const persistConfig = {

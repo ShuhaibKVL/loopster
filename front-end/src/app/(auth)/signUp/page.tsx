@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Form from '@/app/components/Form';
-import userAuthService from '@/services/user/userAuthService';
-import { useRouter } from 'next/navigation';
-import { useToast } from "@/hooks/use-toast";
-import { signUpSchema } from '@/app/utils/validationSchemas';
-import { ValidationError } from 'yup';
-import Link from 'next/link';
 import withAuth from '@/app/contexts/withAuth';
+import { useToast } from "@/hooks/use-toast";
+import { signUpSchema } from '@/lib/utils/validationSchemas';
+import userAuthService from '@/services/user/userAuthService';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { ValidationError } from 'yup';
 
 export interface ISignUp_user {
   fullName: string;
@@ -119,7 +119,7 @@ const Page = () => {
           </div>
           <div className=''><p className='text-red-600'>{error}</p></div>
           <Form fields={fields} onSubmit={handleSubmit} fieldErrors={fieldErrors} />
-          <p className='text-right w-full p-4'>
+          <p className='text-right w-full p-4 text-md'>
             <span className='opacity-50'>All ready have an account?</span>
             <Link href='/signIn'> Sign In</Link>
           </p>

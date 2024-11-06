@@ -6,8 +6,8 @@ export class UserManagementService implements IUserManagementService {
         private userManagementRepo : IUserManagementRepository
     ){}
 
-    async getAllUsers(): Promise<any> {
-        return await this.userManagementRepo.findAllUsers()
+    async getAllUsers(page:number): Promise<any> {
+        return await this.userManagementRepo.findAllUsers(page)
     }
 
     async blockUnBlock(userId: string): Promise<any> {

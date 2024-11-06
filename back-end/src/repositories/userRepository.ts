@@ -12,7 +12,6 @@ export class UserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<any> {
-        console.log('repository findByEmail',email)
         return await User.findOne({email:email})
     }
 
@@ -90,6 +89,7 @@ export class UserRepository implements IUserRepository {
             ]);
         } catch (error) {
             console.log("error on finById respository :",error)
+            return error
         }
     }
 

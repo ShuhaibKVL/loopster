@@ -9,22 +9,17 @@ const useUserData =() => {
     const userId = useSelector((state:RootState) => state.user.userId)
 
     async function fetchUsers() {
-        console.log('fetch user custom hook invoked :',userId)
         const res = await userAuthService.getLatestUsers(userId)
-        console.log('res :',res)
         setUser(res.data)
-        console.log('users state updated inside the useUserData hook...',users)
     }
     
-
     useEffect(() => {
         fetchUsers()
     },[])
 
-    useEffect(() => {
-        console.log('users state updated useEffect :>>>',users)
-    },[users])
-
     return { users , fetchUsers }
 }
 export default useUserData;
+
+
+//  i want to supporate the comment fetching function to custome hook  or centralize

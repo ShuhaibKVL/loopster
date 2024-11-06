@@ -1,14 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PostFooter from './PostFooter';
-import { PostContentProps } from '@/app/utils/interfaces/PostContentProps';
-import PostIMageSkelton from '../skeltons/PostIMageSkelton';
-import Image from 'next/image';
-import { dateToDays , dateToHours , dateToMinutes } from '@/lib/utils/convertDateDifference';
+'use client'
 
-const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType, content, time }) => {
+import { dateToDays, dateToHours, dateToMinutes } from '@/lib/utils/convertDateDifference';
+import { PostContentProps } from '@/lib/utils/interfaces/PostContentProps';
+import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
+import PostIMageSkelton from '../skeltons/PostIMageSkelton';
+import PostFooter from './PostFooter';
+import Content from './Content';
+
+const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType, content, time ,postId,userId,isLiked,isBookMarked,refetchPosts}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isInViewPort, setIsInViewport] = useState(false);
   const [imgError, setImageError] = useState<boolean>(false);
+  const postData = {
+    content:content as string,
+    mediaType:mediaType as string,
+    mediaUrl:`${mediaUrl}`,
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -47,7 +55,7 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
   };
 
   return (
-    <div className="relative mx-auto w-full p-4 border rounded-lg shadow-lg bg-[var(--secondary-bg)]">
+    <div className="relative mx-auto w-full bg-[var(--secondary-bg)]">
       {mediaType === 'image' ? (
         mediaUrl && !imgError ? (
           <Image
@@ -58,7 +66,6 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
             width={700}
             height={500}
             layout="responsive"
-            placeholder='blur'
           />
         ) : (
           <PostIMageSkelton />
@@ -81,12 +88,11 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
       ) : (
         ''
       )}
-      <div className="mt-4 flex items-start justify-between">
-        <p
-          className="text-gray-800 text-base"
-          dangerouslySetInnerHTML={{ __html: content }}
-        ></p>
-        <p className="mt-2 text-gray-500 text-sm">
+      <div className="relative mt-4 flex items-start justify-between">
+        <Content
+        content={content}
+         />
+        <p className="absolute right-0 mt-2 text-gray-500 text-sm">
           {dateToDays(time as Date) > 0 ? 
           `${dateToDays(time as Date)} day ago`:
           (dateToHours(time as Date) > 0 ?
@@ -96,7 +102,14 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
           ('just now')))}
         </p>
       </div>
-      <PostFooter />
+      <PostFooter
+      postData={postData}
+      postId={postId}
+      userId={userId}
+      isLiked={isLiked as boolean}
+      isBookMarked={isBookMarked as boolean}
+      refetchPosts={refetchPosts}
+      />
     </div>
   );
 };

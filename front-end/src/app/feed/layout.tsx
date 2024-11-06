@@ -1,9 +1,8 @@
-'use client'
-
 import "../globals.css";
 import React from "react";
 import SideBar, { INavItems } from "../components/SideBar";
 import Navbar from "../components/Navbar";
+
 
 import { HomeIcon } from "@radix-ui/react-icons";
 import { BellIcon } from "@radix-ui/react-icons";
@@ -15,7 +14,7 @@ const navItems :INavItems[] = [
     {name:'feed',icon:<HomeIcon /> , path:'/feed'},
     {name:'Messages',icon:<LuMessagesSquare /> , path:'/messages'},
     {name:'Notification',icon:<BellIcon /> , path:'/notifications'},
-    {name:'Book Mark',icon:<BookmarkIcon /> , path:'/bookmarks'},
+    {name:'Book Mark',icon:<BookmarkIcon /> , path:'/feed/book_mark'},
     {name:'Profile',icon:<AvatarIcon /> , path:'/feed/profile'},
     // {name:'Gemini',icon:starIcon , path:'/gemini'},
 ]
@@ -35,15 +34,14 @@ export default function feedLayout({
             {/* To Down the Header space due to fixed property */}
             <div className="w-full h-[7.5vh]"></div>
             <div className="flex items-center justify-center w-full h-[92vh] p-2">
-                <div className="flex items-center justify-between w-full md:w-[78vw] h-full">
+                <div className="sm:flex items-center justify-between w-full md:w-[78vw] h-full">
                     {/* Side bar */}
-                    <div className="lg:w-[15vw] h-full bg-[var(--secondary-bg)] hidden sm:block rounded-md">
-                        <SideBar navItems={navItems} />
+                    <div className="w-full sm:w-[15vw] h-fit sm:h-full bg-[var(--hover-card)] shadow-sm sm:shadow-none flex fixed sm:relative bottom-0 z-30 sm:z-0 rounded-md sm:bg-[var(--secondary-bg)]">
+                        <SideBar navItems={navItems} type="user" />
 
                     </div>
                     {/* Main Feed */}
-                    <div className="md:w-[40vw] lg:w-[40vw] p-2 bg-[var(--secondary-bg)] rounded-md w-full h-[90vh] overflow-y-scroll scrollbar-hide"
-                    >
+                    <div className="md:w-[40vw] lg:w-[40vw] p-2 bg-[var(--secondary-bg)] rounded-md w-full h-[90vh] overflow-y-scroll scrollbar-hide">
                         {children}
                     </div>
                     {/* 3rd Layer */}

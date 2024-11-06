@@ -78,9 +78,11 @@ postApi.interceptors.request.use(
 // handel backend middle ware authorisation
 userApi.interceptors.response.use(
     (response) => {
+        console.log('response > interceptor :',response)
         return response;
     },
     (error) => {
+        console.log('error on interceptor :',error)
         const { response } = error;
 
         //If the server return 401 0r 403 , handle unauthorized access
@@ -101,7 +103,7 @@ adminApi.interceptors.response.use(
     },
     (error) => {
         const { response } = error;
-        console.log('error error error error error error error >>>>>>>>>>>>>>>>>>',response)
+        console.log('error on admin interceptor',response)
         //If the server return 401 0r 403 , handle unauthorized access
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token

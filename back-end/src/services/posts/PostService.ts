@@ -2,6 +2,7 @@ import { IPostRepository } from "../../interfaces/posts/IPostRepository";
 import { IPostService } from "../../interfaces/posts/IPostServices";
 import { IS3Service } from "../../interfaces/S3/IS3Service";
 import { IPost } from "../../models/Post";
+import { IReport } from "../../models/Report";
 
 export class PostService implements IPostService {
     constructor(
@@ -23,8 +24,20 @@ export class PostService implements IPostService {
         return await this.postRepository.delete(postId)
     }
 
-    async getLatestPosts(userId: string): Promise<any> {
-        console.log('latest post service invoked')
-        return await this.postRepository.findLatestPosts(userId)
+    async reportPost(data: IReport): Promise<unknown> {
+        return await this.postRepository.report(data)
+    }
+
+    async getLatestPosts(userId: string,page:number): Promise<any> {
+        console.log('latest post service invoked',page)
+        return await this.postRepository.findLatestPosts(userId,page)
+    } 
+    
+    async getFollowedUsersPosts(userId: string, page: number): Promise<any> {
+        return await this.postRepository.findFollowedUserPost(userId,page)
+    }
+
+    async getBookMarkedPosts(userId: string,page:number): Promise<unknown> {
+        return await this.postRepository.findBookMarkedPosts(userId,page)
     }
 }

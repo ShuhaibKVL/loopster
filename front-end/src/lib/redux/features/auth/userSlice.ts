@@ -5,7 +5,8 @@ export interface userState{
     isAuthenticated:boolean,
     loading:boolean,
     user:any,
-    userId:string
+    userId:string,
+    userProfile:string
 }
 
 const initialState:userState = {
@@ -13,7 +14,8 @@ const initialState:userState = {
     isAuthenticated:false,
     loading:true,
     user:null,
-    userId:''
+    userId:'',
+    userProfile:''
 }
 
 const userAuthReducer = createSlice({
@@ -26,6 +28,7 @@ const userAuthReducer = createSlice({
             state.isAuthenticated = true
             state.user = action.payload.user.userName
             state.userId = action.payload.user._id
+            state.userProfile = action.payload.user.profileImg
         },
         logout : (state) => {
             state.accessToken = ''
@@ -33,6 +36,7 @@ const userAuthReducer = createSlice({
             state.loading = true
             state.user = null
             state.userId = ''
+            state.userProfile = ''
         }
     },
 })

@@ -3,8 +3,24 @@ import User from "../../models/userModel";
 
 export class UserManagementRepo implements IUserManagementRepository {
 
-    async findAllUsers(): Promise<any> {
-        return await User.find({})
+    async findAllUsers(page:number): Promise<any> {
+        try {
+            const totalUsers = await User.countDocuments()
+            const limit = 10
+            const totalPages = Math.ceil( totalUsers / limit)
+
+            const users = await User.find({}).sort({createdAt:-1}).skip((limit * page) - limit).limit(limit)
+
+            const result ={
+                users:users,
+                totalPages:totalPages
+            }
+            
+            return result
+        } catch (error) {
+            console.log(error)
+        }
+       
     }
 
     async updateIsBlock(userId: string): Promise<any> {

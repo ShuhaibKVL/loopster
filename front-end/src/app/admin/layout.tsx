@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
 import { Inter } from 'next/font/google'
 
-
 export const metadata: Metadata = {
     title: "loopster",
     description: "A social media network to connect each other.",
@@ -18,7 +17,6 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
     return (
         <div>
         {children}

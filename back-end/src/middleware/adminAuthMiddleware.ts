@@ -12,11 +12,10 @@ export const authorize = async (req:Request , res:Response , next:NextFunction) 
             return res.status(HttpStatus.UNAUTHORIZED).json({ message: ErrorMessages.TOKEN_NOT_FONT});
         }
         const token = authHeader.split(' ')[1]
-        console.log("admin : token after extract :",token)
         const claims = jwt.verify(token, process.env.JWT_SECRET as string)
-        console.log("claims :",claims)
 
         if(!claims){
+            console.log('failed unthorisation..!')
             res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})
             return;
         }

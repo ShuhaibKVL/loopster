@@ -18,14 +18,14 @@ const ReusableDropdown: React.FC<ReusableDropdownProps> = ({ options, triggerIco
         <DropdownMenu>
             <DropdownMenuTrigger asChild className='text-[var(--color-foreign)]'>
                 <button className="p-2 rounded-full" title='click to post actions'>
-                    {triggerIcon ? triggerIcon : <BsThreeDotsVertical className="w-4 h-4" />}
+                    {triggerIcon ? triggerIcon : <BsThreeDotsVertical className="w-3 h-4 sm:w-4 sm:h-4 -z-10" />}
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-48 bg-[var(--secondary-bg)]">
                 {options.map((option, index) => (
                     <DropdownMenuItem
                     key={index} onClick={() => option.action(postId)}>
-                        {option.label}
+                    {option.label}
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>

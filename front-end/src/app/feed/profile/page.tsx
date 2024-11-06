@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import Image from 'next/image'
 import defaultProfile from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
 import { Button } from '@/components/ui/button'
@@ -14,14 +14,18 @@ import { useRef } from 'react'
 import userAuthService from '@/services/user/userAuthService'
 import { ISignUp_user } from '@/app/(auth)/signUp/page'
 import Form from '@/app/components/Form'
-import { editProfileSchema } from '@/app/utils/validationSchemas'
+import { editProfileSchema } from '../../../lib/utils/validationSchemas'
 import { ValidationError } from 'yup'
 import { useToast } from '@/hooks/use-toast'
 import { confirmAction } from '@/app/components/ConfirmationModal'
-import { IUserWithCounts } from '@/app/utils/interfaces/IUserWIthCounts'
+import { IUserWithCounts } from '../../../lib/utils/interfaces/IUserWIthCounts'
 import PostContentContainer from '@/app/components/post_components/PostContentContainer'
 import ReusableDropdown from '@/app/components/DropDownMenu'
 import postService from '@/services/user/post/postServices'
+import FollowUnFollow from '@/app/components/user_components/FollowUnFollow'
+import PostContentSkeleton from '@/app/components/skeltons/PostContentSkeleton'
+import EditPost from '@/app/components/post_components/EditPost'
+import { IPostResponse } from '@/lib/utils/interfaces/IPost'
 
 
 const Page = () => {
@@ -34,8 +38,16 @@ const Page = () => {
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
     const [ error , setError ] = useState('')
     const  { toast } = useToast()
+    const [ isOpen , setIsOpen ] = useState(false)
+    const [ currentPost , setCurrentPost ] = useState<IPostResponse | null>(null)
 
     const editUserFields = [
+        {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
+        {name:'userName',type:"text",label:"User Name",placeHolder:`${userData?.userName}`, value:`${userData?.userName}` },
+        {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
+    ]
+
+    const editPostFields = [
         {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
         {name:'userName',type:"text",label:"User Name",placeHolder:`${userData?.userName}`, value:`${userData?.userName}` },
         {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
@@ -164,46 +176,48 @@ const Page = () => {
             getUserData(userId)
         }
     }
+
+    // Handel post delete
+    const handleEdit = async (post:IPostResponse) => {
+        setCurrentPost(post)
+         setIsOpen(true)
+    }
     
     return (
-    <div className='p-5 space-y-10'>
-        <div className="relative w-[250px] h-[250px] m-auto group overflow-hidden">
-        <Image
-        src={userData?.profileImage || defaultProfile}
-        width={250}
-        height={250}
-        className="border rounded-full shadow-sm hover:opacity-80"
-        objectFit='contain'
-        alt="Profile Image"
-        />
-        <UploadIcon
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        onClick={handleUploadClick}
-        />
-        <input
-        title='upload image'
-        type='file'
-        ref={fileInputRef}
-        accept='image/*'
-        onChange={handleFileChange}
-        className='hidden'
-        />
-    </div>
+    <div className='p-5 space-y-2 sm:space-y-10'>
+        <div className="relative w-[100px] h-[100px] sm:w-[150px] sm:h-[150px] m-auto group overflow-hidden rounded-full">
+            <Image
+            src={userData?.profileImage || defaultProfile}
+            width={250}
+            height={250}
+            className="border rounded-full shadow-sm hover:opacity-80"
+            objectFit='contain'
+            alt="Profile Image"
+            />
+            <UploadIcon
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={handleUploadClick}
+            />
+            <input
+            title='upload image'
+            type='file'
+            ref={fileInputRef}
+            accept='image/*'
+            onChange={handleFileChange}
+            className='hidden'
+            />
+        </div>
 
     {/* Follow / Following section */}
     <section className='flex items-center justify-center gap-x-9 w-full'>
-    <div className='space-y-2'>
-        <p className='px-5 border rounded-lg py-1 font-bold'>Following</p>
-        <p className='text-center'>{userData?.follow}</p>
-    </div>
-    <div className='space-y-2'>
-        <p className='px-5 border rounded-lg py-1 font-bold'>Followers</p>
-        <p className='text-center'>{userData?.followers}</p>
-    </div>
+        <FollowUnFollow
+        follow={Number(userData?.counts?.followedCount)}
+        followers={Number(userData?.counts?.followersCount)}
+        />
     </section>
         {/* user Details and edit section */}
         <div className='relative p-5 border rounded-lg space-y-1 overflow-hidden'>
-            <Button onClick={handleEditContainer} className='border-2 absolute right-5 ' variant={'ghost'} size='icon'>
+            <Button onClick={handleEditContainer} className='border-2 absolute right-5 ' variant={'destructive'} size='icon'>
                 <Pencil2Icon />
             </Button>
             <section>
@@ -226,28 +240,42 @@ const Page = () => {
                 {userData?.posts.length !== 0 ? (
                     userData?.posts.map((post) => (
                         <div className='relative'>
-                            <div className='absolute z-50 top-2 -right-2'>
+                            <div className='absolute z-10 sm:top-2 -right-2'>
                             <ReusableDropdown
                                 options={[
-                                    { label: 'Delete', action: () => handleDelete(post?._id) }
+                                    { label: 'Delete', action: () => handleDelete(post?._id) },
+                                    { label: 'Edit', action: () => handleEdit(post) }
+
                                 ]}
                                 postId={post?._id}
                             />
                             </div>
-                        <PostContentContainer 
-                        key={post?._id}
-                        mediaUrl={post?.mediaUrl}
-                        content={post?.content}
-                        mediaType={post?.mediaType}
-                        time={post?.createdAt}
-                        />
+                            <Suspense fallback={<PostContentSkeleton />}>
+                                <PostContentContainer 
+                                    key={post?._id}
+                                    mediaUrl={post?.mediaUrl}
+                                    content={post?.content}
+                                    mediaType={post?.mediaType}
+                                    time={post?.createdAt}
+                                    postId={post?._id}
+                                    userId={post?.userId}
+                                    
+                                />
+                            </Suspense>
+                            <EditPost
+                            isOpen={isOpen}
+                            setIsOpen={setIsOpen}
+                            postData={currentPost as IPostResponse}
+                            />
                         </div>
+                        
                     ))
                 ) : (
                     <p>No more posts</p>
                 )}
             </div>
         </section>
+        
     </div>
     )
 }

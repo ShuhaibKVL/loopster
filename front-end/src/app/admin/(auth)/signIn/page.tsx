@@ -1,16 +1,16 @@
 'use client'
 
-import { useToast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
-import React, { useEffect ,useState} from 'react'
-import Image from 'next/image'
-import logoWithTitle from '../../../../../public/Images/LogowithTitle.png'
 import Form from '@/app/components/Form'
-import { signInSchema } from '@/app/utils/validationSchemas'
-import adminAuthService from '@/services/admin/adminAuthService'
-import { useDispatch } from 'react-redux'
-import { login } from '@/lib/redux/features/auth/adminSlice'
 import adminWithAuth from '@/app/contexts/adminWithAuth'
+import { useToast } from '@/hooks/use-toast'
+import { login } from '@/lib/redux/features/auth/adminSlice'
+import { signInSchema } from '@/lib/utils/validationSchemas'
+import adminAuthService from '@/services/admin/adminAuthService'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import logoWithTitle from '../../../../../public/Images/LogowithTitle.png'
 
 
 
@@ -40,33 +40,25 @@ const Page =() => {
         await signInSchema.validate(formData , {abortEarly:true})
         try {
             const admin = await adminAuthService.signIn(formData)
-            console.log('admin Response :',admin)
+            console.log('admin Response :',admin.status,">>",admin.message)
 
-            if(admin.message === 'Authentication failed..!'){
+            if(admin.status){
                 toast({
-                    title:admin.message,
+                    title:"Success",
                     description:admin.message,
-                    variant:'destructive'
+                    className:'toast-success'
                 })
-                setError(admin.message)
+                const payload = {
+                    email : admin.email,
+                    accessToken :admin.accessToken
+                } 
+                dispatch(login(payload))
+                router.replace('/admin/dashboard')
                 return
-            }
-
-            toast({
-                title:"Success",
-                description:admin.message,
-                className:'toast-success'
-            })
-
-            const payload = {
-                email : admin.email,
-                accessToken :admin.accessToken
-            }
-
-            dispatch(login(payload))
-            
-            router.replace('/admin/dashboard')
+            } 
+            setError(admin.message) 
         } catch (error:any) {
+            console.log(error)
             setError(error.message)
         }
     }
@@ -80,10 +72,8 @@ const Page =() => {
                 <div className='mb-24'>
                     <h1 className='text-2xl font-bold text-center m-2'>Admin Sign In</h1>
                 </div>
-                <div className=''>
-                    {error === 'User login success' ?
-                    <p className='text-red-600'>{error}</p>:
-                    <p className='text-green-600'>{error}</p> }
+                <div className='h-5 overflow-hidden'>
+                    <p className='text-red-600'>{error}</p>
                 </div>
                 <Form fields={signInFields} onSubmit={handleSubmit} />
                 

@@ -11,9 +11,8 @@ import {
 } from "@/components/ui/hover-card"
 import ThemeToggle from './ThemeToggle'
 import Link from 'next/link'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '@/lib/redux/store/store'
-import { logout } from '@/lib/redux/features/auth/userSlice'
 
 
 export default function Navbar() {
@@ -22,7 +21,7 @@ export default function Navbar() {
     const user = useSelector((state:RootState) => state.user.user)
 
     return (
-    <div className='z-auto w-full h-full flex items-center px-24 justify-between overflow-hidden'>
+    <div className='z-auto w-full h-full flex items-center px-14 sm:px-24 justify-between overflow-hidden'>
         <Image
         src={logo}
         width={120}
@@ -48,7 +47,9 @@ export default function Navbar() {
             </HoverCardContent>
             </HoverCard>
         )}
-        <ThemeToggle />
+        <div className='hidden md:block'>
+            <ThemeToggle />
+        </div>
         </div>
     </div>
     )

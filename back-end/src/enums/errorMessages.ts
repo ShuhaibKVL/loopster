@@ -5,6 +5,7 @@ export enum ErrorMessages {
     PASSWORD_NOT_MATCH ='Password not matched',
     EMAIL_ALREADY_EXIST = 'Email all ready exist',
     USERNAME_ALREADY_EXIST = 'Username all ready exist',
+    BLOCKED = 'Admin blocked',
 
     // Token related error messages
     TOKEN_VERIFIED_FAILED = 'Invalid Token',

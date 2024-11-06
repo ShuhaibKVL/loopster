@@ -1,19 +1,6 @@
-import React, { useEffect } from 'react'
-import { Textarea } from "@/components/ui/textarea"
+'use client'
+
 import { Button } from '@/components/ui/button'
-import { ImageIcon } from '@radix-ui/react-icons'
-import AvatarComponent from '../Avatar'
-import './style.css'
-import { IPost } from '@/app/utils/interfaces/IPost'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/lib/redux/store/store'
-import { useToast } from '@/hooks/use-toast'
-import { useState } from 'react'
-import postService, { PostService } from '@/services/user/post/postServices'
-import { useRef } from 'react'
-import TipTap  from './TipTap'
-import {UploadIcon} from '@radix-ui/react-icons'
-import { confirmAction } from '../ConfirmationModal'
 import {
     Dialog,
     DialogContent,
@@ -22,11 +9,26 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import FileRobot from './Libraries/Filerobot'
-import Unsplash from './Libraries/Unsplash'
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from '@/hooks/use-toast'
+import { RootState } from '@/lib/redux/store/store'
+import postService from '@/services/user/post/postServices'
+import { ImageIcon, UploadIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
+import React, { useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
+import AvatarComponent from '../Avatar'
+import { confirmAction } from '../ConfirmationModal'
+import FileRobot from '../Libraries/Filerobot'
+import Unsplash from '../Libraries/Unsplash'
+import './style.css'
+import TipTap from './TipTap'
+import { FaArrowUp } from "react-icons/fa6";
+import { RiAiGenerate } from "react-icons/ri";
+import { useAppSelector } from '@/hooks/typedUseDispatch'
 
 export default function CreatePostComponent() {
+    const userProfileImg = useAppSelector((state:RootState) => state?.user?.userProfile)
     const localFileInput = useRef<HTMLInputElement | null>(null)
     const [ fileType , setFileType ]  = useState<'image' | 'video' | 'none'>('none')
     const [ prevFileUrl , setPrevFileUrl] = useState<string | null>(null)
@@ -41,7 +43,7 @@ export default function CreatePostComponent() {
     
     const { toast} = useToast()
 
-    const invokeLocalFileInput = () => {
+    const invokeLocalFileInput = () => {    
         console.log('Trigger the file input ')
         if(localFileInput.current){
             localFileInput.current.value = ''
@@ -179,10 +181,7 @@ export default function CreatePostComponent() {
             if (fileBuffer) {
                 formData.append('mediaUrl', fileBuffer);
             }
-
-            console.log('data :',formData)
             const response = await postService.createPost(formData)
-            console.log('response >>>>>>>>>',response)
             if(response.status){
                 toast({
                     title: 'Success',
@@ -205,8 +204,12 @@ export default function CreatePostComponent() {
 
     return (
         <div className='w-full border-2 rounded-md p-2 flex flex-col gap-2 justify-between min-h-40 h-fit'>
-            <div className='w-full flex justify-between md:space-x-5'>
-                <div className='hidden md:block'><AvatarComponent  /></div>
+            <div className='w-full flex justify-between md:space-x-3'>
+                <div className='hidden md:block min-w-12'>
+                    <AvatarComponent 
+                    imgUrl={userProfileImg}
+                    />
+                </div>
                 <Textarea onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')} className={`${isDisplayEditorContent === 'hidden' ? 'block' : 'hidden'}`} />
                 <div className={`${isDisplayEditorContent} w-full border-b rounded`}>
                     <TipTap onContentChange={handleContentChange} />
@@ -223,8 +226,7 @@ export default function CreatePostComponent() {
                                 src={prevFileUrl}
                                 height={300}
                                 width={500}
-                                alt="Preview Image"
-                                placeholder='blur'
+                                alt="Preview Image" 
                                  />
                             ) : null
                             ) : fileType === 'video' ? (
@@ -243,6 +245,14 @@ export default function CreatePostComponent() {
             </div>
             
             <div className='flex items-center justify-end space-x-2'>
+            <FaArrowUp 
+            onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')}
+            className={`${isDisplayEditorContent === 'hidden' ? 'hidden' : 'block' } text-gray-300`}  />
+            
+            <div className='flex items-center gap-1 text-secondary duration-75 cursor-pointer'>
+                <RiAiGenerate className=''/>
+                <p className='text-sm'>Genarate Caption with AI</p>
+            </div>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <ImageIcon className='w-6 h-6' onClick={() => setIsOpen(true)} />
@@ -264,6 +274,7 @@ export default function CreatePostComponent() {
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
+            
                 <input
                     type='file'
                     ref={

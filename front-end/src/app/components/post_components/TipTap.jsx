@@ -1,13 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bold, Italic, Underline, List, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
 
-const TipTap = ({ onContentChange }) => {
-  const [content, setContent] = useState('');
+// interface TipTapProps{
+//   initialContent?:HTMLInputElement | string;
+//   onContentChange:(content:string) => void;
+// }
+
+const TipTap = ({ initialContent = '', onContentChange }) => {
+  const [content, setContent] = useState(initialContent);
   const editorRef = useRef(null);
 
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current.contentEditable = true;
+      editorRef.current.innerHTML = initialContent;
     }
   }, []);
 
@@ -41,38 +47,42 @@ const TipTap = ({ onContentChange }) => {
   };
 
   return (
-    <div className="border border-gray-300 rounded-lg p-4">
-      <div className="flex space-x-2 mb-2">
-        <button onClick={() => handleCommand('bold')} className="p-2 hover:bg-gray-200 rounded">
-          <Bold size={20} />
-        </button>
-        <button onClick={() => handleCommand('italic')} className="p-2 hover:bg-gray-200 rounded">
-          <Italic size={20} />
-        </button>
-        <button onClick={() => handleCommand('underline')} className="p-2 hover:bg-gray-200 rounded">
-          <Underline size={20} />
-        </button>
-        <button onClick={() => handleCommand('insertUnorderedList')} className="p-2 hover:bg-gray-200 rounded">
-          <List size={20} />
-        </button>
-        <button onClick={() => handleCommand('justifyLeft')} className="p-2 hover:bg-gray-200 rounded">
-          <AlignLeft size={20} />
-        </button>
-        <button onClick={() => handleCommand('justifyCenter')} className="p-2 hover:bg-gray-200 rounded">
-          <AlignCenter size={20} />
-        </button>
-        <button onClick={() => handleCommand('justifyRight')} className="p-2 hover:bg-gray-200 rounded">
-          <AlignRight size={20} />
-        </button>
-        <button onClick={handleCodeBlock} className="p-2 hover:bg-gray-200 rounded">
-          <Code size={20} />
-        </button>
+    <div className="border border-gray-300 rounded-lg sm:p-1 p-4">
+      <div className="flex flex-wrap justify-center items-center space-x-2 mb-2">
+        <div className='flex items-center'>
+          <button onClick={() => handleCommand('bold')} className="p-2 hover:bg-gray-200 rounded">
+            <Bold className='size-3 sm:size-5 lg:size-5'  />
+          </button>
+          <button onClick={() => handleCommand('italic')} className="p-2 hover:bg-gray-200 rounded">
+            <Italic className='size-3 sm:size-5 lg:size-5' />
+          </button>
+          <button onClick={() => handleCommand('underline')} className="p-2 hover:bg-gray-200 rounded">
+            <Underline className='size-3 sm:size-5 lg:size-5' />
+          </button>
+          <button onClick={() => handleCommand('insertUnorderedList')} className="p-2 hover:bg-gray-200 rounded">
+            <List className='size-3 sm:size-5 lg:size-5' />
+          </button>
+        </div>
+        <div className='flex items-center'>
+          <button onClick={() => handleCommand('justifyLeft')} className="p-2 hover:bg-gray-200 rounded">
+            <AlignLeft className='size-3 sm:size-5 lg:size-5' />
+          </button>
+          <button onClick={() => handleCommand('justifyCenter')} className="p-2 hover:bg-gray-200 rounded">
+            <AlignCenter className='size-3 sm:size-5 lg:size-5' />
+          </button>
+          <button onClick={() => handleCommand('justifyRight')} className="p-2 hover:bg-gray-200 rounded">
+            <AlignRight className='size-3 sm:size-5 lg:size-5' />
+          </button>
+          <button onClick={handleCodeBlock} className="p-2 hover:bg-gray-200 rounded">
+            <Code className='size-3 sm:size-5 lg:size-5' />
+          </button>
+        </div>
       </div>
       <div
         ref={editorRef}
         onInput={handleContentChange}
         className="min-h-[200px] p-2 border border-gray-200 rounded focus:outline-none focus:border-blue-500"
-      />
+      />  
     </div>
   );
 };

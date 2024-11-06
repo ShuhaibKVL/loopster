@@ -5,7 +5,7 @@ import connectDB from './config/db/database'
 import dotenv from 'dotenv'
 import userRoutes from './routes/user/userRoutes'
 import cookieParser from 'cookie-parser'
-// import './cron/deleteUnverifiedUsers'
+import './cron/deleteUnverifiedUsers'
 import adminRoutes from './routes/admin/adminRoutes'
 import postRoutes from './routes/user/postRoutes'
 import unsplashRoutes from './routes/user/unsplashRoutes'
@@ -18,8 +18,6 @@ const port = 5000
 const corsOptions = {
     origin: 'http://localhost:3000',
     credentials: true,
-    optionsSuccessStatus: 200,
-    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 

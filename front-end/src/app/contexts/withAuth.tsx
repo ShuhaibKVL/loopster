@@ -17,7 +17,7 @@ const RequiresAuth = (props: any) => {
     const accessToken = useSelector((state: RootState) => state.user?.accessToken);
 
     useLayoutEffect(() => {
-        if (accessToken) {
+        if (accessToken) {  
             const isExpired = isTokenExpired(accessToken);
             if (isExpired) {
             console.log("Token expired, logging out and redirecting to signIn");

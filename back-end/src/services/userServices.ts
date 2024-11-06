@@ -1,33 +1,15 @@
-// import { createUser, findUserByEmailOrUserName, isExistUser, isVerified } from "../repositories/userRepository";
 import User, { IUser } from '../models/userModel'
-import bcrypt from 'bcryptjs'
-import { generateOtp } from '../utils/otpGenerator'
-import { mailSender } from "../utils/mailSender";
-// import { verify_Otp } from "../repositories/otpRepository";
-import jwt from 'jsonwebtoken'
 import { IUserService } from '../interfaces/IUserService';
 import { IUserRepository } from '../interfaces/IUserRepository';
 import { ObjectId } from 'mongoose';
 import { IS3Service } from '../interfaces/S3/IS3Service';
-import { string } from 'yup';
 
 
 export const deleteUnverifiedUsers = async () => {
     try {
-        const countOfUsers = await User.find({}).countDocuments()
-        const countOfUsersIsVerifeid_false = await User.find({isVerified:false}).countDocuments()
-        console.log("countOfUsers :",countOfUsers)
-        console.log("count Of Users IsVerifeid = false :",countOfUsersIsVerifeid_false)
-
-        const result = await User.deleteMany({
-        isVerified: false,
-    });
-
-        console.log(`${result.deletedCount}${Date.now()} unverified users deleted`);
-        console.log('delete result is :',result)
+        const unVerifiedUser = await User.deleteMany({isVerified:false})       
     } catch (error) {
         console.error('Error deleting unverified users:', error);
-        throw error;
     }
 };
 

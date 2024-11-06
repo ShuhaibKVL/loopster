@@ -1,18 +1,17 @@
 'use client'
 
-import Image from 'next/image'
-import Form from '@/app/components/Form'
-import "../../globals.css";
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useToast } from "@/hooks/use-toast"
-import { signInSchema } from '@/app/utils/validationSchemas';
-import { ValidationError } from 'yup';
-import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
+import Form from '@/app/components/Form';
+import withAuth from '@/app/contexts/withAuth';
+import { useToast } from "@/hooks/use-toast";
 import { login } from '@/lib/redux/features/auth/userSlice';
 import userAuthService from '@/services/user/userAuthService';
-import withAuth from '@/app/contexts/withAuth';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { ValidationError } from 'yup';
+import "../../globals.css";
 
 
 export interface IsignIn{
@@ -50,9 +49,6 @@ const Page = () => {
 
         try {
             const user =  await userAuthService.signIn(formData)
-            console.log("user",user,)
-
-            setError(user.message)
             if(user.status){
                 toast({
                     title: 'Success',
@@ -70,7 +66,6 @@ const Page = () => {
                 dispatch(login(userData))
                 router.replace('/feed')
 
-                // router.push('/feed')
             }else if (user.errors) {
                 // Handle validation errors
                 user.errors.forEach((error:any) => {
@@ -83,11 +78,22 @@ const Page = () => {
         } catch (error:any) {
             if(error instanceof ValidationError) {
                 const validationErrors = error.inner.map((err:any) => err.message).join(', ')
-                console.log("validationErrors :",validationErrors)
                 setError(validationErrors)
             }
-            console.log(error.message)
-            setError(error.message)
+            if (error.response) {
+                console.log(error,error.response)
+                const { status } = error.response;
+
+                if (status === 401) {
+                  // Incorrect credentials
+                  setError("Email or password is incorrect.");
+                } else if (status === 403) {
+                  // Account blocked
+                  setError("Your account has been blocked. Please contact support.");
+                } else {
+                  console.log('erororoor')
+                }
+            }
         }
     }
 
@@ -105,7 +111,7 @@ const Page = () => {
                         <p className='text-red-600'>{error}</p> }
                     </div>
                     <Form fields={signInFields} onSubmit={handleSubmit} />
-                    <p className='text-right w-full p-4'>
+                    <p className='text-right w-full p-4 text-md'>
                     <span className='opacity-50'>
                         You have not a account ?
                     </span>

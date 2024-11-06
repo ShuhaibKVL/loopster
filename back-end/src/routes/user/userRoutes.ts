@@ -19,13 +19,16 @@ const router:Router = Router()
 
 const userRepository = new UserRepository()
 const s3Service = new S3Service()
-const userService = new userServices(userRepository,s3Service)
+export const userService = new userServices(userRepository,s3Service)
 const authService = new AuthService()
 const emailService = new EmailService()
+
 const otpRepository = new OtpRepository()
 const otpService = new OtpService(otpRepository)
+
 const followRepository = new FollowRespository()
 const followService = new FollowService(followRepository)
+
 const userController = new UserController(userService , authService , emailService,otpService,followService)
 const otpController = new OtpController(otpService,emailService,userService)
 const followController = new FollowController(followService)

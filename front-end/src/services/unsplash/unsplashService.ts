@@ -1,4 +1,3 @@
-import axios from "axios";
 import { IUnsplashService } from "./interfaces/IUnsplashServices";
 import { BASE_URL, userApi } from "../apis/axiosInstance";
 
