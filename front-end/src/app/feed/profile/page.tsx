@@ -13,18 +13,18 @@ import { useState } from 'react'
 import { useRef } from 'react'
 import userAuthService from '@/services/user/userAuthService'
 import { ISignUp_user } from '@/app/(auth)/signUp/page'
-import Form from '@/app/components/Form'
+import Form from '@/components/cm/Form'
 import { editProfileSchema } from '../../../lib/utils/validationSchemas'
 import { ValidationError } from 'yup'
 import { useToast } from '@/hooks/use-toast'
-import { confirmAction } from '@/app/components/ConfirmationModal'
+import { confirmAction } from '@/components/cm/ConfirmationModal'
 import { IUserWithCounts } from '../../../lib/utils/interfaces/IUserWIthCounts'
-import PostContentContainer from '@/app/components/post_components/PostContentContainer'
-import ReusableDropdown from '@/app/components/DropDownMenu'
+import PostContentContainer from '@/components/post_components/PostContentContainer'
+import ReusableDropdown from '@/components/cm/DropDownMenu'
 import postService from '@/services/user/post/postServices'
-import FollowUnFollow from '@/app/components/user_components/FollowUnFollow'
-import PostContentSkeleton from '@/app/components/skeltons/PostContentSkeleton'
-import EditPost from '@/app/components/post_components/EditPost'
+import FollowUnFollow from '@/components/user_components/FollowUnFollow'
+import PostContentSkeleton from '@/components/skeltons/PostContentSkeleton'
+import EditPost from '@/components/post_components/EditPost'
 import { IPostResponse } from '@/lib/utils/interfaces/IPost'
 
 
@@ -266,6 +266,8 @@ const Page = () => {
                             isOpen={isOpen}
                             setIsOpen={setIsOpen}
                             postData={currentPost as IPostResponse}
+                            userId={userId}
+                            getUserData={getUserData}
                             />
                         </div>
                         

@@ -175,12 +175,40 @@ export class UserController{
     async getLatestUsers(req:Request , res:Response) {
         try {
             const { userId } = req.body
+            if(!userId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'userId missng..!',status:false})
+                return false
+            }
             const latestUsers = await this.userService.findLatestUsers(userId)
             if(latestUsers){
-                res.status(HttpStatus.OK).json({data:latestUsers})
+                res.status(HttpStatus.OK).json({data:latestUsers,status:true})
             }
         } catch (error) {
-            
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
+        }
+    }
+
+    async search_followed_users(req:Request,res:Response):Promise<unknown>{
+        try {
+            const { userId } = req.params
+            const {query } = req.query
+
+            if(!userId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'userId missng..!',status:false})
+                return false
+            }
+            if(!query){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'query missng..!',status:false})
+                return false
+            }
+            const searchusers = await this.userService.findFollowedUsersBySearch(userId,query as string)
+            if(!searchusers){
+                res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
+                return
+            }
+            res.status(HttpStatus.OK).json({message:'users searched successfully',status:true,users:searchusers})
+        } catch (error) {
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
         }
     }
 

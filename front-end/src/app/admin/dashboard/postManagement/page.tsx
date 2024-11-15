@@ -1,9 +1,9 @@
 'use client'
 
 import adminWithAuth from '@/app/contexts/adminWithAuth'
-import PostTable from '@/app/components/post_components/PostTable'
+import PostTable from '@/components/post_components/PostTable'
 import { Suspense } from 'react'
-import PostTableSkeleton from '@/app/components/skeltons/PostTableSkeleton'
+import PostTableSkeleton from '@/components/skeltons/PostTableSkeleton'
 
 const Page = () => {
 

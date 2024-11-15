@@ -21,6 +21,12 @@ export class PostService implements IPostServices {
         return res.data
     }
 
+    async update(content: string, postId: string): Promise<{message:string,status:boolean}> {
+        console.log(">>>>>>>>>>>>>>",typeof content)
+        const res = await postApi.post(`/${postId}/update`,{content})
+        return res?.data
+    }
+
     async report(data: IReport): Promise<unknown> {
         const res = await postApi.post(`/report-post`,data)
         return res.data

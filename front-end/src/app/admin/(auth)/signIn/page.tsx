@@ -1,6 +1,6 @@
 'use client'
 
-import Form from '@/app/components/Form'
+import Form from '@/components/cm/Form';
 import adminWithAuth from '@/app/contexts/adminWithAuth'
 import { useToast } from '@/hooks/use-toast'
 import { login } from '@/lib/redux/features/auth/adminSlice'

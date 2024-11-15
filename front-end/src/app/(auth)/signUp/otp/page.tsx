@@ -8,7 +8,7 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
-import Counter from '@/app/components/Counter'
+import Counter from '@/components/cm/Counter'
 import { useSearchParams , useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
 import otpService from '@/services/authServices/otpService'

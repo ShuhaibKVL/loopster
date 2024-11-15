@@ -3,6 +3,7 @@ import { IUserRepository } from '../interfaces/IUserRepository';
 import User,{IUser} from '../models/userModel'
 import mongoose, { Types } from 'mongoose';
 import Follow from '../models/followCollectionModal';
+import { isVerifiedJwt } from '../controllers/jwtController';
 
 // Accessing the ObjectId constructor from Types
 const ObjectId = Types.ObjectId;
@@ -220,4 +221,45 @@ export class UserRepository implements IUserRepository {
         }
         
     }
+    
+    async findFollowedUsersBySearch(userId: string, query: string): Promise<unknown> {
+        try {
+            const followedUsers = await Follow.find({follower:userId},{follower:0,_id:0})
+            // Extract the followed user IDs into an array
+            const followedUserIds = followedUsers.map(follow => new mongoose.Types.ObjectId(follow.following.toString()));
+            console.log('followed users Id :',followedUserIds)
+            const users = User.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            { 
+                                isList: true,
+                                isBlocked:false,
+                                _id: { $in: followedUserIds }, // Match posts from followed users only
+                                isVerified:true
+                            },
+                                {
+                                    $or:[
+                                        {userName:{$regex:query,$options:'i'}},
+                                        {fullName:{$regex:query,$options:'i'}}
+                                    ]
+                                }
+                        ]
+                    }
+                },
+                {$project:{
+                    userName:1,
+                    fullName:1,
+                    profileImage:1,
+                    createdAt:1
+                }}
+            ])
+            console.log('users :',users)
+            return users
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import ReportPosts from '@/app/components/post_components/ReportPosts'
+import ReportPosts from '@/components/post_components/ReportPosts'
 import adminWithAuth from '@/app/contexts/adminWithAuth'
 import React from 'react'
 

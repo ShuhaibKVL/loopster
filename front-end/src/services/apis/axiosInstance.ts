@@ -3,6 +3,7 @@ import store from '@/lib/redux/store/store'
 import { error } from 'console'
 import { logout } from '@/lib/redux/features/auth/userSlice'
 import  Router from 'next/navigation'
+import { toast } from 'react-toastify'
 
 // Base URL
 export const BASE_URL = 'http://localhost:5000'
@@ -19,6 +20,10 @@ export const userApi = axios.create({
 
 export const postApi = axios.create({
     baseURL:`${BASE_URL}/api/post`
+})
+
+export const chatApi = axios.create({
+    baseURL:`${BASE_URL}/api/chat`
 })
 
 // Public URL for unauthenticated admin request (signIn/ signUp)
@@ -74,6 +79,21 @@ postApi.interceptors.request.use(
     (error) => Promise.reject(error)
 )
 
+chatApi.interceptors.request.use(
+    (config) => {
+        const state = store.getState()
+        const token = state?.user?.accessToken
+        console.log('token inside axios interceptor :',token)
+
+        if(token){
+            config.headers.Authorization = `Bearer ${token}`
+        }
+
+        return config
+    },
+    (error) => Promise.reject(error)
+)
+
 
 // handel backend middle ware authorisation
 userApi.interceptors.response.use(
@@ -91,6 +111,8 @@ userApi.interceptors.response.use(
             store.dispatch(logout())
 
             Router.redirect('/signIn')
+        }else if (response) {
+            toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
 
         return Promise.reject(error)
@@ -111,6 +133,8 @@ adminApi.interceptors.response.use(
 
             Router.redirect('/admin/signIn')
              // Router.replace('/signIn')
+        }else if (response) {
+            toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
 
         return Promise.reject(error)
@@ -130,6 +154,29 @@ postApi.interceptors.response.use(
             store.dispatch(logout())
 
             Router.redirect('/signIn')
+        }else if (response) {
+            toast.error('Network issue: Unable to connect to the server. Please try again later.');
+        }
+
+        return Promise.reject(error)
+    }
+)
+
+chatApi.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        const { response } = error;
+
+        //If the server return 401 0r 403 , handle unauthorized access
+        if(response?.status === 401 || response?.status === 403) {
+            //Logout the user from Redux and clear token
+            store.dispatch(logout())
+
+            Router.redirect('/signIn')
+        }else if (response) {
+            toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
 
         return Promise.reject(error)

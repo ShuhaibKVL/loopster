@@ -62,5 +62,9 @@ export class userServices implements IUserService {
     async findLatestUsers(userId:string): Promise<any> {
         return await this.userRepository.findLatestUsers(userId)
     }
+
+    async findFollowedUsersBySearch(userId:string,query:string):Promise<unknown>{
+        return await this.userRepository.findFollowedUsersBySearch(userId,query)
+    }
 }
 

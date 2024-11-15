@@ -1,10 +1,10 @@
 'use client'
 
 import withAuth from '@/app/contexts/withAuth';
-import CreatePostComponent from '@/app/components/post_components/CreatePost';
+import CreatePostComponent from '@/components/post_components/CreatePost';
 import { Suspense } from 'react';
-import CreatePostSkelton from '@/app/components/skeltons/CreatePostSkelton';
-import PostTabs from '@/app/components/post_components/Tabs';
+import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
+import PostTabs from '@/components/post_components/Tabs';
 
 const Page = () => {
     return (
@@ -20,3 +20,4 @@ const Page = () => {
 };
 
 export default withAuth(Page, true);
+// export default Page

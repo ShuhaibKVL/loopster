@@ -58,3 +58,16 @@ body {
   height: auto !important;
 }
 
+.chatbox{
+  background-image:url('../../public/Images/lightThemechatBg.jpg');
+  background-position: center;
+  background-size: auto;
+}
+
+[data-theme='dark']{
+  .chatbox{
+    background-image:url('../../public/Images/darkThemChatbg.png');
+  }
+}
+
+

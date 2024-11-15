@@ -2,6 +2,7 @@ import { ISignUp_user } from "@/app/(auth)/signUp/page";
 import { IUserAuthService } from "./interfaces/IUserAuthService";
 import { user_publicApi, userApi } from "../apis/axiosInstance";
 import { IsignIn } from "@/app/(auth)/signIn/page";
+import { ISearchUsers } from "@/lib/utils/interfaces/ISeacrchUsers";
 
 class UserAuthService implements IUserAuthService{
     
@@ -38,6 +39,11 @@ class UserAuthService implements IUserAuthService{
         const response = await userApi.post('/latest-users',{userId})
         return response.data
         
+    }
+
+    async search_followed_users(userId: string, query: string): Promise<{status:boolean,message:string,users:ISearchUsers[]}> {
+        const response = await userApi.get(`/${userId}/search-followed-users?query=${query}`)
+        return response?.data
     }
 }
 

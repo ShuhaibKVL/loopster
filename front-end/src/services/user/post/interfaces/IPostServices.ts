@@ -6,6 +6,7 @@ import { IPostProps } from "@/lib/utils/interfaces/PostProps"
 export interface IPostServices {
     createPost(data:IPost | FormData):Promise<any>
     deletePost(postId:string):Promise<any>
+    update(content:string,postId:string):Promise<unknown>
     report(data:IReport):Promise<unknown>
     getLatestPosts(userid:string,page?:number):Promise<any>
     getFollowedUserPosts(userId:string,page?:number):Promise<unknown>

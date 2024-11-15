@@ -7,6 +7,6 @@ export interface IUserAuthService {
     user(user_id:any):Promise<any>
     uploadProfileImg(userId:string,formData:FormData):Promise<any>
     editProfile(userId:string,formData:FormData):Promise<any>
-
     getLatestUsers(userId:string):Promise<any>
+    search_followed_users(userId:string,query:string):Promise<unknown>
 }

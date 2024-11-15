@@ -13,4 +13,6 @@ export interface IUserService {
 
     //To show new  users on feed recommended section
     findLatestUsers(userId:string):Promise<any>
+    //the response to search users on messages
+    findFollowedUsersBySearch(userId:string,query:string):Promise<unknown>
 }
