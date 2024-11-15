@@ -11,8 +11,8 @@ export class PostService implements IPostService {
     ){}
 
     async createPost(data: IPost ,file : Buffer,fileName:string): Promise<any> {
-        console.log('create post service invoked',data)
         const imageUrl = await this.s3Service.uploadFile(file,fileName)
+        console.log('image url :',imageUrl)
         data.mediaUrl = imageUrl
         if(imageUrl){
             return await this.postRepository.create(data)
@@ -22,6 +22,10 @@ export class PostService implements IPostService {
 
     async deletePost(postId: string): Promise<any> {
         return await this.postRepository.delete(postId)
+    }
+
+    async update(content: string, postId: string): Promise<unknown> {
+        return await this.postRepository.update(content,postId)
     }
 
     async reportPost(data: IReport): Promise<unknown> {

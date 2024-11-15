@@ -1,8 +1,8 @@
 'use client'
 
-import { confirmAction } from '@/app/components/ConfirmationModal';
-import Pagination from '@/app/components/Pagination';
-import AvatarSkelton from '@/app/components/skeltons/AvatarSkelton';
+import { confirmAction } from '@/components/cm/ConfirmationModal';
+import Pagination from '@/components/cm/Pagination';
+import AvatarSkelton from '@/components/skeltons/AvatarSkelton';
 import adminWithAuth from '@/app/contexts/adminWithAuth';
 import {
     Table,
@@ -35,9 +35,7 @@ const Page = () => {
   
     async function findUsers(page=1){
       try {
-        console.log('fin users function')
         const data = await userManagementService.getAllUsers(page);
-        console.log('data:', data.userData);
         setUsers(data?.userData?.users);
         setTotalPages(data?.userData?.totalPages)
       } catch (error) {

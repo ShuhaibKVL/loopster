@@ -14,4 +14,8 @@ export class LikeService implements ILikeService{
     async removeLike(postId: string,userId:string): Promise<unknown> {
         return await this.likeRepository.unLike(postId,userId)
     }
+
+    async likedPostsUsers(postId: string): Promise<unknown> {
+        return await this.likeRepository.likedPostsUsers(postId)
+    }
 }

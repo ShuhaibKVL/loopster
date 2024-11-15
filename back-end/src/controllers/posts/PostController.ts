@@ -11,21 +11,19 @@ export class PostController{
 
     async createPost(req:Request,res:Response):Promise<any>{
         try {
-            console.log('create post controller invoked...',)
             const newPostData = req.body
-            console.log("newPostData : >",newPostData)
             const file = req.file
-            console.log('file in post controller :',file)
             const fileName = `profile-images/${file?.originalname}-${Date.now()}.jpeg`;
 
             const createPost = await this.postServices.createPost(newPostData,file?.buffer,fileName)
-            console.log('createPost :',createPost)
+            console.log('create Post :',createPost)
             if(!createPost){
                 res.status(HttpStatus.FORBIDDEN).json({message:'Failed to create new post',status:false})
                 return
             }
             res.status(HttpStatus.CREATED).json({message:"Post created successfully",newPost:createPost,status:true})
         } catch (error:any) {
+            console.log("error on createPost controller :",error)
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
         }
     }
@@ -33,11 +31,36 @@ export class PostController{
     async DeletePost(req:Request,res:Response):Promise<any>{
         try {
             const postId = req.query.postId
+            if(!postId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'postId is missing',status:false})
+            }
             const response = await this.postServices.deletePost(postId as string)
             if(!response){
                 res.status(HttpStatus.BAD_REQUEST).json({message:'Filed to delete post.Try again',status:false})
+                return
             }
             res.status(HttpStatus.OK).json({message:'Post deleted success fully.'})
+        } catch (error:any) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message})
+        }
+    }
+
+    async updatePost(req:Request,res:Response):Promise<any>{
+        try {
+            const postId = req.params.postId
+            const { content }   = req.body
+            console.log('postId and content :',postId,content,typeof content)
+            if(!postId && content){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'postId and content is missing',status:false})
+                return
+            }
+            const response = await this.postServices.update(content,postId)
+            console.log('response :',response)
+            if(!response){
+                res.status(HttpStatus.BAD_REQUEST).json({message:'Filed to update post.Try again',status:false})
+                return
+            }
+            res.status(HttpStatus.OK).json({message:'Post data updated success fully.',status:true})
         } catch (error:any) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message})
         }
@@ -66,7 +89,6 @@ export class PostController{
         try {
             const userId = req.params.userId
             const page = req.query.page || 1
-            console.log('inside the controler :',userId,page)
             if(!userId){
                 res.status(HttpStatus.BAD_REQUEST).json({message:'User id missing',status:false})
                 return
@@ -88,7 +110,6 @@ export class PostController{
         try {
             const userId = req.params.userId
             const page = req.query.page || 1
-            console.log('inside the controler :',userId,page)
             if(!userId){
                 res.status(HttpStatus.BAD_REQUEST).json({message:'User id missing',status:false})
                 return
@@ -110,7 +131,6 @@ export class PostController{
         try {
             const userId = req.params.userId
             const page = req.query.page || 1
-            console.log('inside the get book marked controler :',userId,page)
             if(!userId){
                 res.status(HttpStatus.BAD_REQUEST).json({message:'User id missing',status:false})
                 return

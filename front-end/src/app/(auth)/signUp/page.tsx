@@ -1,6 +1,6 @@
 'use client';
 
-import Form from '@/app/components/Form';
+import Form from '@/components/cm/Form';
 import withAuth from '@/app/contexts/withAuth';
 import { useToast } from "@/hooks/use-toast";
 import { signUpSchema } from '@/lib/utils/validationSchemas';

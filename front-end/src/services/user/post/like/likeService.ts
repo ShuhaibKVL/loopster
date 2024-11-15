@@ -11,6 +11,11 @@ export class LikeService implements ILikeService{
         const response = await postApi.delete(`/unlike?postId=${postId}&userId=${userId}`)
         return response.data
     }
+
+    async findLikedUsers(postId: string): Promise<{message:string,users:[],status:boolean}> {
+        const response = await postApi.get(`/liked-users?postId=${postId}`)
+        return response.data
+    }
 }
 
 const likeService = new LikeService()

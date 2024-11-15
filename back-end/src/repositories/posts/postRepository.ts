@@ -10,6 +10,7 @@ import Bookmark from "../../models/Bookmark";
 
 export class PostRepository implements IPostRepository {
     async create(data: IPost): Promise<any> {
+        console.log('post repo')
         return  await Post.create(data)
     }
 
@@ -17,10 +18,22 @@ export class PostRepository implements IPostRepository {
         return await Post.findByIdAndUpdate(postId,{isList:false})
     }
 
+    async update(content: string, postId: string): Promise<unknown> {
+        console.log('update repo :-',content,postId)
+        try {
+            const update =  await Post.findByIdAndUpdate(postId , {content:content},{new:true}) 
+            console.log('update :',update)
+            return update
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+         
+    }
+
     async report(data:IReport): Promise<unknown> {
         try {
             await Report.create(data)
-            // return await Post.findByIdAndUpdate(data?.postId ,{$set:{isReported:true}})
             await User.findByIdAndUpdate(data?.userId,{$push:{reportedPosts:data?.postId}},{new:true})
             return true
         } catch (error) {
@@ -113,6 +126,36 @@ export class PostRepository implements IPostRepository {
                     }
                 },
                 {
+                    // Add an `isLiked` field to indicate if the current user has liked this post
+                    $addFields: {
+                        isLiked: { $gt: [{ $size: '$likeInfo' }, 0] }
+                    }
+                },
+                {
+                    $lookup:{
+                        from:'likes',
+                        let: { postId: '$_id' },   
+                        pipeline: [
+                            {
+                              $addFields: {
+                                postIdObjectId: { $toObjectId: '$postId' }  // Convert postId in Like collection to ObjectId
+                              }
+                            },
+                            {
+                              $match: {
+                                $expr: { $eq: ['$postIdObjectId', '$$postId'] } // Match the converted field with Post._id
+                              }
+                            }
+                          ],
+                        as:'likes'
+                    }
+                },
+                {
+                    $addFields: {
+                      likeCount: { $size: '$likes' } // Count the number of items in the 'likes' array
+                    }
+                },
+                {
                     // Lookup user data from the 'users' collection
                     $lookup: {
                         from: 'users',  // Collection name for users
@@ -218,7 +261,9 @@ export class PostRepository implements IPostRepository {
                         followedCount: 1,
                         isReported:1,
                         isLiked:1,
+                        likes:1,
                         likeInfo:1,
+                        likeCount:1,
                         isBookMarked:1,
                         bookMarkInfo:1,
                         'user.fullName': 1,
@@ -301,6 +346,30 @@ export class PostRepository implements IPostRepository {
                     // Add an `isLiked` field to indicate if the current user has liked this post
                     $addFields: {
                         isLiked: { $gt: [{ $size: '$likeInfo' }, 0] }
+                    }
+                },
+                {
+                    $lookup:{
+                        from:'likes',
+                        let: { postId: '$_id' },   
+                        pipeline: [
+                            {
+                              $addFields: {
+                                postIdObjectId: { $toObjectId: '$postId' }  // Convert postId in Like collection to ObjectId
+                              }
+                            },
+                            {
+                              $match: {
+                                $expr: { $eq: ['$postIdObjectId', '$$postId'] } // Match the converted field with Post._id
+                              }
+                            }
+                          ],
+                        as:'likes'
+                    }
+                },
+                {
+                    $addFields: {
+                      likeCount: { $size: '$likes' } // Count the number of items in the 'likes' array
                     }
                 },
                 {
@@ -438,6 +507,8 @@ export class PostRepository implements IPostRepository {
                         isLiked:1,
                         isBookMarked:1,
                         bookMarkInfo:1,
+                        likes:1,
+                        likeCount:1,
                         'user.fullName': 1,
                         'user.userName': 1,
                         'user.profileImage': 1,

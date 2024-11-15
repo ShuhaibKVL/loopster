@@ -50,4 +50,25 @@ export class LikeController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message,status:false})
         }
     }
+
+    async fetchLIkedPostsUser(req:Request,res:Response):Promise<unknown>{
+        try {
+            const {postId} = req.query
+            console.log('post id :',postId)
+            if(!postId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'postId is missing',status:false})
+                return
+            }
+            const response = await this.likeService.likedPostsUsers(postId as string)
+            console.log('response :',response)
+            if(!response){
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:'failed fetch liked posts'})
+                return
+            }
+            res.status(HttpStatus.CREATED).json({message:'Successfully fetched the liked users',status:true,users:response})
+            return
+        } catch (error:any) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message,status:false})
+        }
+    }
 }

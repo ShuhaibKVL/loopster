@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import {ThemeProvider} from './contexts/ThemeContext'
 import { Toaster } from "@/components/ui/toaster"
+import { ToastContainer } from 'react-toastify'
 import { Inter } from 'next/font/google'
 import ReduxProvider from "./contexts/ReduxProvider";
 import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
+import { io } from "socket.io-client";
 
 
 export const metadata: Metadata = {
@@ -21,9 +23,9 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) { 
 
- 
+
   return (
     <html lang="en">
       <head>
@@ -31,14 +33,15 @@ export default function RootLayout({
         <title>Loopster</title>
       </head>
       <body className={`${inter.className} rounded-sm`}>
+      <Toaster /> 
         <TanStackQueryClientProvider>
           <ReduxProvider>
-            {/* <ThemeProvider> */}
+            <ThemeProvider>
               {children}
-            {/* </ThemeProvider> */}
+            </ThemeProvider>
           </ReduxProvider>
         </TanStackQueryClientProvider>
-        <Toaster />
+        <ToastContainer position="top-right" autoClose={3000} />  
       </body>
     </html>
   );

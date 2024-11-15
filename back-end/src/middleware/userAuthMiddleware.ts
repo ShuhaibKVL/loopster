@@ -27,8 +27,8 @@ export const authorize = async (req:Request , res:Response , next:NextFunction) 
         }
 
         const user = await userService.findUserById(claims?.userId)
-        console.log('user :',user[0].isBlocked,user)
-        if(user[0]?.isBlocked){
+        console.log('user is Blocked :',user[0].isBlocked,)
+        if(!user && user[0]?.isBlocked){
             console.log('blocked ')
             res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.BLOCKED})
             return

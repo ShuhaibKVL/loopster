@@ -1,6 +1,6 @@
 'use client'
 
-import Form from '@/app/components/Form';
+import Form from '@/components/cm/Form';
 import withAuth from '@/app/contexts/withAuth';
 import { useToast } from "@/hooks/use-toast";
 import { login } from '@/lib/redux/features/auth/userSlice';
@@ -12,18 +12,18 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ValidationError } from 'yup';
 import "../../globals.css";
-
+import { SignIn } from '@/app/actions/auth';
 
 export interface IsignIn{
-    email:String,
-    password:String,
+    email:string,
+    password:string,
 }
+const signInFields = [
+    {name:'email', type:"email",label:'Email',placeHolder:"Enter your email"},
+    {name:'password',type:"password",label:'Password',placeHolder:"Enter your password"},
+]
 
 const Page = () => {
-    const signInFields = [
-        {name:'email', type:"email",label:'Email',placeHolder:"Enter your email"},
-        {name:'password',type:"password",label:'Password',placeHolder:"Enter your password"},
-    ]
     const router = useRouter()
     const { toast} = useToast()
     const dispatch = useDispatch()
@@ -97,6 +97,48 @@ const Page = () => {
         }
     }
 
+    // const handleSubmit = async(formData:IsignIn) => {
+    //     console.log('formData :',formData)
+    //     if(formData?.email.length <= 1 ){
+    //         setError('Please enter your valid email')
+    //         return
+    //     }
+    //     if(formData?.password.length <= 1){
+    //         setError('Please enter your password')
+    //         return
+    //     }
+
+    //     try {
+    //         const result = await SignIn(formData)
+    //         if (result.status) {
+    //             dispatch(login({
+    //               user: result.userData,
+    //               // Don't store token in Redux, it's now in an HTTP-only cookie
+    //             }));
+                
+    //             toast({
+    //               title: 'Success',
+    //               description: result.message,
+    //               className: "toast-success"
+    //             });
+                
+    //             router.replace('/feed');
+    //           } else {
+    //             toast({
+    //               title: 'Error',
+    //               description: result.message,
+    //               className: 'toast-failed'
+    //             });
+    //           }
+    //     } catch (error) {
+    //         toast({
+    //             title: 'Error',
+    //             description: 'An unexpected error occurred',
+    //             className: 'toast-failed'
+    //           });
+    //     }
+    // }
+
     return (
         <div className='min-h-screen flex items-center justify-center bg[var(--color-bg)'>
             <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full bg-[var(--secondary-bg)] m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
@@ -136,5 +178,5 @@ const Page = () => {
         </div>
     )
 }
-
+// export default Page
 export default withAuth(Page,false)

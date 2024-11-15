@@ -45,6 +45,7 @@ router.post('/user/:userId/upload-profile-img',upload.single('profileImage'),use
 router.post('/:userId/update-profile',userController.updateProfile.bind(userController))
 
 router.post('/latest-users',userController.getLatestUsers.bind(userController))
+router.get('/:userId/search-followed-users',userController.search_followed_users.bind(userController))
 
 router.post('/follow-user',followController.follow.bind(followController))
 router.delete('/unfollow-user',followController.unFollow.bind(followController))

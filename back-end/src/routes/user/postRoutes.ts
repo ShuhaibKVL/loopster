@@ -37,6 +37,7 @@ const bookMarkController = new BookMarkController(bookMarkService)
 router.use(authorize)
 router.post('/create',upload.single('mediaUrl'),postController.createPost.bind(postController))
 router.delete('/delete',postController.DeletePost.bind(postController))
+router.post('/:postId/update',postController.updatePost.bind(postController))
 router.post('/report-post',postController.reportPost.bind(postController))
 router.get('/:userId/get-latest-posts',postController.getLatestPosts.bind(postController))
 router.get('/:userId/followed-users-post',postController.getFollowedUsersPosts.bind(postController))
@@ -48,7 +49,6 @@ router.delete('/unlike',likeController.unlike.bind(likeController))
 router.post('/book-mark/create',bookMarkController.create.bind(bookMarkController))
 router.delete('/book-mark/delete',bookMarkController.delete.bind(bookMarkController))
 router.get('/:userId/book-mark/get_all',postController.getBookMarkedPosts.bind(postController))
-router.get('/details')
-
+router.get('/liked-users',likeController.fetchLIkedPostsUser.bind(likeController))
 
 export default router

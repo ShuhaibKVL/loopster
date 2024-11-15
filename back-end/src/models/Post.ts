@@ -2,7 +2,7 @@ import mongoose , {Schema} from 'mongoose'
 
 export interface IPost extends Document{
     userId:string,
-    content:string,
+    content?:string,
     mediaType:"none" | "video" | "image",
     mediaUrl?:string,
     isList?:boolean,
@@ -11,7 +11,7 @@ export interface IPost extends Document{
 
 const PostSchema : Schema = new mongoose.Schema<IPost>({
     userId:{type:String,required:true},
-    content:{type:String,required:true},
+    content:{type:String},
     mediaType:{type:String ,default:'none'},
     mediaUrl:{type:String},
     isList:{type:Boolean,default:true},

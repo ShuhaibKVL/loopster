@@ -10,7 +10,6 @@ export default function GlobalError({
     reset: () => void
 }) {
     return (
-    // global-error must include html and body tags !!!
     <html>
         <body className='bg-[var(--background)]'>
             <div className='flex items-center justify-center'>

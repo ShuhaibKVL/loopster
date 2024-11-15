@@ -1,6 +1,6 @@
 'use client'
 
-import BookMarkPosts from '@/app/components/post_components/BookMarkPosts'
+import BookMarkPosts from '@/components/post_components/BookMarkPosts'
 import withAuth from '@/app/contexts/withAuth'
 import React from 'react'
 

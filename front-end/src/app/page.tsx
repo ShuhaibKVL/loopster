@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import ThemToggle from './components/ThemeToggle'
+import ThemToggle from '@/components/cm/ThemeToggle'
 import Link from 'next/link';
 export default function Home() {
   return (

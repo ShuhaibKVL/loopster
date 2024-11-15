@@ -1,6 +1,6 @@
 'use client'
 
-import SideBar, { INavItems } from '@/app/components/SideBar'
+import SideBar,{ INavItems} from '@/components/cm/SideBar'; 
 import React from 'react'
 import { DashboardIcon } from '@radix-ui/react-icons'
 import { MdOutlineManageAccounts } from "react-icons/md";
@@ -21,8 +21,7 @@ export default function Layout({
     return (
         <div className='w-full h-screen bg-[var(--color-bg)]'>
             {/* Navbar section */}
-            <nav className='w-full  h-[7.5vh] fixed z-50 top-0 bg-[var(--secondary-bg)] flex items-center justify-end px-5 border-b'>
-                ha ja aj 
+            <nav className='w-full  h-[7.5vh] fixed z-50 top-0 bg-[var(--secondary-bg)] flex items-center justify-end px-5 border-b'> 
             </nav>
             {/* To Down the Header space due to fixed property */}
             <div className="w-full h-[7.5vh]"></div>
