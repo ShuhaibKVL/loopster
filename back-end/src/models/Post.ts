@@ -1,6 +1,7 @@
 import mongoose , {Schema} from 'mongoose'
 
 export interface IPost extends Document{
+    _id?:string,
     userId:string,
     content?:string,
     mediaType:"none" | "video" | "image",

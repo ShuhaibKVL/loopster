@@ -13,7 +13,6 @@ class UserAuthService implements IUserAuthService{
 
     async signIn(userData: IsignIn): Promise<any> {
         const response = await user_publicApi.post('/signIn',userData)
-        console.log("response :",response)
         return response.data
     }
 
@@ -23,10 +22,7 @@ class UserAuthService implements IUserAuthService{
     }
 
     async uploadProfileImg(userId:string,formData: FormData): Promise<any> {
-        console.log('uploadProfileImg invoked')
-        console.log(userId,)
         const response = await userApi.post(`/user/${userId}/upload-profile-img`,formData)
-        console.log('response :',response)
         return response.data
     }
 

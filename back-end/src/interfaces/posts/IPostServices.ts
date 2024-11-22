@@ -3,6 +3,7 @@ import { IReport } from "../../models/Report";
 
 export interface IPostService {
     createPost(data:IPost,file:Buffer | undefined,fileName:string):Promise<any>
+    findPostById(id:string):Promise<unknown>
     deletePost(postId:string):Promise<any>
     update(content:string,postId:string):Promise<unknown>
     reportPost(data:IReport):Promise<unknown>

@@ -10,14 +10,13 @@ import { MessageController } from "../../controllers/chat/messageController";
 
 const router:Router = Router()
 
-export const chatRepository = new ChatRepository()
-const chatService = new ChatService(chatRepository)
-const chatController = new ChatController(chatService)
-
 const messageRepository = new MessageRepository()
 export const messageService = new MessageService(messageRepository)
 const messageController = new MessageController(messageService)
 
+export const chatRepository = new ChatRepository()
+const chatService = new ChatService(chatRepository)
+const chatController = new ChatController(chatService,messageService)
 
 router.use(authorize)
 

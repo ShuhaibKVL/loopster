@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import AvatarComponent from '../cm/Avatar'
 import { activeChat } from './ChatLayout';
@@ -5,6 +7,7 @@ import { ISearchUsers } from '@/lib/utils/interfaces/ISeacrchUsers';
 import { IChatResponse } from '@/lib/utils/interfaces/IChat';
 import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
+import { useRouter } from 'next/navigation';
 
 export interface IChatUsersList extends IChatResponse{
     isOnline?:boolean
@@ -16,23 +19,40 @@ interface ChatUserProps{
 }
 export default function ChatUsers({chatList,setActiveChat}:ChatUserProps) {
     const currentUserId = useAppSelector((state:RootState) => state?.user?.userId)
+    const unReadMsgPerChat = useAppSelector((state:RootState) => state?.user?.unReadMsgPerChat)
+    console.log('inisde the chat layout :',unReadMsgPerChat)
+    console.log('chat list : >>>>>',chatList)
+    const router = useRouter()
 
-  const onSelect = (chatId:string,chatType:'individual' | 'group',profileImage:string,userName:string) => {
-    
+  const onSelect = (chatId:string,chatType:'individual' | 'group',profileImage:string,userName:string,groupImage?:string,groupName?:string) => {
+
     if(!chatId) 
       return alert('user id is missing!!!')
-
-    const data :activeChat = {
-       chatType:'individual',
-       chatId:chatId,
-       profileImage:profileImage,
-       userName:userName
-
+    console.log('chatType >>>>>>>',chatType)
+    let data :activeChat ;
+    if(groupName){
+      data  = {
+        chatType:chatType,
+        chatId:chatId,
+        profileImage:groupImage,
+        userName:groupName
+     }
+    }else{
+      data  = {
+        chatType:chatType,
+        chatId:chatId,
+        profileImage:profileImage,
+        userName:userName
+ 
+     }
     }
 
     setActiveChat(data)
+    if(window.innerWidth <= 789){
+      router.push(`/feed/messages/chat/${chatId}`)
+    }
+    
   }
-
   return (
     <>
       {chatList && chatList.length > 0 ? (
@@ -50,20 +70,34 @@ export default function ChatUsers({chatList,setActiveChat}:ChatUserProps) {
                     chat._id,
                     isGroupChat ? 'group' : 'individual',
                     otherUser?.profileImage as string ,
-                    otherUser?.userName as string
+                    otherUser?.userName as string,
+                    chat?.groupImage,
+                    chat?.chatName,
                     )
                 }
-              className='border-b p-2 hover:bg-[var(--hover-card)] duration-100'
+              className='border-b p-2 hover:bg-[var(--hover-card)] duration-100 relative'
             >
               <div className='flex items-center space-x-2'>
                 <AvatarComponent imgUrl={isGroupChat ? chat.groupImage : otherUser?.profileImage} />
-                <h1 className='font-semibold'>
-                  {isGroupChat ? chat.chatName : otherUser?.userName}
-                </h1>
+                <div>
+                  <h1 className='font-semibold'>
+                    {isGroupChat ? chat.chatName : otherUser?.userName}
+                  </h1>
+                  <p className='text-xs'>{chat?.latestMessage?.content}</p>
+                </div>
               </div>
               <p className='text-green-400 w-full text-center'>
                 {chat.isOnline ? 'Online' : ''}
               </p>
+              {unReadMsgPerChat?.map((item) => {
+                if(item._id.toString() === chat?._id){
+                  return (
+                    <div className='p-1 bg-green-500 rounded-full flex items-center justify-center text-white absolute right-2 top-1 size-5'>
+                      <p className='text-[8px] text-white'>{item?.unReadMsg}</p>
+                    </div>
+                  )
+                }
+              })}
             </div>
           );
         })

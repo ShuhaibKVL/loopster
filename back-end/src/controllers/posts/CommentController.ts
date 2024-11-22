@@ -41,6 +41,7 @@ export class CommentConroller{
                 return
             }
             const comments = await this.commentService.getComments(postId as string)
+            console.log('comments :',comments)
             if(!comments){
                 res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'Failed to fetch comments',status:false})
                 return
@@ -65,6 +66,44 @@ export class CommentConroller{
                 return
             }
             res.status(HttpStatus.OK).json({message:'Comment deleted successfully',status:true})
+            return
+        } catch (error:any) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message,status:false})
+        }
+    }
+
+    async likeComment(req:Request,res:Response):Promise<unknown>{
+        try {
+            const { userId , commentId } = req.body
+            if(!userId || !commentId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'comment id is missing'})
+                return
+            }
+            const likeComment = await this.commentService.Like(commentId as string,userId as string)
+            if(!likeComment){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'Failed to like Comment',status:false})
+                return
+            }
+            res.status(HttpStatus.OK).json({message:'Comment liked successfully',status:true})
+            return
+        } catch (error:any) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message,status:false})
+        }
+    }
+
+    async unLikeComment(req:Request,res:Response):Promise<unknown>{
+        try {
+            const { userId , commentId } = req.body
+            if(!userId || !commentId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'comment id is missing'})
+                return
+            }
+            const unlikeComment = await this.commentService.unlike(commentId as string,userId as string)
+            if(!unlikeComment){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'Failed to Unlike Comment',status:false})
+                return
+            }
+            res.status(HttpStatus.OK).json({message:'Comment unliked successfully',status:true})
             return
         } catch (error:any) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message,status:false})

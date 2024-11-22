@@ -109,7 +109,7 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
       isLiked={isLiked as boolean}
       isBookMarked={isBookMarked as boolean}
       refetchPosts={refetchPosts}
-      likeCount={likeCount}
+      likeCount={likeCount as number}
       />
     </div>
   );

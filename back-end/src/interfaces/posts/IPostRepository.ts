@@ -3,6 +3,7 @@ import { IReport } from "../../models/Report";
 
 export interface IPostRepository {
     create(data:IPost):Promise<any>
+    findPostById(id:string):Promise<unknown>
     delete(postId:string):Promise<any>
     update(content:string,postId:string):Promise<unknown>
     report(data:IReport):Promise<unknown>

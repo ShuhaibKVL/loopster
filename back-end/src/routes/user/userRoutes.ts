@@ -13,6 +13,11 @@ import { EmailService } from '../../services/EmailService'
 import { FollowService } from '../../services/follow/FollowService'
 import { OtpService } from '../../services/OtpService'
 import { userServices } from '../../services/userServices'
+import { MessageRepository } from '../../repositories/chat/messageRepository'
+import { MessageService } from '../../services/chat/messageService'
+import { NotificationRepository } from '../../repositories/notification/notificationRepository'
+import { NotificationService } from '../../services/notification/notificationService'
+import { NotificationController } from '../../controllers/notification/notificationController'
 
 
 const router:Router = Router()
@@ -29,9 +34,16 @@ const otpService = new OtpService(otpRepository)
 const followRepository = new FollowRespository()
 const followService = new FollowService(followRepository)
 
-const userController = new UserController(userService , authService , emailService,otpService,followService)
+const messageRepository = new MessageRepository()
+const messageService = new MessageService(messageRepository)
+
+const notificationRepository = new NotificationRepository()
+const notificationService = new NotificationService(notificationRepository)
+const notificationController = new NotificationController(notificationService)
+
+const userController = new UserController(userService , authService , emailService,otpService,followService,messageService)
 const otpController = new OtpController(otpService,emailService,userService)
-const followController = new FollowController(followService)
+const followController = new FollowController(followService,notificationService)
 
 
 router.post('/register',userController.signUp.bind(userController))
@@ -49,5 +61,8 @@ router.get('/:userId/search-followed-users',userController.search_followed_users
 
 router.post('/follow-user',followController.follow.bind(followController))
 router.delete('/unfollow-user',followController.unFollow.bind(followController))
+
+router.get('/get-notifications',notificationController.fetchAllNotifications.bind(notificationController))
+router.patch('/mark-as-readed',notificationController.markAsReaded.bind(notificationController))
 
 export default router

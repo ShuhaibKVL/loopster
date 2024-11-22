@@ -12,7 +12,7 @@ const restrictedRoutes = ['/signIn', '/signUp', '/signUp/otp', '/'];
 const withAuth = (WrappedComponent: React.ComponentType, requiresAuth: boolean) => {
     console.log("with auth invoked .......");
 
-const RequiresAuth = (props: any) => {
+const RequiresAuth = (props: any) => {  
     const router = useRouter();
     const accessToken = useSelector((state: RootState) => state.user?.accessToken);
 

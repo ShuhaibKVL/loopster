@@ -8,7 +8,7 @@ import userAuthService from '@/services/user/userAuthService';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ValidationError } from 'yup';
 import "../../globals.css";
@@ -37,7 +37,6 @@ const Page = () => {
     })
 
     const handleSubmit = async(formData:IsignIn) => {
-        console.log('formData :',formData)
         if(formData?.email.length <= 1 ){
             setError('Please enter your valid email')
             return
@@ -58,11 +57,9 @@ const Page = () => {
 
                 const userData ={
                     user:user?.userData,
-                    accessToken:user?.accessToken
+                    accessToken:user?.accessToken,
+                    totalUnReadMessages:user?.totalUnReadMessages
                 }
-
-                console.log("user data >>>>>",userData)
-
                 dispatch(login(userData))
                 router.replace('/feed')
 

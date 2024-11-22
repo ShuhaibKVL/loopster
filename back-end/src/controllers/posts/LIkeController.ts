@@ -2,10 +2,17 @@ import { Request, Response } from "express";
 import { ILikeService } from "../../interfaces/posts/likes/ILikeService";
 import { HttpStatus } from "../../enums/httpStatus";
 import { ILike } from "../../models/Like";
+import { INotification } from "../../models/notification";
+import mongoose from "mongoose";
+import { IPostService } from "../../interfaces/posts/IPostServices";
+import { IPost } from "../../models/Post";
+import { INotificationService } from "../../interfaces/notification/INotificationService";
 
 export class LikeController {
     constructor(
-        private likeService : ILikeService
+        private likeService : ILikeService,
+        private postService : IPostService,
+        private notificationService : INotificationService
     ){}
 
     async create_like(req:Request , res:Response) :Promise<unknown>{
@@ -25,6 +32,22 @@ export class LikeController {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:'failed to create like document.'})
                 return
             }
+            const post  = await this.postService.findPostById(postId as string)
+            if(!post){
+                console.log('Failed to fetch post')
+            }
+            const postData = post as IPost
+
+            const newNotification : INotification = {
+                senderId:postData?.userId,
+                userId:userId as string,
+                type:'post',
+                message:'post liked',
+                postId:postId as string
+            }
+
+            await this.notificationService.create(newNotification)
+
             res.status(HttpStatus.CREATED).json({message:'Successfully like created',status:true})
             return
         } catch (error:any) {

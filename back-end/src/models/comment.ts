@@ -3,7 +3,8 @@ import mongoose , { ObjectId , Schema} from "mongoose";
 export interface IComment extends Document{
     postId:ObjectId,
     userId:ObjectId,
-    comment:string
+    comment:string,
+    likes?:ObjectId[]
 }
 
 const commentSchema : Schema = new mongoose.Schema<IComment>({
@@ -18,6 +19,9 @@ const commentSchema : Schema = new mongoose.Schema<IComment>({
     comment:{
         type:String,
         required:true
+    },
+    likes:{
+        type:Array
     }
 },{timestamps:true})
 

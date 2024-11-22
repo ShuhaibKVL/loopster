@@ -2,10 +2,12 @@ import { Request, Response} from 'express'
 import { HttpStatus } from '../../enums/httpStatus'
 import { IChatService } from '../../interfaces/chat/IChatService'
 import { IChat } from '../../models/chat'
+import { IMessageService } from '../../interfaces/message/IMessageService'
 
 export class ChatController{
     constructor(
-        private chatService : IChatService
+        private chatService : IChatService,
+        private messageService : IMessageService
     ){}
 
     async createChat(req:Request,res:Response):Promise<unknown>{
@@ -43,7 +45,10 @@ export class ChatController{
                 res.status(HttpStatus.BAD_REQUEST).json({message:'Failed to fetch chats',status:false})
                 return
             }
-            res.status(HttpStatus.CREATED).json({message:"chats fetched successfully",chats:chats,status:true})
+            const unReadMsgPerChat = await this.messageService.unReadMessagesPerChat(currentUserId as string)
+            console.log('unReadMsgPerChat :',unReadMsgPerChat)
+
+            res.status(HttpStatus.CREATED).json({message:"chats fetched successfully",chats:chats,unReadMsgPerChat:unReadMsgPerChat,status:true})
         } catch (error:any) {
             res.status(HttpStatus.BAD_REQUEST).json({message:error.message,status:false})
         }

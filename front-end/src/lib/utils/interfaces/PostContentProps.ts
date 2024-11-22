@@ -8,7 +8,7 @@ export interface PostContentProps {
     postId:string,
     userId:string,
     isLiked?:boolean,
-    likeCount:number,
+    likeCount?:number,
     isBookMarked?:boolean,
-    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+    refetchPosts?: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
 }

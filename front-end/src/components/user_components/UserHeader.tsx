@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import FollowHandleButton from './FollowHandleButton'
 import FollowUnFollow from './FollowUnFollow'
 import UnFollowHandleButton from './UnFollowHandelButton'
+import Link from 'next/link'
 
 
 export interface IUserHeader {
@@ -78,10 +79,12 @@ export default function UserHeader({
                         )}
                     </Avatar>
                 </div>
-                <div className="flex flex-col gap-1">
-                <h1 className='font-bold'>{fullName || 'fullName'}</h1>
-                <p className='font-mono'>{userName || 'userName'}</p>
-                </div>
+                <Link href={`/feed/profile/${_id}`} >
+                    <div className="flex flex-col gap-1">
+                    <h1 className='font-bold'>{fullName || 'fullName'}</h1>
+                    <p className='font-mono'>{userName || 'userName'}</p>
+                    </div>
+                </Link>
                 </div>
                 <FollowUnFollow follow={followedCount} followers={followersCount} />
 
@@ -95,10 +98,12 @@ export default function UserHeader({
             ) : ('')}
             
             </HoverCard>
-            <div className="flex flex-col gap-1">
+            <Link href={`/feed/profile/${_id}`} >
+                <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>
                 <p className='font-mono'>{userName || 'userName'}</p>
-            </div>
+                </div>
+            </Link>
         </div>
         </div>
     )

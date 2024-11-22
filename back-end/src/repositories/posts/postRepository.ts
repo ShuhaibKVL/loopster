@@ -14,6 +14,10 @@ export class PostRepository implements IPostRepository {
         return  await Post.create(data)
     }
 
+    async findPostById(id: string): Promise<unknown> {
+        return await Post.findById(id)
+    }
+
     async delete(postId: string): Promise<any> {
         return await Post.findByIdAndUpdate(postId,{isList:false})
     }

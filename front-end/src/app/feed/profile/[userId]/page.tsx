@@ -1,38 +1,38 @@
 'use client'
 
-import React, { Suspense, useEffect } from 'react'
-import Image from 'next/image'
-import defaultProfile from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
-import { Button } from '@/components/ui/button'
-import {Pencil2Icon  } from '@radix-ui/react-icons'
-import {UploadIcon} from '@radix-ui/react-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/lib/redux/store/store'
 import withAuth from '@/app/contexts/withAuth'
-import { useState } from 'react'
-import { useRef } from 'react'
-import userAuthService from '@/services/user/userAuthService'
-import { ISignUp_user } from '@/app/(auth)/signUp/page'
-import Form from '@/components/cm/Form'
-import { editProfileSchema } from '../../../lib/utils/validationSchemas'
-import { ValidationError } from 'yup'
-import { useToast } from '@/hooks/use-toast'
 import { confirmAction } from '@/components/cm/ConfirmationModal'
-import { IUserWithCounts } from '../../../lib/utils/interfaces/IUserWIthCounts'
-import PostContentContainer from '@/components/post_components/PostContentContainer'
 import ReusableDropdown from '@/components/cm/DropDownMenu'
-import postService from '@/services/user/post/postServices'
-import FollowUnFollow from '@/components/user_components/FollowUnFollow'
-import PostContentSkeleton from '@/components/skeltons/PostContentSkeleton'
+import Form from '@/components/cm/Form'
 import EditPost from '@/components/post_components/EditPost'
+import PostContentContainer from '@/components/post_components/PostContentContainer'
+import PostContentSkeleton from '@/components/skeltons/PostContentSkeleton'
+import { Button } from '@/components/ui/button'
+import FollowUnFollow from '@/components/user_components/FollowUnFollow'
+import { useToast } from '@/hooks/use-toast'
+import { RootState } from '@/lib/redux/store/store'
 import { IPostResponse } from '@/lib/utils/interfaces/IPost'
+import postService from '@/services/user/post/postServices'
+import userAuthService from '@/services/user/userAuthService'
+import { Pencil2Icon, UploadIcon } from '@radix-ui/react-icons'
+import Image from 'next/image'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ValidationError } from 'yup'
+import { IUserWithCounts } from '../../../../lib/utils/interfaces/IUserWIthCounts'
+import { editProfileSchema } from '../../../../lib/utils/validationSchemas'
+import defaultProfile from '../../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
 
 
-const Page = () => {
+const Page = ({params}:{params:{userId:string}}) => {
     const dispatch = useDispatch()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const userId = useSelector((state:RootState) => state.user.userId)
+    const loginedUserId = useSelector((state:RootState) => state.user.userId)
 
+    console.log('params :',params)
+    const userId = params?.userId || loginedUserId
+    console.log('userId :',userId)
+    
     const [userData, setUserData] = useState<IUserWithCounts | null>(null);
     const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfile)
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
@@ -94,10 +94,10 @@ const Page = () => {
                 });
             
                 if(willProceed){
-                    const update = await userAuthService.uploadProfileImg(userId,formData)
+                    const update = await userAuthService.uploadProfileImg(loginedUserId,formData)
                     console.log('update :',update)
                 if(update.status){
-                    getUserData(userId)
+                    getUserData(loginedUserId)
                     toast({
                         title: 'Success',
                         description:`${userData?.fullName} data updated successfully`,
@@ -127,11 +127,11 @@ const Page = () => {
         try {
             console.log('formData :',formData)
             await editProfileSchema.validate(formData, {abortEarly:true})
-            const updateProfile = await userAuthService.editProfile(userId,formData)
+            const updateProfile = await userAuthService.editProfile(loginedUserId,formData)
             console.log(updateProfile)
             if(updateProfile.status){
                 handleEditContainer()
-                getUserData(userId)
+                getUserData(loginedUserId)
                 toast({
                     title: 'Success',
                     description:`${userData?.fullName} data updated successfully`,
@@ -173,7 +173,7 @@ const Page = () => {
                     className:"toast-failed"
                 })
             }
-            getUserData(userId)
+            getUserData(loginedUserId)
         }
     }
 
@@ -195,7 +195,7 @@ const Page = () => {
             alt="Profile Image"
             />
             <UploadIcon
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className={`absolute top-1/2 left-1/2 ${userId !== loginedUserId && 'hidden'} transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
             onClick={handleUploadClick}
             />
             <input
@@ -217,7 +217,7 @@ const Page = () => {
     </section>
         {/* user Details and edit section */}
         <div className='relative p-5 border rounded-lg space-y-1 overflow-hidden'>
-            <Button onClick={handleEditContainer} className='border-2 absolute right-5 ' variant={'destructive'} size='icon'>
+            <Button onClick={handleEditContainer} className={`border-2 absolute right-5 ${userId !== loginedUserId && 'hidden'} `} variant={'destructive'} size='icon'>
                 <Pencil2Icon />
             </Button>
             <section>
@@ -241,14 +241,15 @@ const Page = () => {
                     userData?.posts.map((post) => (
                         <div className='relative'>
                             <div className='absolute z-10 sm:top-2 -right-2'>
-                            <ReusableDropdown
-                                options={[
-                                    { label: 'Delete', action: () => handleDelete(post?._id) },
-                                    { label: 'Edit', action: () => handleEdit(post) }
-
-                                ]}
-                                postId={post?._id}
-                            />
+                                {userId === loginedUserId && (
+                                    <ReusableDropdown
+                                    options={[
+                                        { label: 'Delete', action: () => handleDelete(post?._id) },
+                                        { label: 'Edit', action: () => handleEdit(post) }
+                                    ]}
+                                    postId={post?._id}
+                                />
+                                )}
                             </div>
                             <Suspense fallback={<PostContentSkeleton />}>
                                 <PostContentContainer 
@@ -266,7 +267,7 @@ const Page = () => {
                             isOpen={isOpen}
                             setIsOpen={setIsOpen}
                             postData={currentPost as IPostResponse}
-                            userId={userId}
+                            userId={loginedUserId}
                             getUserData={getUserData}
                             />
                         </div>

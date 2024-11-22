@@ -3,8 +3,6 @@ import { postApi } from "@/services/apis/axiosInstance";
 import { IPostServices } from "./interfaces/IPostServices";
 import { IReport } from "@/lib/utils/interfaces/IReport";
 import { IPostProps } from "@/lib/utils/interfaces/PostProps";
-import { PostProps } from "@/app/components/post_components/Post";
-
 export class PostService implements IPostServices {
 
     async createPost(formData: IPost | FormData): Promise<any> {
@@ -22,7 +20,6 @@ export class PostService implements IPostServices {
     }
 
     async update(content: string, postId: string): Promise<{message:string,status:boolean}> {
-        console.log(">>>>>>>>>>>>>>",typeof content)
         const res = await postApi.post(`/${postId}/update`,{content})
         return res?.data
     }
@@ -33,7 +30,6 @@ export class PostService implements IPostServices {
     }
 
     async getLatestPosts(userId:string,page?:number): Promise<any> {
-        console.log('iniside the post service :',userId,"page :",page)
         const res = await postApi.get(`/${userId}/get-latest-posts?page=${page}`)
         return res.data
     }
