@@ -10,4 +10,5 @@ export interface IPostService {
     getLatestPosts(userId:string,page:number):Promise<any>
     getFollowedUsersPosts(userId:string,page:number):Promise<any>
     getBookMarkedPosts(userId:string,page:number):Promise<unknown>
+    getPost(postId:string,userId:string):Promise<unknown>
 }

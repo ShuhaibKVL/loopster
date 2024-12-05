@@ -9,9 +9,10 @@ import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 
 interface IFollowUserIds{
     following:string,
-    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+    isButton?:boolean,
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
-export default function FollowHandleButton({following,refetchPosts}:IFollowUserIds) {
+export default function FollowHandleButton({following,refetchPosts,isButton}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
     const dispatch = useAppDispatch()
 
@@ -27,6 +28,12 @@ export default function FollowHandleButton({following,refetchPosts}:IFollowUserI
         await refetchPosts()
     }
     return (
-        <Button onClick={handleFollow} className='w-full'>Follow</Button>
+        <>
+        {isButton ? (
+            <Button onClick={handleFollow} className='w-full'>Follow</Button>
+        ) : (
+            <p onClick={handleFollow} className='text-blue-500 cursor-pointer text-md'>Follow</p>
+        )}
+        </> 
     )
 }

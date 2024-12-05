@@ -2,44 +2,34 @@
 
 import withAuth from '@/app/contexts/withAuth'
 import { confirmAction } from '@/components/cm/ConfirmationModal'
-import ReusableDropdown from '@/components/cm/DropDownMenu'
 import Form from '@/components/cm/Form'
-import EditPost from '@/components/post_components/EditPost'
-import PostContentContainer from '@/components/post_components/PostContentContainer'
-import PostContentSkeleton from '@/components/skeltons/PostContentSkeleton'
 import { Button } from '@/components/ui/button'
 import FollowUnFollow from '@/components/user_components/FollowUnFollow'
 import { useToast } from '@/hooks/use-toast'
 import { RootState } from '@/lib/redux/store/store'
-import { IPostResponse } from '@/lib/utils/interfaces/IPost'
-import postService from '@/services/user/post/postServices'
 import userAuthService from '@/services/user/userAuthService'
 import { Pencil2Icon, UploadIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import React, { Suspense, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { ValidationError } from 'yup'
 import { IUserWithCounts } from '../../../../lib/utils/interfaces/IUserWIthCounts'
 import { editProfileSchema } from '../../../../lib/utils/validationSchemas'
 import defaultProfile from '../../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
-
+import Setting from '@/components/cm/Setting'
+import DefaultPosts from '@/components/post_components/profile/defaultPosts'
 
 const Page = ({params}:{params:{userId:string}}) => {
-    const dispatch = useDispatch()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const loginedUserId = useSelector((state:RootState) => state.user.userId)
 
-    console.log('params :',params)
     const userId = params?.userId || loginedUserId
-    console.log('userId :',userId)
     
     const [userData, setUserData] = useState<IUserWithCounts | null>(null);
     const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfile)
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
     const [ error , setError ] = useState('')
     const  { toast } = useToast()
-    const [ isOpen , setIsOpen ] = useState(false)
-    const [ currentPost , setCurrentPost ] = useState<IPostResponse | null>(null)
 
     const editUserFields = [
         {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
@@ -47,20 +37,15 @@ const Page = ({params}:{params:{userId:string}}) => {
         {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
     ]
 
-    const editPostFields = [
-        {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
-        {name:'userName',type:"text",label:"User Name",placeHolder:`${userData?.userName}`, value:`${userData?.userName}` },
-        {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
-    ]
-
-    async function getUserData(userId :string){
+    async function getUserData(){
         const user = await userAuthService.user(userId)
+        console.log('user data :',user)
         setUserData(user?.userData[0])
     }
 
     useEffect(() => {
         if(userId){
-            getUserData(userId)
+            getUserData()
         }
     },[userId])
 
@@ -97,7 +82,7 @@ const Page = ({params}:{params:{userId:string}}) => {
                     const update = await userAuthService.uploadProfileImg(loginedUserId,formData)
                     console.log('update :',update)
                 if(update.status){
-                    getUserData(loginedUserId)
+                    getUserData()
                     toast({
                         title: 'Success',
                         description:`${userData?.fullName} data updated successfully`,
@@ -131,7 +116,7 @@ const Page = ({params}:{params:{userId:string}}) => {
             console.log(updateProfile)
             if(updateProfile.status){
                 handleEditContainer()
-                getUserData(loginedUserId)
+                getUserData()
                 toast({
                     title: 'Success',
                     description:`${userData?.fullName} data updated successfully`,
@@ -155,36 +140,10 @@ const Page = ({params}:{params:{userId:string}}) => {
         }
     }
 
-    // Handel post delete
-    const handleDelete = async (postId:string) => {
-
-        const willProceed = await confirmAction({
-            title: `Are you sure to delete ?`,
-            text: `Once deleted, you are not able to return..!`,
-            icon: 'warning',
-        });
-        if(willProceed){
-            const response = await postService.deletePost(postId)
-            console.log('post delete response :',response)
-            if(response?.status){
-                toast({
-                    title: 'Failed',
-                    description: response?.message,
-                    className:"toast-failed"
-                })
-            }
-            getUserData(loginedUserId)
-        }
-    }
-
-    // Handel post delete
-    const handleEdit = async (post:IPostResponse) => {
-        setCurrentPost(post)
-         setIsOpen(true)
-    }
     
     return (
     <div className='p-5 space-y-2 sm:space-y-10'>
+        <Setting />
         <div className="relative w-[100px] h-[100px] sm:w-[150px] sm:h-[150px] m-auto group overflow-hidden rounded-full">
             <Image
             src={userData?.profileImage || defaultProfile}
@@ -211,8 +170,8 @@ const Page = ({params}:{params:{userId:string}}) => {
     {/* Follow / Following section */}
     <section className='flex items-center justify-center gap-x-9 w-full'>
         <FollowUnFollow
-        follow={Number(userData?.counts?.followedCount)}
-        followers={Number(userData?.counts?.followersCount)}
+            follow={Number(userData?.counts?.followedCount)}
+            followers={Number(userData?.counts?.followersCount)}
         />
     </section>
         {/* user Details and edit section */}
@@ -232,53 +191,10 @@ const Page = ({params}:{params:{userId:string}}) => {
             <p className='w-full h-10 text-center text-red-500'>{error}</p>
             <Form fields={editUserFields} onSubmit={handleModalSubmit} />
         </div>
-        {/* User Posts */}
-        <section>
-            <h2 className='w-full p-2 text-center border rounded-lg mb-2 bg-[var(--color-bg)]'>Your Posts</h2>
-            <div className='flex flex-col rounded-sm gap-2 p-2'>
+
+        {/* -------------  Users post deault view -------------- */}
+            <DefaultPosts userData={userData as IUserWithCounts} />
             
-                {userData?.posts.length !== 0 ? (
-                    userData?.posts.map((post) => (
-                        <div className='relative'>
-                            <div className='absolute z-10 sm:top-2 -right-2'>
-                                {userId === loginedUserId && (
-                                    <ReusableDropdown
-                                    options={[
-                                        { label: 'Delete', action: () => handleDelete(post?._id) },
-                                        { label: 'Edit', action: () => handleEdit(post) }
-                                    ]}
-                                    postId={post?._id}
-                                />
-                                )}
-                            </div>
-                            <Suspense fallback={<PostContentSkeleton />}>
-                                <PostContentContainer 
-                                    key={post?._id}
-                                    mediaUrl={post?.mediaUrl}
-                                    content={post?.content}
-                                    mediaType={post?.mediaType}
-                                    time={post?.createdAt}
-                                    postId={post?._id}
-                                    userId={post?.userId}
-                                    
-                                />
-                            </Suspense>
-                            <EditPost
-                            isOpen={isOpen}
-                            setIsOpen={setIsOpen}
-                            postData={currentPost as IPostResponse}
-                            userId={loginedUserId}
-                            getUserData={getUserData}
-                            />
-                        </div>
-                        
-                    ))
-                ) : (
-                    <p>No more posts</p>
-                )}
-            </div>
-        </section>
-        
     </div>
     )
 }

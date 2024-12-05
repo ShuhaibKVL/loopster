@@ -41,9 +41,7 @@ export default function RootLayout({
             <ThemeProvider>
               <NotificationProvider>
                 <CsFallBack>
-                  <ChatProvider>
                   {children}
-                  </ChatProvider>
                 </CsFallBack>
               </NotificationProvider>
               </ThemeProvider>

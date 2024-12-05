@@ -67,8 +67,8 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
     selectedComment(newComment)
   }
 
-  const likeComment = async(commentId:string) => {
-    const like = await commentService.likeComment(commentId,loggedUserId)
+  const likeComment = async(commentId:string,postId:string) => {
+    const like = await commentService.likeComment(commentId,loggedUserId,postId,)
     console.log('response :',like)
     getComments(comment?.postId)
   }
@@ -81,7 +81,7 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
     
   return (
     <>
-    <div className='flex gap-1 items-center justify-between'>
+    <div className='flex gap-1 items-center justify-between overflow-hidden'>
       <div className='flex gap-2'>
       <AvatarComponent
         imgUrl={userProfileImg}
@@ -108,16 +108,17 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
             className='opacity-75 text-red-600 cursor-pointer'
             />
         ) : (
-          <CiHeart onClick={() => likeComment(comment?._id)} 
+          <CiHeart onClick={() => likeComment(comment?._id,comment?.postId)} 
           className='w-4 h-4 cursor-pointer'
           />
         )}
       </div>
     </div>
 
-    {comment?.innerComments && (
+    <div className='max-h-40 overflow-y-scroll scrollbar-hide space-y-2'>
+    {comment?.innerComments.length > 1 && (
       comment?.innerComments?.map((item) => (
-        <div className='flex gap-1 items-center justify-between w-[80%] relative left-10'>
+        <div className='flex gap-1 items-center justify-between w-[80%] relative left-10 overflow-hidden'>
         <div className='flex gap-2'>
         <AvatarComponent
           imgUrl={item?.user?.profileImage}
@@ -145,7 +146,7 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
             className='opacity-75 text-red-600 cursor-pointer'
             />
           ) : (
-          <CiHeart onClick={() => likeComment(item?._id)} 
+          <CiHeart onClick={() => likeComment(item?._id,item?.postId)} 
           className='w-4 h-4 cursor-pointer'
           />
           )}
@@ -156,6 +157,7 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
       </div>
       ))
     )}
+    </div>
     </>
   )
 }

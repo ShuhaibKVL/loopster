@@ -261,5 +261,4 @@ export class UserRepository implements IUserRepository {
             return false
         }
     }
-
 }

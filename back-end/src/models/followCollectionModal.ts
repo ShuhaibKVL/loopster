@@ -7,12 +7,14 @@ export interface IFollow extends Document{
 
 const followSchema : Schema = new mongoose.Schema<IFollow>({
     follower:{
-        type:mongoose.Schema.Types.ObjectId ,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required:true
     },
     following:{
         type:mongoose.Schema.Types.ObjectId,
-        required:true   
+        ref:'User',
+        required:true  
     }
 },{timestamps:true})
 

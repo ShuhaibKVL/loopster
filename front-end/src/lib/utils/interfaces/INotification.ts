@@ -12,12 +12,12 @@ export interface INotification{
 
 export interface INotificationResponse{
     _id:ObjectId,
-    senderId:{_id:string,userName:string,profileImg:string};
-    userId:{_id:string,userName:string,profileImg:string};
+    senderId:{_id:string,userName:string,profileImage:string};
+    userId:{_id:string,userName:string,profileImage:string};
     type:'post' | 'comment' | 'follow';
     message:'post liked' | 'followed you' | 'unfollowed you' | 'liked your comment' | 'commented on your post';
     postId?:{content:string,mediaType:string,_id:string,mediaUrl:"none" | "video" | "image"};
     commentId?:{comment:string,postId:string};
     isRead:boolean
-    createdAt:string
+    createdAt:string | Date
 }

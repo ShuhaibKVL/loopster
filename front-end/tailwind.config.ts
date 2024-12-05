@@ -6,6 +6,17 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
+	safelist:[
+		"bg-gradient-to-r from-gray-100 via-gray-300 to-gray-200", 
+		"bg-gradient-to-b from-white to-blue-500" ,
+    	"bg-gradient-to-r from-green-50 via-teal-100 to-blue-50" , 
+		"bg-gradient-to-bl from-pink-50 via-red-100 to-yellow-50" ,
+    	"bg-gradient-to-r from-indigo-50 via-purple-100 to-pink-50" , 
+		"bg-gradient-to-tl from-yellow-100 via-orange-200 to-red-100" ,
+    	'bg-black' , 
+		'bg-white',
+		'text-white'
+	],
 	theme: {
 		extend: {
 			colors: {
@@ -34,6 +45,7 @@ const config: Config = {
 	plugins: [
 	require('tailwind-scrollbar-hide'),
 	require('daisyui'),
+	require('tailwind-scrollbar')
 	],
 
 };

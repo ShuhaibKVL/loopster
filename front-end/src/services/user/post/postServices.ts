@@ -1,4 +1,4 @@
-import { IPost } from "@/lib/utils/interfaces/IPost";
+import { IPost, IPostResponse } from "@/lib/utils/interfaces/IPost";
 import { postApi } from "@/services/apis/axiosInstance";
 import { IPostServices } from "./interfaces/IPostServices";
 import { IReport } from "@/lib/utils/interfaces/IReport";
@@ -29,12 +29,12 @@ export class PostService implements IPostServices {
         return res.data
     }
 
-    async getLatestPosts(userId:string,page?:number): Promise<any> {
+    async getLatestPosts(userId:string,page?:number): Promise<{posts:[]}> {
         const res = await postApi.get(`/${userId}/get-latest-posts?page=${page}`)
         return res.data
     }
 
-    async getFollowedUserPosts(userId: string, page?: number): Promise<unknown> {
+    async getFollowedUserPosts(userId: string, page?: number): Promise<{posts:[]}> {
         const res = await postApi.get(`/${userId}/followed-users-post?page=${page}`)
         return res.data
     }
@@ -44,6 +44,10 @@ export class PostService implements IPostServices {
         return res.data
     }
 
+    async getPost(postId: string, userId: string): Promise<{message:string,posts:IPostResponse[]}> {
+        const res = await postApi.get(`/${userId}/view-post?postId=${postId}`)
+        return res.data
+    }
 }
 
 const postService = new PostService()

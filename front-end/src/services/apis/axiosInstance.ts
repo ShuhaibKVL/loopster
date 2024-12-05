@@ -26,6 +26,10 @@ export const chatApi = axios.create({
     baseURL:`${BASE_URL}/api/chat`
 })
 
+export const chatBotApi = axios.create({
+    baseURL:`${BASE_URL}/api/chat-boat`
+})
+
 // Public URL for unauthenticated admin request (signIn/ signUp)
 export const admin_publicApi = axios.create({
     baseURL:`${BASE_URL}/api/admin`
@@ -35,6 +39,7 @@ export const admin_publicApi = axios.create({
 export const adminApi = axios.create({
     baseURL:`${BASE_URL}/api/admin`
 })
+
 
 userApi.interceptors.request.use(
     (config) => {
@@ -80,6 +85,21 @@ postApi.interceptors.request.use(
 )
 
 chatApi.interceptors.request.use(
+    (config) => {
+        const state = store.getState()
+        const token = state?.user?.accessToken
+        console.log('token inside axios interceptor :',token)
+
+        if(token){
+            config.headers.Authorization = `Bearer ${token}`
+        }
+
+        return config
+    },
+    (error) => Promise.reject(error)
+)
+
+chatBotApi.interceptors.request.use(
     (config) => {
         const state = store.getState()
         const token = state?.user?.accessToken
@@ -178,7 +198,26 @@ chatApi.interceptors.response.use(
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
+        return Promise.reject(error)
+    }
+)
 
+chatBotApi.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        const { response } = error;
+
+        //If the server return 401 0r 403 , handle unauthorized access
+        if(response?.status === 401 || response?.status === 403) {
+            //Logout the user from Redux and clear token
+            store.dispatch(logout())
+
+            Router.redirect('/signIn')
+        }else if (response) {
+            toast.error('Network issue: Unable to connect to the server. Please try again later.');
+        }
         return Promise.reject(error)
     }
 )

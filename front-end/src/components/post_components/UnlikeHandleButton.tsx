@@ -5,7 +5,7 @@ import { InfiniteData, QueryObserverResult } from '@tanstack/react-query';
 import React from 'react'
 import { FaHeart } from "react-icons/fa";
 
-export default function UnlikeHandleButton({postId,refetchPosts}:{postId:string,refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;}) {
+export default function UnlikeHandleButton({postId,refetchPosts}:{postId:string,refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );}) {
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     const handleUnLike = async() => {
         const response = await likeService.unlike(postId,userId)   

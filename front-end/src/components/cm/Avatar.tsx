@@ -3,10 +3,12 @@ import { BiSolidUserCircle } from 'react-icons/bi'
 
 interface IAvatarProps{
     imgUrl?:string
+    h?:string,
+    w?:string
 }
-export default function AvatarComponent({imgUrl}:IAvatarProps) {
+export default function AvatarComponent({imgUrl,h='h-10',w='w-10'}:IAvatarProps) {
     return (
-        <div className="h-10 w-10 overflow-hidden shrink-0 rounded-full border">
+        <div className={`${h} ${w} overflow-hidden shrink-0 rounded-full border`}>
         <Avatar >
         {imgUrl !== '' ? 
         (<>

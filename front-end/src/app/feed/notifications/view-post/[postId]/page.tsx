@@ -1,11 +1,13 @@
+'use client'
+
+import withAuth from '@/app/contexts/withAuth'
+import ViewPost from '@/components/notification/ViewPost'
 import Post from '@/components/post_components/Post'
 import React from 'react'
-
-export default function page({params}:{params:{userId:string}}) {
-  
+const Page = ({params}:{params:{postId:string}}) => {
   return (
-    <div className='w-full min-h-full bg-red-50'>
-      {/* <Post /> */}
-    </div>
+      <ViewPost  postId={params?.postId}/>
   )
 }
+
+export default withAuth(Page,true)

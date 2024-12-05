@@ -5,6 +5,9 @@ export interface IMessage{
   content:string;
   chatType:'individual' | 'group';
   chatId:string | ObjectId;
+  mediaType:'none' | 'video' |'image';
+  mediaUrl?:string;
+  deleteFromMe?:string[];
 }
 
 
@@ -22,7 +25,10 @@ const messageSchema = new mongoose.Schema({
       refPath:'Chat',
       required: true 
     },
-    isRead:{type:Array}
+    mediaType:{type:String,enum:['none','video','image'],default:'none'},
+    mediaUrl:{type:String},
+    deleteFromMe:{type:Array,unique:true},
+    isRead:{type:Array,unique:true }
 },{timestamps:true});
 
 export const Message = mongoose.model('Message', messageSchema);

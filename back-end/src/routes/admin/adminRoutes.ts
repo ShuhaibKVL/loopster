@@ -13,6 +13,12 @@ import { AuthService } from "../../services/AuthService";
 import { ReportManagementRepository } from "../../repositories/admin/reportManagementRepository";
 import { ReportManagementService } from "../../services/admin/reportManagementService";
 import { ReportManagementController } from "../../controllers/admin/reportManagementController";
+import { FollowRespository } from "../../repositories/follow/followRepository";
+import { FollowService } from "../../services/follow/FollowService";
+import FollowController from "../../controllers/followController";
+import { NotificationRepository } from "../../repositories/notification/notificationRepository";
+import { NotificationService } from "../../services/notification/notificationService";
+import { DashBoardController } from "../../controllers/admin/dashboardController";
 
 const router:Router = Router()
 
@@ -33,8 +39,14 @@ const postManagementRepository = new PostManagementRepository()
 const postManagementService = new PostManagementService(postManagementRepository,reportManagementRepository)
 const postManagementController = new PostManagementController(postManagementService)
 
+const notificationRepository = new NotificationRepository()
+const notificationService = new NotificationService(notificationRepository)
 
+const followRepository = new FollowRespository()
+const followService = new FollowService(followRepository)
+const followController = new FollowController(followService,notificationService)
 
+const dashBoardController = new DashBoardController(postManagementService,userManagementService)
 
 router.post('/signIn',adminController.signIn.bind(adminController))
 
@@ -43,10 +55,18 @@ router.use(authorize)
 router.get('/users',userManagementController.getAllUsers.bind(userManagementController))
 router.patch('/user/:userId/block',userManagementController.blockUnBlock.bind(userManagementController))
 router.patch('/user/:userId/unlist',userManagementController.listUnList.bind(userManagementController))
+router.get('/user',userManagementController.findById.bind(userManagementController))
+
 router.get('/post/all-posts',postManagementController.getAllPosts.bind(postManagementController))
 router.patch('/post/list-unlist',postManagementController.listUnList.bind(postManagementController))
 router.get('/post/new-reportes',reportManagementController.getAllReports.bind(reportManagementController))
 router.patch('/post/report-post',postManagementController.reportPost.bind(postManagementController))
 router.patch('/post/report/mark-as-readed',reportManagementController.markAsRead.bind(reportManagementController))
+
+// for dashboard 
+router.get('/post/most-liked-posts',postManagementController.findMostLikedPosts.bind(postManagementController))
+router.get('/user/most-followed-accounts',followController.findMostFollowerUsers.bind(followController))
+router.get('/user/get-total-accounts',userManagementController.getTotalAccountsCount.bind(userManagementController))
+router.get('/dashboard/chart-data',dashBoardController.getChartData.bind(dashBoardController))
 
 export default router

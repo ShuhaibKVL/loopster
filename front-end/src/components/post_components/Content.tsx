@@ -12,7 +12,7 @@ export default function Content({content,fonts = 100,size='text-base'}:{content:
                         : content?.toString()?.slice(0, fonts) + '...',
                 }}
             />
-            {content.toString().length > fonts &&
+            {content?.toString().length > fonts &&
             (
                 <span
                 onClick={() => setIsExpanded(!isExpanded)}

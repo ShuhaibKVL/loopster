@@ -19,6 +19,7 @@ export default function BookMarkPosts() {
     if (userId) {
       
       const response = await postService.getBookMarkedPosts(userId,page)
+      console.log('response :',response)
       const data : IPostProps[] = response?.posts
       console.log('data :>>>>>>>>>>>>>>>>>>>>>>',data)
       await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -5,6 +5,7 @@ import { Server } from 'socket.io'
 import { MessageService } from "../../services/chat/messageService";
 import { chatRepository, messageService } from "../../routes/user/chatRoutes";
 import { ObjectId } from "mongoose";
+import { S3Service } from "../../services/admin/S3Services.ts/S3Service";
 
 const app = express()
 
@@ -35,6 +36,9 @@ export interface IUnreadChatMsg{
     unReadMsg:number
 }
 
+const onlineUsers = new Map();
+const s3Service = new S3Service()
+
 io.on('connection',(socket) => {
     console.log('user connected on socket.io :',socket.id)
 
@@ -50,17 +54,47 @@ io.on('connection',(socket) => {
         socket.join(`group:${groupId}`)
     })
 
+    // to store the online users id
+    socket.on('user-online',(data) => {
+        const {socketId , userId} = data
+        console.log('user-online :',data)
+        
+        if(!onlineUsers.has(socketId)){
+            console.log('added')
+            onlineUsers.set(socketId,userId)
+        }else{
+            console.log('all ready existed :',onlineUsers.get(socketId))
+        }
+
+        // while a new user-online updated, udate alos users
+        io.emit('updated-online-users',Array.from(onlineUsers.values()))
+    })
+
     // Handle individual message
     socket.on('sendIndividualMessage',async(data) => {
         try {
             console.log('socket io sendIndividualmessage invoked...')   
-            const { senderId , chatId , content } = data
+            const { senderId , chatId , content,mediaType,fileBuffer } = data
+            console.log(senderId,"<>",chatId,"<>",content,"<>",mediaType,"<>",fileBuffer)
 
+            let imageUrl ;
+            if(mediaType !== 'none'){
+                if(!fileBuffer){
+                    throw Error('file is missing')
+                }
+                const fileName = `profile-images/${fileBuffer?.originalname}-${Date.now()}.jpeg`;
+                console.log('fileName :',fileName,"FileBuffer :",fileBuffer)
+                imageUrl = await s3Service.uploadFile(fileBuffer,fileName)
+                console.log("s3 response image url :",imageUrl)   
+            }
+            
             const newMessage : IMessage = {
                 sender:senderId,
                 content,
                 chatType:'individual',
-                chatId:chatId
+                chatId:chatId,
+                mediaType:mediaType,
+                mediaUrl:imageUrl
             }
 
             const chat  = await chatRepository.fetchChat(chatId)
@@ -83,13 +117,20 @@ io.on('connection',(socket) => {
     //Handle group message
     socket.on('sendGroupMessage',async(data) => {
         try {
-            const { senderId, content ,chatId} = data;
-            console.log('group message >>  :',data)
+            const { senderId, content ,chatId,mediaType,fileBuffer} = data;
+            console.log(senderId,"<>",chatId,"<>",content,"<>",mediaType,"<>",fileBuffer)
+
+            if(mediaType !== 'none' && !fileBuffer ){
+                throw Error('file is missing')
+            }
+
             const newMessage : IMessage = {
                 sender:senderId,
                 content,
                 chatType:'group',
-                chatId:chatId
+                chatId:chatId,
+                mediaType:mediaType,
+                mediaUrl:'' //mediaUrl
             }
             
             const response = await messageService.create(newMessage)
@@ -124,27 +165,55 @@ io.on('connection',(socket) => {
             const convertedUnReadMsg = unReadMessagesPerChat as IUnreadChatMsg[]
             const chatIds = convertedUnReadMsg.map((chat) => chat?._id)
 
-            console.log('chat id s >>>>>>>> ',chatIds)
-
             io.to(`user:${userId}`).emit('updatedUnReadMessage',{
                 unReadMessagesPerChat,
                 totalUnreadMessage
             })
-
-            // chatIds.forEach((chatId) => {
-            //     io.to(`group:${chatId}`).emit('updatedUnReadMessage', {
-            //         unReadMessagesPerChat,
-            //         totalUnreadMessage,
-            //     });
-            // });
 
         } catch (error) {
             console.log('error on socke.io while message mark as readed :',error)
         }
     })
 
+    socket.on('onTyping...',async(data) => {
+        try {
+            console.log('onType >')
+            const { senderId , chatId } = data
+            console.log(">>",senderId,chatId)
+
+            io.to(`group:${chatId}`).emit('typing...',{
+                chatId,
+                senderId
+            })
+        } catch (error) {
+            console.log('error on socke.io while onType event :',error)
+        }
+    })
+
+    socket.on('on-type-end',async(data) => {
+        try {
+            console.log('on end type')
+            const { senderId , chatId } = data
+            console.log(">>",senderId,chatId)
+
+            io.to(`group:${chatId}`).emit('type-ended',{
+                chatId,
+                senderId
+            })
+            
+        } catch (error) {
+            console.log('error on socke.io while end type event :',error)
+        }
+    })
+
     socket.on('disconnect',() => {
         console.log('User disconnected :',socket.id)
+        onlineUsers.delete(socket?.id)
+        console.log('updated online users :',onlineUsers)
+        console.log('online users Map()',onlineUsers)
+        // while a new user-online updated, udate alos users
+        io.emit('updated-online-users',Array.from(onlineUsers.values()))
+
     })
 })
 

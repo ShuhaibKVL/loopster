@@ -28,4 +28,13 @@ export class PostManagementService implements IPostManagementService {
         console.log('markAsReaded :',markAsReaded)
         return markAsReaded
     }
+
+    async findMostLikedPost(): Promise<unknown> {
+        return await this.postMangementRepository.findMostLikedPost()
+    }
+
+    async findPostsBasedOnDay(): Promise<unknown> {
+        return await this.postMangementRepository.findPostsBasedOnDay()
+    }
+
 }

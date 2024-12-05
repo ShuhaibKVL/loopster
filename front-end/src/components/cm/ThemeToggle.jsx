@@ -1,14 +1,17 @@
+'use client'
+
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState(() =>
+        document.documentElement.getAttribute('data-theme') || 'light'
+    );
 
     useEffect(() => {
         console.log('>>>>>> Theme useEffect invoked',)
         document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.transition = 'background-color 0.3s'
     }, [theme]);
-
-
 
     const toggleTheme = () => {
         console.log('theme setting invoked',theme ,"set to opposite ")

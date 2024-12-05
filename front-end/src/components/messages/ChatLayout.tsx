@@ -6,7 +6,6 @@ import UsersList from './UsersList'
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch'
 import { RootState } from '@/lib/redux/store/store'
 import SearchInput from '../cm/SearchInput'
-import { Button } from '../ui/button'
 import { ISearchUsers } from '@/lib/utils/interfaces/ISeacrchUsers'
 import userAuthService from '@/services/user/userAuthService'
 import chatService from '@/services/user/chat/chatService'
@@ -14,14 +13,16 @@ import { IChat } from '@/lib/utils/interfaces/IChat'
 import ChatUsers, { IChatUsersList } from './ChatUsers'
 import { useToast } from '@/hooks/use-toast'
 import messageService from '@/services/user/messages/messageService'
-import { IMessageResponse } from '@/lib/utils/interfaces/iMessages'
 import MessageContainer from './MessageContainer'
 import { MdGroupAdd } from "react-icons/md";
 import { SocketContext } from '@/app/contexts/SocketContext'
 import CreateGroup from './CreateGroup'
 import MessageInput from './MessageInput'
-import { updateTotalUnReadMsg, updateUnReadMsgPerChat } from '@/lib/redux/features/auth/userSlice'
+import { updateUnReadMsgPerChat } from '@/lib/redux/features/auth/userSlice'
 import { useChat } from '@/app/contexts/chatContext'
+import Image from 'next/image'
+import { IoMdClose } from "react-icons/io";
+
 
 export interface activeChat{
     recipientId?:string,
@@ -47,8 +48,16 @@ export default function ChatLayout() {
     const [ isOpenCreateGroup , setIsOpenCreateGroup] = useState<boolean>(false)
     const { toast} = useToast()
     const dispatch = useAppDispatch()
-
-    const { activeChat, setActiveChat,messages,setMessages , message , sendMessage,handleMessageChange,chatContainerRef} = useChat()
+    
+    const { activeChat, setActiveChat,
+            messages,setMessages , 
+            message , sendMessage,
+            handleMessageChange,
+            chatContainerRef 
+            ,typing,onlineUsers,
+            prevFileUrl,
+            setPrevFileUrl
+          } = useChat()
  
     const socket = useContext(SocketContext);
  
@@ -86,7 +95,7 @@ export default function ChatLayout() {
       console.log('created new individual Chat :',createNewChat)
     }else if(activeChat?.chatType === 'group' && activeChat.chatId === ''){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",activeChat)
-      if(activeChat?.groupId?.length < 2 ){
+      if(activeChat?.groupId && activeChat?.groupId?.length < 2 ){
         toast({
           title:'Failed',
           description:'Failed to get group users id',
@@ -126,6 +135,7 @@ export default function ChatLayout() {
     } 
   }
 
+  
   const markMsgAsReaded = () => {
     const extractMsgIds = messages.map((message) => message?._id)
     console.log('message id s :',extractMsgIds)
@@ -158,8 +168,17 @@ export default function ChatLayout() {
       {/* users / chatList container */}
      <div className="relative w-full md:w-2/4 min-h-full border-r">
         {/* -------------- serch form ------------- */}
-        <div className='w-full min-h-14 bg-[var(--secondary-bg)] flex items-center justify-center p-2'>
+        <div className='w-full min-h-14 bg-[var(--secondary-bg)] flex items-center justify-center p-2 gap-1'>
             <SearchInput onInputChange={setSearchInput}/>
+            {/* to create group */}
+            <div className='w-10 h-10 border flex items-center justify-center rounded-md'>
+            <MdGroupAdd  
+              onClick={() => setIsOpenCreateGroup(!isOpenCreateGroup)}
+              className='text-secondary w-6 h-6'
+              title='create a group chat'
+            />
+            </div>
+            
         </div>
         {/* ---- for keep the remain content from fixed search component ------
         <div className='w-full min-h-14'></div> */}
@@ -172,14 +191,13 @@ export default function ChatLayout() {
           setSearcchInput={setSearchInput}
         />
         ):(
-          <ChatUsers chatList={userList} setActiveChat={setActiveChat}/>
+          <ChatUsers 
+            chatList={userList} 
+            setActiveChat={setActiveChat}
+            setPrevFileUrl={setPrevFileUrl}
+          />
         )}
 
-        <MdGroupAdd  
-        onClick={() => setIsOpenCreateGroup(!isOpenCreateGroup)}
-        className='text-secondary absolute bottom-2 right-2 w-6 h-6 rounded-lg shadow-md'
-        title='create a group chat'
-        />
          {/* create group chat modal */}
          <CreateGroup 
          isOpenCreateGroup={isOpenCreateGroup}
@@ -190,24 +208,44 @@ export default function ChatLayout() {
      </div>
         {/* message display section in big sreeen md > */}
      <div className="chat-container relative w-full h-full scrollbar-hide hidden md:block">
-      <header className="fixed w-full h-[6%] border-b flex items-center gap-2 p-2 bg-[var(--secondary)] z-10">
+      <header className="fixed w-full h-[6%] border-b bg-[var(--secondary)] z-10">
+        <div className=' flex items-center gap-2 p-2'>
         <AvatarComponent imgUrl={activeChat?.profileImage} />
         <h1 className='font-semibold'>{activeChat?.userName}</h1>
-        {/* <p>{onlineUsers.length}</p> */}
+        </div>
+        <p>{onlineUsers.includes(activeChat?.recipientId as string) && 'online'}</p>
       </header>
         {/* for handling the space of fixed property */}
       <div className="w-full h-[6%]"></div>
 
-      <div className={`chatbox overflow-y-auto scrollbar-hide h-[88%] `} ref={chatContainerRef} >
-      {!activeChat?.chatId && !activeChat?.groupId ? (
+      <div className={`relative chatbox overflow-y-auto scrollbar-hide h-[88%] `} ref={chatContainerRef} >
+        
+        {/* ----------- to show the prev image if user select a file ----------  */}
+        {prevFileUrl ? (
+          <>
+          <Image
+            src={prevFileUrl}
+            className='w-full h-[95%] absolute'
+            width={100}
+            height={100}
+            objectFit='fill'
+            alt='prev'
+          />
+          <IoMdClose 
+            onClick={() => setPrevFileUrl(null)}
+            className='w-7 h-7 absolute bottom-0 left-2 ' 
+            title='remove the selected image'
+          />
+          </>
+        ) : !activeChat?.chatId && !activeChat?.groupId ? (
           <p className='w-full text-center p-2'>Select a chat to see messages</p>
-      ) : (
-        messages && messages?.length > 0 ? (
-          <MessageContainer messages={messages} userId={userId} />
         ) : (
-          null
-        )
-      )}
+          messages && messages?.length > 0 ? (
+            <MessageContainer messages={messages} userId={userId} typing={typing} />
+          ) : (
+            null
+          )
+        )}
       </div>
       {/* Message Input */}
       {activeChat && (

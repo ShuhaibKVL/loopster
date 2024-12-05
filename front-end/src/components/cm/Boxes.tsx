@@ -11,14 +11,17 @@ interface BoxeProps {
 
 interface BoxesProps {
     items: BoxeProps[];
+    hight?:string
+    width?:string
+    ratio?:string
 }
 
-export default function Boxes({ items }: BoxesProps) {
+export default function Boxes({ items ,ratio = 'w-1/4'}: BoxesProps) {
     return (
-        <div className='relative border w-full p-5 h-32 rounded-md flex items-center justify-around gap-5 overflow-visible'>
+        <div className='relative border w-full p-5 h-28 rounded-md flex items-center justify-around overflow-visible gap-2'>
             {items.length > 0 ? (
                 items.map((item, index) => (
-                    <div key={index} className='relative w-1/4 h-full space-y-2 text-center border rounded-md overflow-visible hover:bg-[var(--color-bg)] duration-100 cursor-pointer'>
+                    <div key={index} className={`relative ${ratio} h-full space-y-2 text-center border rounded-md overflow-visible hover:bg-[var(--color-bg)] duration-100 cursor-pointer`}>
                         {item.link ? (
                             <Link href={item.link}>
                                     <h1 className='font-bold'>{item.title}</h1>

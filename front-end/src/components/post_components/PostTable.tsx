@@ -62,7 +62,7 @@ export default function PostTable() {
     <Boxes
     items={itemsData}
     />
-    <section className='flex items-center justify-center w-full gap-3'>
+    {/* <section className='flex items-center justify-center w-full gap-3'>
         <SelectComponent 
             items={filterItems}
             label='Selct to filter.'
@@ -74,7 +74,8 @@ export default function PostTable() {
             placeholder='Type to search...'
             />
         </div>
-    </section>
+    </section> */}
+    
     {posts.length > 0 ?
         (
          posts.map((post) => (

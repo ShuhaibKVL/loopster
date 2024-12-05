@@ -5,6 +5,9 @@ export interface IMessage{
     content:string;
     chatType:'individual' | 'group';
     chatId:string | ObjectId;
+    mediaType:'none' | 'video' |'image';
+    mediaUrl?:string;
+    deleteFromMe?:string[];
 }
 
 export interface IMessageResponse {
@@ -13,6 +16,9 @@ export interface IMessageResponse {
     content:string;
     chatType:'individual' | 'group';
     chatId:string | ObjectId;
+    mediaType:'none' | 'video' |'image';
+    mediaUrl?:string;
+    deleteFromMe?:string[]
     isRead:string[];
     createdAt:string | Date,
 }

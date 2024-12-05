@@ -15,15 +15,6 @@ export class ChatRepository implements IChatRepository{
     }
 
     async fetchAllChats(currentUserId: string): Promise<unknown> {
-        // return await Chat.find({
-        //     users: { $in: [currentUserId] }
-        //     }).populate('users', 'userName _id fullName profileImage') // Adjust as needed for user fields
-        //   .populate('latestMessage','conten')
-        //   .populate({
-        //       path: 'latestMessage.sender',
-        //       select: 'username email', // Adjust as needed
-        // });
-
         return await Chat.aggregate([
             { $match: { users: { $in: [new mongoose.Types.ObjectId(currentUserId)] } } },
             {

@@ -24,12 +24,12 @@ const s3Service = new S3Service()
 const postServices = new PostService(postRepository,s3Service)
 const postController = new PostController(postServices)
 
-const commentRepository = new PostCommentsRepository()
-const commentService = new CommentService(commentRepository)
-const commentConroller = new CommentConroller(commentService)
-
 const notificationRepository = new NotificationRepository()
 const notificationService = new NotificationService(notificationRepository)
+
+const commentRepository = new PostCommentsRepository()
+const commentService = new CommentService(commentRepository)
+const commentConroller = new CommentConroller(commentService,postServices,notificationService)
 
 const likeRepository = new LikeRepository()
 const likeService = new LikeService(likeRepository)
@@ -46,6 +46,8 @@ router.post('/:postId/update',postController.updatePost.bind(postController))
 router.post('/report-post',postController.reportPost.bind(postController))
 router.get('/:userId/get-latest-posts',postController.getLatestPosts.bind(postController))
 router.get('/:userId/followed-users-post',postController.getFollowedUsersPosts.bind(postController))
+router.get('/:userId/view-post',postController.getPost.bind(postController))
+
 router.post('/like',likeController.create_like.bind(likeController))
 router.delete('/unlike',likeController.unlike.bind(likeController))
 router.post('/book-mark/create',bookMarkController.create.bind(bookMarkController))

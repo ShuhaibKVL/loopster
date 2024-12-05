@@ -4,10 +4,16 @@ import { IPostCommentsService } from "../../interfaces/posts/comments/IPostComme
 import { IComment } from "../../models/comment";
 import { error } from "console";
 import { ErrorMessages } from "../../enums/errorMessages";
+import { IPostService } from "../../interfaces/posts/IPostServices";
+import { INotificationService } from "../../interfaces/notification/INotificationService";
+import { INotification } from "../../models/notification";
+import { IPost } from "../../models/Post";
 
 export class CommentConroller{
     constructor(
-        private commentService : IPostCommentsService
+        private commentService : IPostCommentsService,
+        private postService : IPostService,
+        private notificationService : INotificationService
     ){}
 
     async createComment(req:Request , res:Response):Promise<unknown>{
@@ -24,6 +30,25 @@ export class CommentConroller{
                 res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'Failed to create new comment',status:false})
                 return
             }
+
+            const post  = await this.postService.findPostById(newComment?.postId.toString())
+            if(!post){
+                console.log('Failed to fetch post')
+            }
+            const postData = post as IPost
+
+            const newNotification : INotification = {
+                senderId:postData?.userId,
+                userId:newComment?.userId.toString(),
+                type:'comment',
+                message:'commented on your post',
+                postId:newComment?.postId.toString()
+            }
+
+            console.log('new notification created :',newNotification)
+
+            await this.notificationService.create(newNotification)
+
             res.status(HttpStatus.CREATED).json({message:"comment created successfully",status:true})
             return
         } catch (error:any) {
@@ -74,7 +99,7 @@ export class CommentConroller{
 
     async likeComment(req:Request,res:Response):Promise<unknown>{
         try {
-            const { userId , commentId } = req.body
+            const { userId , commentId ,postId} = req.body
             if(!userId || !commentId){
                 res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'comment id is missing'})
                 return
@@ -84,6 +109,25 @@ export class CommentConroller{
                 res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'Failed to like Comment',status:false})
                 return
             }
+
+            const post  = await this.postService.findPostById(postId)
+            if(!post){
+                console.log('Failed to fetch post')
+            }
+            const postData = post as IPost
+
+            const newNotification : INotification = {
+                senderId:postData?.userId,
+                userId:userId,
+                type:'comment',
+                message:'liked your comment',
+                postId:postId
+            }
+
+            console.log('new notification created :',newNotification)
+
+            await this.notificationService.create(newNotification)
+
             res.status(HttpStatus.OK).json({message:'Comment liked successfully',status:true})
             return
         } catch (error:any) {

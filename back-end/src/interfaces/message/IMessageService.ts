@@ -6,4 +6,6 @@ export interface IMessageService{
     unReadMessagesPerChat(userId:string):Promise<unknown>
     totalUnReadMessages(userId:string):Promise<unknown>
     markMsgAsReaded(userId:string,messageIds:string[]):Promise<unknown>
+    deleteFromMe(messageId:string,userId:string):Promise<unknown>
+    deleteFromEveryOne(messageId:string):Promise<unknown>
 }

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IUserManagementRepository } from "../../interfaces/admin/userManagment/IUserManagementRepository";
 import User from "../../models/userModel";
 
@@ -15,12 +16,10 @@ export class UserManagementRepo implements IUserManagementRepository {
                 users:users,
                 totalPages:totalPages
             }
-            
             return result
         } catch (error) {
             console.log(error)
         }
-       
     }
 
     async updateIsBlock(userId: string): Promise<any> {
@@ -58,7 +57,94 @@ export class UserManagementRepo implements IUserManagementRepository {
         );
 
         console.log("updateUser :",updatedUser)
-
         return updatedUser;
     }
+
+    async getTotalAccountsCount(): Promise<unknown> {
+        return await User.countDocuments()
+    }
+
+    async findUsersBasedOnDays(): Promise<unknown> {
+        return await User.aggregate([
+            {$group:
+                {_id:{
+                    $dateToString:{format:"%Y-%m-%d",date:"$createdAt"}
+                },
+                users:{$sum:1}
+            }  
+            },
+            {$sort:{_id:1}}
+        ])
+    }
+
+    async findById(_id: string): Promise<unknown> {
+        try {
+            return await User.aggregate([
+                { $match: { _id: new mongoose.Types.ObjectId(_id) } },
+                {
+                    $lookup: {
+                        from: 'follows',
+                        let: { userId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $or: [
+                                            { $eq: ['$follower', '$$userId'] },
+                                            { $eq: ['$following', '$$userId'] }
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                $group: {
+                                    _id: null,
+                                    followedCount: {
+                                        $sum: { $cond: [{ $eq: ['$follower', '$$userId'] }, 1, 0] }
+                                    },
+                                    followersCount: {
+                                        $sum: { $cond: [{ $eq: ['$following', '$$userId'] }, 1, 0] }
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'counts'
+                    }
+                },
+                {
+                    $unwind: {
+                        path: '$counts',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'posts',
+                        let: { userId: '$_id' },
+                        pipeline: [
+                            {
+                                $sort:{createdAt:-1}
+                            },
+                            { $match: { isList:true } },
+                            {
+                                $match: {
+                                    $expr: {
+                                    $eq: [{ $toObjectId: '$userId' }, '$$userId']
+                                    }
+                                }
+                            }
+                        ],
+                        as: 'posts'
+                    }
+                    },
+                {
+                    $project : {password : 0}
+                }
+            ]);
+        }catch (error){
+            console.log(error)
+            return false
+        }
+    }
+
 }

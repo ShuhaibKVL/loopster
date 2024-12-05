@@ -61,7 +61,7 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
           <Image
             src={`${mediaUrl}`}
             alt="Postcard Image"
-            className="w-full h-auto rounded-lg"
+            className="w-full h-auto object-cover rounded-lg"
             onError={handleImgError}
             width={700}
             height={500}

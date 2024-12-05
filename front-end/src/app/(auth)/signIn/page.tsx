@@ -94,50 +94,8 @@ const Page = () => {
         }
     }
 
-    // const handleSubmit = async(formData:IsignIn) => {
-    //     console.log('formData :',formData)
-    //     if(formData?.email.length <= 1 ){
-    //         setError('Please enter your valid email')
-    //         return
-    //     }
-    //     if(formData?.password.length <= 1){
-    //         setError('Please enter your password')
-    //         return
-    //     }
-
-    //     try {
-    //         const result = await SignIn(formData)
-    //         if (result.status) {
-    //             dispatch(login({
-    //               user: result.userData,
-    //               // Don't store token in Redux, it's now in an HTTP-only cookie
-    //             }));
-                
-    //             toast({
-    //               title: 'Success',
-    //               description: result.message,
-    //               className: "toast-success"
-    //             });
-                
-    //             router.replace('/feed');
-    //           } else {
-    //             toast({
-    //               title: 'Error',
-    //               description: result.message,
-    //               className: 'toast-failed'
-    //             });
-    //           }
-    //     } catch (error) {
-    //         toast({
-    //             title: 'Error',
-    //             description: 'An unexpected error occurred',
-    //             className: 'toast-failed'
-    //           });
-    //     }
-    // }
-
     return (
-        <div className='min-h-screen flex items-center justify-center bg[var(--color-bg)'>
+        <div className='min-h-screen flex items-center justify-center bg[var(--secondary-bg)'>
             <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full bg-[var(--secondary-bg)] m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
                 {/* Form Section */}
                 <div className='w-full md:w-1/2 h-full'>

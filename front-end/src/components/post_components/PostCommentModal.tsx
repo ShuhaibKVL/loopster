@@ -25,10 +25,8 @@ export default function PostCommentModal({isOpen,setIsOpen,postId,mediaType,medi
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className={`${mediaType === 'none' ? 'w-[40vw]' : 'w-[70vw]'} h-[70vh] max-w-none p-0`}>
-            <DialogHeader>
-            <DialogTitle className='hidden'></DialogTitle>
-            <DialogDescription className='h-full'>
+        <DialogContent className={`${mediaType === 'none' ? 'w-[40vw]' : 'w-[70vw]'} h-[70vh] max-w-none p-2`}>
+            <DialogDescription className='h-full overflow-hidden'>
                 <div className='flex items-center h-full w-full justify-center'>
                   {/* medaiSection */}
                   <div className={`w-1/2 h-full border-r ${mediaType === 'none' ? 'hidden' : ''}`}>
@@ -71,11 +69,11 @@ export default function PostCommentModal({isOpen,setIsOpen,postId,mediaType,medi
                   </div>
                   {/* comment section */}
                   <div className={`relative h-full flex flex-col ${mediaType === 'none' ? 'w-full' : 'w-1/2'}`}>
+                    <h1 className="w-full text-center text-md">comment feed</h1>
                      <CommentSection postId={postId} />
                   </div>
                 </div>
             </DialogDescription>
-            </DialogHeader>
         </DialogContent>
     </Dialog>
   )

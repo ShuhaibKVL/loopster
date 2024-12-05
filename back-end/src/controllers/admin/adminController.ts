@@ -28,4 +28,6 @@ export class AdminController implements IAdminController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
         }
     }
+
+    
 }

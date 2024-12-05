@@ -6,8 +6,8 @@ export class NotificationRepository implements INotificationRepository{
     async create(newNotification: INotification): Promise<unknown> {
         const createNotification = await Notification.create(newNotification)
         return await Notification.findById(createNotification?._id)
-            .populate('userId','userName profileImg _id')
-            .populate('senderId','userName profileImg _id')
+            .populate('userId','userName profileImage _id')
+            .populate('senderId','userName profileImage _id')
             .populate('postId','content mediaUrl mediaType _id')
             .populate('commentId','comment postId')
     }
@@ -15,8 +15,8 @@ export class NotificationRepository implements INotificationRepository{
     async fetchAll(userId: string): Promise<unknown> {
         return await Notification.find({senderId:userId})
                     .sort({createdAt:-1})
-                    .populate('userId','userName profileImg _id')
-                    .populate('senderId','userName profileImg _id')
+                    .populate('userId','userName profileImage _id')
+                    .populate('senderId','userName profileImage _id')
                     .populate('postId','content mediaUrl mediaType _id')
                     .populate('commentId','comment postId')
     }

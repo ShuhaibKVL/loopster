@@ -11,6 +11,7 @@ import CommentFeedSkeleton from '../skeltons/CommentFeedSkeleton'
 import PostComments from './PostComments'
 import { ObjectId } from 'mongoose'
 import { CiSquareRemove } from "react-icons/ci";
+import EmojiPickerComponent from '../Libraries/EmojiPicker'
 
 interface ICommentSectionProps{
     postId:string
@@ -68,7 +69,7 @@ export default function CommentSection({postId}:ICommentSectionProps) {
 
   return (
     <>
-    <div className='relative border mt-10 p-2 overflow-y-auto flex flex-col gap-2 h-full'>
+    <div className='border mt-10 p-2 h-5/6 space-y-2 overflow-y-scroll scrollbar-hide'>
       {/* comments of posts */}
       <Suspense fallback={<CommentFeedSkeleton/>} >
         <PostComments
@@ -81,24 +82,35 @@ export default function CommentSection({postId}:ICommentSectionProps) {
     </div>
     {/* show if the any replay comment is selected */} 
     {selectedComment && (
-          <div className='h-1/6 flex items-center justify-between bg-green-100 w-full gap-2 p-2 overflow-hidden'>
-            <div className='flex items-center'>
-              <AvatarComponent
-                imgUrl={selectedComment?.userProfile}
-              />
-              <p>{selectedComment?.comment}</p>
-            </div>
-            <CiSquareRemove onClick={() => setSelectedComment(null)} />
-          </div>
-      )}
+      <div className='h-1/6 flex items-center justify-between bg-green-100 w-full gap-2 p-2 overflow-hidden'>
+        <div className='flex items-center'>
+          <AvatarComponent
+            imgUrl={selectedComment?.userProfile}
+          />
+          <p>{selectedComment?.comment}</p>
+        </div>
+        <CiSquareRemove className='w-4 h-4' onClick={() => setSelectedComment(null)} />
+      </div>
+    )}
     {/* add new comment  */}
-      <div className='h-1/6 flex items-center justify-between w-full gap-2 p-2 overflow-hidden'>
+      <div className='flex items-center justify-between w-full gap-2 p-2 overflow-hidden'>
           <AvatarComponent
           imgUrl={userProfileImg}
           />
-          <input onChange={handleCommentInput} type="text" value={commentInput}
-          ref={commentInputRef}
-          placeholder='comment here...' className='rounded-sm border w-full'/>
+          <input 
+            onChange={handleCommentInput} 
+            type="text" 
+            value={commentInput}
+            ref={commentInputRef}
+            placeholder='comment here...' className='rounded-sm border w-full h-[80%]'
+          />
+          <div className=''>
+          <EmojiPickerComponent 
+            message={commentInput}
+            handleMessageChange={handleCommentInput}
+          />
+          </div>
+          
           <Button disabled={commentInput.length <= 0}
           onClick={handleSubmit}
           >Post</Button>

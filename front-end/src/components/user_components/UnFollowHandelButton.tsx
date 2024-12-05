@@ -11,9 +11,11 @@ import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 
 interface IFollowUserIds{
     following:string,
-    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+    isButton?:boolean,
+    isDisplay?:boolean,
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
-export default function UnFollowHandleButton({following,refetchPosts}:IFollowUserIds) {
+export default function UnFollowHandleButton({following,refetchPosts,isButton = true,isDisplay=false}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
 
     const dispatch = useAppDispatch()
@@ -41,6 +43,12 @@ export default function UnFollowHandleButton({following,refetchPosts}:IFollowUse
         
     }
     return (
-        <Button onClick={handleUnFollow} className='w-full'>UnFollow</Button>
+        <>
+        {isButton ? (
+            <Button onClick={handleUnFollow} className='w-full'>UnFollow</Button>
+        ) : (
+            <p onClick={handleUnFollow} className='text-blue-500 cursor-pointer text-md'>Unfollow</p>
+        )}
+        </> 
     )
 }

@@ -18,10 +18,11 @@ export class CommentService implements ICommentService{
         return await response?.data
     }
 
-    async likeComment(commentId: string, userId: string): Promise<unknown> {
+    async likeComment(commentId: string, userId: string, postId:string): Promise<unknown> {
         const response = await postApi.patch('/comment/like',{
             commentId,
-            userId
+            userId,
+            postId,
         })
         return await response?.data
     }

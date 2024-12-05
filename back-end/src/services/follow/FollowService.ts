@@ -19,4 +19,20 @@ export class FollowService implements IFollowService {
         return await this.followRepository.delete(data)
     }
 
+    async findFollowedUsers(userId: string): Promise<unknown> {
+        return await this.followRepository.findFollowedUsers(userId)
+    }
+
+    async findFollowers(userId: string): Promise<unknown> {
+        return await this.followRepository.findFollowers(userId)
+    }
+
+    async findUnFollowedUsers(userId: string): Promise<unknown> {
+        return await this.followRepository.findUnFollowedUsers(userId)
+    }
+
+    async findMostFollowersUsers(): Promise<unknown> {
+        return await this.followRepository.findMostFollowersUsers()
+    }
+
 }

@@ -11,6 +11,7 @@ import postRoutes from './routes/user/postRoutes'
 import unsplashRoutes from './routes/user/unsplashRoutes'
 import chatRoutes from './routes/user/chatRoutes'
 import {io , server,app} from './controllers/socket.io/connectionHandler'
+import chatBotRoutes from './routes/user/chatBotRoutes'
 
 dotenv.config()
 
@@ -38,5 +39,6 @@ app.use('/api/admin',adminRoutes)
 app.use('/api/post',postRoutes)
 app.use('/api/unsplash',unsplashRoutes)
 app.use('/api/chat',chatRoutes)
+app.use('/api/chat-boat',chatBotRoutes)
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))

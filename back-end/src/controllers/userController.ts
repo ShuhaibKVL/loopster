@@ -218,7 +218,6 @@ export class UserController{
             res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
         }
     }
-
 }
 
 

@@ -34,10 +34,13 @@ export interface IUserData {
 }
 
 import { InfiniteData } from '@tanstack/react-query';
+import EditPost from "./EditPost";
+import { IPostResponse } from "@/lib/utils/interfaces/IPost";
+import { confirmAction } from "../cm/ConfirmationModal";
 
 export interface PostProps {
     postData: IPostProps;
-    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
 
 export default function Post({postData ,refetchPosts}:PostProps){
@@ -46,6 +49,7 @@ export default function Post({postData ,refetchPosts}:PostProps){
     const dispatch = useAppDispatch()
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     const [ isOpen , setIsOpen ] = useState<boolean>(false)
+    const [ currentPost , setCurrentPost ] = useState<IPostResponse | null>(null)
 
     const handleReport = () => {
         setIsOpen(true)
@@ -94,13 +98,49 @@ export default function Post({postData ,refetchPosts}:PostProps){
             }
         }
     }
+
+     // Handel post delete
+     const handleDelete = async (postId:string) => {
+
+        const willProceed = await confirmAction({
+            title: `Are you sure to delete ?`,
+            text: `Once deleted, you are not able to return..!`,
+            icon: 'warning',
+        });
+        if(willProceed){
+            const response = await postService.deletePost(postId)
+            console.log('post delete response :',response)
+            if(response?.status){
+                toast({
+                    title: 'Failed',
+                    description: response?.message,
+                    className:"toast-failed"
+                })
+            }
+            await refetchPosts()
+        }
+    }
+
+    // Handel post delete
+    const handleEdit = async (post:IPostResponse) => {
+        setCurrentPost(post)
+         setIsOpen(true)
+    }
     return (
         <div className='relative w-full min-h-48 border-b rounded-sm p-2'>
             <div className='absolute right-0'>
             <DropdownMenu
-            options={[
-                { label: 'Report', action: handleReport },
-            ]}
+                options={
+                    userId === postData?.userId ? (
+                        [
+                            { label: 'Delete', action: () => handleDelete(postData?._id) },
+                            { label: 'Edit', action: () => handleEdit(postData) }
+                        ]
+                    ) : (
+                        [{ label: 'Report', action: handleReport }]
+                    )
+                    }
+                    postId={postData?._id}
             />
             </div>
             <UserHeader imgUrl={postData?.user?.profileImage} fullName={postData?.user?.fullName}
@@ -146,6 +186,14 @@ export default function Post({postData ,refetchPosts}:PostProps){
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
+
+            <EditPost
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                postData={currentPost as IPostResponse}
+                userId={userId}
+                getUserData={refetchPosts}
+            />
         </div>
     )
 }

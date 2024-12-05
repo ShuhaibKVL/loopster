@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
   // You can add your middleware logic here
  
   const currentPath = req.nextUrl.pathname
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+  console.log('%c >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>','color:green; font-weight:bold')
   console.log('current path :',currentPath)
   const isProtectedRoute = protectedRoutes.includes(currentPath)
   const isPublicRoute = publicRoute.includes(currentPath)

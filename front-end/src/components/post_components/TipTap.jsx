@@ -6,16 +6,20 @@ import { Bold, Italic, Underline, List, AlignLeft, AlignCenter, AlignRight, Code
 //   onContentChange:(content:string) => void;
 // }
 
-const TipTap = ({ initialContent = '', onContentChange }) => {
+const TipTap = ({ initialContent, onContentChange }) => {
   const [content, setContent] = useState(initialContent);
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    console.log('initial Content :',initialContent,"editor content :",editorRef.current.innerHTML,)
+  },[content,initialContent])
 
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current.contentEditable = true;
       editorRef.current.innerHTML = initialContent;
     }
-  }, []);
+  }, [initialContent]);
 
   const handleCommand = (command, value = null) => {
     document.execCommand(command, false, value);
@@ -32,6 +36,7 @@ const TipTap = ({ initialContent = '', onContentChange }) => {
 
   const handleCodeBlock = () => {
     const selection = window.getSelection();
+    if (!selection.rangeCount) return;
     const range = selection.getRangeAt(0);
     const preElement = document.createElement('pre');
     const codeElement = document.createElement('code');

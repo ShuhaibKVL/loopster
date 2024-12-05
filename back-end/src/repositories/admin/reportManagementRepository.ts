@@ -46,8 +46,5 @@ export class ReportManagementRepository implements IReportManagementRepository{
         } catch (error) {
             console.log(error)
         }
-       
     }
-
-
 }

@@ -7,7 +7,7 @@ import { IoMdHeartEmpty } from 'react-icons/io'
 
 export default function LikeHandleButton({postId,refetchPosts}:{
   postId:string,
-  refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>
+  refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }) {
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     const handleLike = async() => {

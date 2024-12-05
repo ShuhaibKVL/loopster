@@ -51,4 +51,15 @@ export class MessageRepository implements IMessageRepository{
             console.log(error)
         }
     }
+
+    async deleteFromMe(messageId: string, userId: string): Promise<unknown> {
+        return await Message.findByIdAndUpdate(
+            messageId,
+            {$push:{deleteFromMe:userId}}
+        )
+    }
+
+    async deleteFromEveryOne(messageId: string): Promise<unknown> {
+        return await Message.findByIdAndDelete(messageId)
+    }
 }
