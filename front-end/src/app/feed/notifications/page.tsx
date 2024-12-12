@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import withAuth from '@/app/contexts/withAuth'
 import Notifications from '@/components/notification/Notifications'
@@ -10,4 +10,5 @@ const Page = () => {
   )
 }
 
-export default withAuth(Page,true)
+// export default withAuth(Page,true)
+export default Page

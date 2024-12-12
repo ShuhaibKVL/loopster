@@ -9,30 +9,35 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAppSelector } from '@/hooks/typedUseDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
 import userAuthService from '@/services/user/userAuthService';
 import { IFollowers } from './FollowUnFollow';
 import { RootState } from '@/lib/redux/store/store';
 import AvatarComponent from '../cm/Avatar';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import UnFollowHandleButton from './UnFollowHandelButton';
+import { getProfileUserData } from '@/lib/redux/features/storySlice';
 
-export default function Followers({followers}:{followers:number}) {
+
+export default function Followers({followers,profileUserId}:{followers:number,profileUserId:string}) {
     const [ isOpen , setIsOpen ] = useState<boolean>(false)
     const [users , setUsers ] = useState<IFollowers[] | []>([])
     const userId  = useAppSelector((state:RootState) => state?.user?.userId)
+    const dispatch = useAppDispatch()
 
     const getFollowers = async() => {
-        const response = await userAuthService.getFollowers(userId)
+        const response = await userAuthService.getFollowers(profileUserId)
         console.log('response :',response)
         setUsers(response?.data)
         setIsOpen(true)
+        dispatch(getProfileUserData(profileUserId))
     }
 
   return (
     <div className='space-y-1'>
         <p className='px-1 rounded-lg py-1 font-mono'>Followers</p>
-        <p className='text-center cursor-pointer' onClick={getFollowers}>{followers}</p>
+        <p className='text-center cursor-pointer' onClick={getFollowers}>{followers || 0}</p>
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild> 
@@ -53,7 +58,18 @@ export default function Followers({followers}:{followers:number}) {
                                         </div>
                                     </div>
                                     </Link>
-                                    <Button >Follow</Button>
+
+                                    {/* remove follower */}
+                                    {profileUserId === userId && (
+                                        <div>
+                                            <UnFollowHandleButton 
+                                                following={user?.follower?._id} 
+                                                refetchPosts={getFollowers} 
+                                                label='Remove' 
+                                                removeFollower={{follower:user?.follower?._id, following:userId}} 
+                                            />
+                                        </div>
+                                    )}   
                                 </div>
                             ))}
                         </div>

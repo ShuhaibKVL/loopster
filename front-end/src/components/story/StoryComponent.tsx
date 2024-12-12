@@ -20,9 +20,12 @@ import Image from 'next/image';
 import { BiSolidUserCircle } from 'react-icons/bi';
 import { fetchStories } from '@/lib/redux/features/storySlice';
 import TypeWriterComponent from '../Libraries/TypeWriterComponent';
+import useSyncReduxFromCookie from '@/hooks/customHooks/useSyncReduxFromCookie';
 
 
 export default function StoryComponent() {
+  useSyncReduxFromCookie(); // Sync Redux with cookie on page load
+  
   const [isOpen , setIsOpen] = useState<boolean>(false)
   const userId = useAppSelector((state:RootState) => state?.user?.userId)
   const dispatch = useAppDispatch()
@@ -30,7 +33,10 @@ export default function StoryComponent() {
   const { followedUsersStories , loggedUserStories} = useAppSelector((state:RootState) => state?.stories)
 
   useEffect(() => {
-    dispatch(fetchStories(userId))
+    if(userId){
+      dispatch(fetchStories(userId))
+    }
+    
   },[userId])
 
   return (
@@ -40,7 +46,7 @@ export default function StoryComponent() {
         <Tooltip>
           <TooltipTrigger>
           <div className='flex flex-col items-center justify-center'>
-          {loggedUserStories.length > 0 ? (
+          {loggedUserStories?.length > 0 ? (
             // If there are logged user stories, wrap with Link to navigate the story route
             <Link href={`/story-carasoll/${loggedUserStories[0]?._id}`}>
               <div
@@ -87,17 +93,17 @@ export default function StoryComponent() {
         </Tooltip>
       </TooltipProvider>
 
-      {followedUsersStories.length > 0 && (
+      {followedUsersStories?.length > 0 && (
         followedUsersStories.map((story) => (
           <Link href={`/story-carasoll/${story?._id}`}>
             <div className='flex flex-col items-center justify-center'>
             <div 
               className={`relative w-10 h-10 md:w-14 md:h-14 bg-[var(--color-bg)]
-                flex items-center justify-center rounded-full overflow-hidden ${followedUsersStories.length > 0 &&
+                flex items-center justify-center rounded-full overflow-hidden ${followedUsersStories?.length > 0 &&
                 'bg-gradient-to-r from-pink-600 to-blue-400 skeleton'}`}
             >
               <div className='w-9 h-9 md:w-12 md:h-12 bg-[var(--secondary-bg)] rounded-full overflow-hidden '>
-                  {story.userId.profileImage ? (
+                  {story?.userId?.profileImage ? (
                       <Image 
                       width={100}
                       height={100}

@@ -1,6 +1,10 @@
+'use client'
+
 // Form.tsx
 import React from 'react';
 import '../../app/globals.css'
+import { useAppSelector } from '@/hooks/typedUseDispatch';
+import { RootState } from '@/lib/redux/store/store';
 
 interface Field {
   name: string;
@@ -18,6 +22,7 @@ interface FormProps {
 
 const Form: React.FC<FormProps> = ({ fields, onSubmit, fieldErrors }) => {
   const [formData, setFormData] = React.useState<any>({});
+  const loading = useAppSelector((state:RootState) => state?.user?.loading)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -52,7 +57,11 @@ const Form: React.FC<FormProps> = ({ fields, onSubmit, fieldErrors }) => {
         </div>
       ))}
       <button type="submit" className="bg-primary text-white py-2 px-4 rounded w-full">
-        Submit
+        {loading ? (
+         <span className="loading loading-spinner loading-xs"></span>
+        ) : (
+          'Submit'
+        )}
       </button>
     </form>
   );

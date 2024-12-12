@@ -8,7 +8,7 @@ import ReduxProvider from "./contexts/ReduxProvider";
 import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
 import { SocketProvider } from "./contexts/socketContext";
 import CsFallBack from "@/components/cm/CsFallBack";
-import { ChatProvider } from "./contexts/chatContext";
+import { SessionProvider } from 'next-auth/react'
 import { NotificationProvider } from "./contexts/notificationContext";
 
 export const metadata: Metadata = {
@@ -34,21 +34,23 @@ export default function RootLayout({
         <title>Loopster</title>
       </head>
       <body className={`${inter.className} rounded-sm`}>
-      <Toaster />
-      <SocketProvider>
-        <TanStackQueryClientProvider>
-          <ReduxProvider>
-            <ThemeProvider>
+        {/* <SessionProvider> */}
+        <ThemeProvider>
+        <ReduxProvider>
+        <Toaster />
+        <SocketProvider>
+          <TanStackQueryClientProvider>
               <NotificationProvider>
                 <CsFallBack>
                   {children}
                 </CsFallBack>
               </NotificationProvider>
-              </ThemeProvider>
-            </ReduxProvider>
           </TanStackQueryClientProvider>
         </SocketProvider>
-      <ToastContainer position="top-right" autoClose={3000} />  
+        <ToastContainer position="top-right" autoClose={3000} />
+        </ReduxProvider>
+        </ThemeProvider>
+      {/* </SessionProvider>   */}
       </body>
     </html>
   );

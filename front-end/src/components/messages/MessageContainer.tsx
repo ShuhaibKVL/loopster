@@ -14,21 +14,24 @@ import {
 } from "@/components/ui/context-menu"
 import DeleteFromMe from './DeleteFromMe';
 import DeleteFromEveryOne from './DeleteFromEveryOne';
-import { Timeout} from 'timers'
-
+import { IoIosDownload } from "react-icons/io";
+import { FaFilePdf } from 'react-icons/fa';
 
 export default function MessageContainer({messages,userId,typing=false}:{messages:IMessageResponse[],userId:string,typing:boolean}) { 
   const [isLongPress , setIsLongPress] = useState<boolean>(false)
-  let longPressTimeout = useRef<null | Timeout>(null) 
+  let longPressTimeout = useRef<null | number>(null) 
 
   const handleTouchStart = () => {
-    longPressTimeout.current = setTimeout(() => {
+    longPressTimeout.current = window.setTimeout(() => {
       setIsLongPress(true)
     },500)
   }
 
   const handleToushEnd = (messageId:string) => {
-    clearTimeout(longPressTimeout.current)
+    if(longPressTimeout.current){
+      clearTimeout(longPressTimeout.current)
+    }
+    
     if(isLongPress){
       // here, simulating the right click on context menu
       const contextMenuTrigger = document.getElementById(`message${messageId}`)
@@ -46,7 +49,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
 
   return (
     <>
-          {messages.map((message) => (
+          {messages?.map((message) => (
             message?.sender?._id?.toString() === userId ? (
               !message?.deleteFromMe?.includes(userId) && (
               // user message section
@@ -64,7 +67,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                         <Image
                           src={`${message?.mediaUrl}`}
                           alt="Postcard Image"
-                          className="w-full h-auto object-cover rounded-lg"
+                          className="w-full h-auto object-cover rounded-lg max-h-80 max-w-80"
                           width={400}
                           height={300}
                           layout="responsive"
@@ -76,14 +79,27 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                       message?.mediaUrl ? (
                         <video
                           src={`${message?.mediaUrl}`}
-                          className="w-full h-auto rounded-md"
+                          className="w-full h-auto rounded-md max-h-80 max-w-80"
                           controls
+                          controlsList="nodownload"
                           playsInline
                         />
                       ) : (
                         <PostIMageSkelton />
                       )
-                    ) : (
+                    ) : message?.mediaType === 'audio' ? (
+                      <audio controls>
+                        <source src={message?.mediaUrl} type="audio/mp3"/>
+                      </audio>
+                    ) : message?.mediaType === 'application' ? (
+                      <div className="min-w-36 h-14 rounded border flex items-center justify-between">
+                        <FaFilePdf />
+                        <p>{message?.fileName || 'Document'}</p>
+                        <a href={message?.mediaUrl} download>
+                         <IoIosDownload className='text-blue-500 w-5 h-5' />
+                        </a>
+                      </div>
+                    ):(
                       ''
                     )}
 
@@ -131,7 +147,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                         <Image
                           src={`${message?.mediaUrl}`}
                           alt="Postcard Image"
-                          className="w-full h-auto object-cover rounded-lg"
+                          className="w-full h-auto object-cover rounded-lg max-h-80 max-w-80"
                           width={400}
                           height={300}
                           layout="responsive"
@@ -143,14 +159,27 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                       message?.mediaUrl ? (
                         <video
                           src={`${message?.mediaUrl}`}
-                          className="w-full h-auto rounded-md"
+                          className="w-full h-auto rounded-md max-h-80 max-w-80"
+                          controlsList="nodownload"
                           controls
                           playsInline
                         />
                       ) : (
                         <PostIMageSkelton />
                       )
-                    ) : (
+                    ) : message?.mediaType === 'audio' ? (
+                      <audio controls>
+                        <source src={message?.mediaUrl} type="audio/mp3"/>
+                      </audio>
+                    ) : message?.mediaType === 'application' ? (
+                      <div className="min-w-36  h-14 rounded border flex items-center justify-between">
+                         <FaFilePdf />
+                         <p>{message?.fileName || 'Document'}</p>
+                        <a title='click to download' href={message?.mediaUrl} download>
+                         <IoIosDownload  className='text-blue-500 w-5 h-5'/>
+                        </a>
+                      </div>
+                    ):(
                       ''
                     )}
 

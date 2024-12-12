@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast'
 import { useAppDispatch, useAppSelector } from "@/hooks/typedUseDispatch";
 import { RootState } from "@/lib/redux/store/store";
 import { updateTotalUnReadMsg, updateUnReadMsgPerChat } from "@/lib/redux/features/auth/userSlice";
-import { Timeout } from 'timers'
 import messageService from "@/services/user/messages/messageService";
 
 export interface ActiveChat{
@@ -39,6 +38,8 @@ interface ChatContextType {
     setPrevFileUrl:React.Dispatch<React.SetStateAction<string | null>>;
     delte_from_me:(messageId:string) => void;
     delete_from_everyOne:(messageId:string) => void;
+    fileType:'image' |'video' | 'none' | 'audio'|'application';
+    fileName:null | string
 }
 
 interface ChatProviderProps {
@@ -65,15 +66,20 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     const userName = useAppSelector((state:RootState) => state?.user?.user)
     const [typing , setTyping ] = useState<boolean>(false) // To track user is it typing...
     const dispatch = useAppDispatch()
-    const debouncingTimeOut = useRef<null | Timeout >(null)
+    const debouncingTimeOut = useRef<null | number >(null)
     const [onlineUsers , setOnlineUsers ] = useState<string[] | []>([])// To store the online users id
-    const [ fileType , setFileType ]  = useState<'image' | 'video' | 'none'>('none')
+    const [ fileType , setFileType ]  = useState<'image' | 'video' | 'audio'|'application'| 'none'>('none')
     const [ prevFileUrl , setPrevFileUrl] = useState<string | null>(null)
     const [ fileBuffer , setFileBuffer ] = useState<File | null>(null)
+    const [fileName , setFileName] = useState<null | string>(null)
+
+    useEffect(() => {
+      console.log('messages :',messages)
+    },[messages])
 
     const socket = useContext(SocketContext);
 
-    const handleMessageChange = (e) => {
+    const handleMessageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         onType()
         setMessage(e.target.value);
 
@@ -81,7 +87,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           clearTimeout(debouncingTimeOut.current)
         }
 
-        debouncingTimeOut.current = setTimeout(() => {
+        debouncingTimeOut.current = window.setTimeout(() => {
           onTypeEnd()
         },2000)
     };
@@ -94,6 +100,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
 
       if(file){
         if(file.size > maxFileSize){
+          console.log('file size :',file.size)
           toast({
               title: 'Over size..!',
               description:`Please upload a file under ${maxFileSize / (1024 * 1024)}MB `,
@@ -101,9 +108,9 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           })
           return
         }
-
-        const fileMimeType = file?.type
         // for extrating file type
+        const fileMimeType = file?.type
+        
         if(fileMimeType?.startsWith('image/')){
           console.log('file type set to image')
           setFileType('image')
@@ -122,7 +129,12 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
                     return
                 }else{setFileType('video')}
             }
-        }else{
+        }else if(fileMimeType?.startsWith('audio/')){
+          setFileType('audio')
+        }else if(fileMimeType?.startsWith('application/')){
+          setFileType('application')
+        }
+        else{
           toast({
               title: 'Unsupported..!',
               description: 'File upload filed failed.',
@@ -134,6 +146,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         const fileUrl = URL.createObjectURL(file as Blob)
         setPrevFileUrl(fileUrl)
         setFileBuffer(file)
+        setFileName(file?.name)
         console.log('file uploading is currect.')
       }else{
         toast({
@@ -144,6 +157,10 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         return
       }
     }
+
+    useEffect(() => {
+      console.log('file prev :',prevFileUrl , "fileBuffer :",fileBuffer , "file type :",fileType)
+    },[fileType,fileBuffer,prevFileUrl])
 
     const delte_from_me = async(messageId:string) => {
       if(!messageId && !userId){
@@ -278,7 +295,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         console.log('sendMessage invoked :',message,"<>",activeChat,"<>",message.trim())
-        if (!message.trim() || !activeChat){
+        if ((!message.trim() || !fileBuffer )&& !activeChat){
             toast({
               title: 'caution',
               description:`Please select a chat`,
@@ -295,15 +312,17 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           return;
         }
     
-        if(activeChat.chatType === 'individual'){
+        if(activeChat?.chatType === 'individual'){
             socket.emit('sendIndividualMessage',{
                 senderId:userId,
                 senderName:userName,
                 chatId:activeChat?.chatId,
                 content:message,
                 mediaType:fileType,
-                fileBuffer:fileBuffer
+                fileBuffer:fileBuffer,
+                filename:fileName
             })
+            console.log('message emitted :')
         }else{
           console.log('sendGroupMessage :',activeChat)
             socket.emit('sendGroupMessage',{
@@ -311,14 +330,15 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
                 chatId:activeChat?.chatId,
                 content:message,
                 mediaType:fileType,
-                fileBuffer:fileBuffer
+                fileBuffer:fileBuffer,
+                filename:fileName
             })
         }
           setMessage('')
           setFileType('none')
           setFileBuffer(null)
           setPrevFileUrl(null)
-          markMsgAsReaded()
+          // markMsgAsReaded() // for handling the unreaded messages
     }
 
     const onType = () => {
@@ -364,7 +384,9 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           prevFileUrl,
           setPrevFileUrl,
           delte_from_me,
-          delete_from_everyOne
+          delete_from_everyOne,
+          fileType,
+          fileName
           }}>
             {children}
         </ChatContext.Provider>

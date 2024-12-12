@@ -8,13 +8,12 @@ import { IUserData } from './Post'
 import UserHeader from '../user_components/UserHeader'
 
 export default function Suggestion() {
-  const { userId } = useAppSelector((state:RootState) => state?.user)
+  const  userId  = useAppSelector((state:RootState) => state?.user?.userId)
   const [ users , setUsers ] = useState<IUserData[] | []>([])
   
   const fetchSuggestionUser = async() => {
-    // const response = await userAuthService.getSuggestionUsers(userId as string)
     const response = await userAuthService.getLatestUsers(userId)
-    console.log('usggestion response :',response)
+    console.log('suggestion response :',response)
     if(response.status){
       setUsers(response?.data)
     }
@@ -40,6 +39,7 @@ export default function Suggestion() {
           userName={user?.userName}
           imgUrl={user?.profileImage}
           key={user?._id}
+          isRequestPending={user?.isRequestPending}
           refetchPosts={fetchSuggestionUser}
            /> 
         ))

@@ -12,6 +12,9 @@ import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
 import { useNotifications } from '@/app/contexts/notificationContext';
 import { SocketContext } from '@/app/contexts/socketContext';
+import { deleteCookie  } from 'cookies-next';
+import { redirect } from 'next/navigation'
+import { signOut } from 'next-auth/react';
 
 export interface INavItems {
     name: string,
@@ -28,7 +31,7 @@ export default function SideBar({ navItems ,type}: SideBarProps) {
     const router = useRouter();
     const currentPath = usePathname()
     const totalUnReadMessages = useAppSelector((state:RootState) => state?.user?.totalUnReadMessages)
-    const [width , setWidth ] = useState(0)
+    const [width , setWidth ] = useState(window?.innerWidth)
     const {notifications , unReadedNotifications} = useNotifications()
     const socket = useContext(SocketContext);
  
@@ -44,21 +47,30 @@ export default function SideBar({ navItems ,type}: SideBarProps) {
         if(willProceed){
             if(type === 'user'){
                 socket.disconnect()
+
                 dispatch(logout())
+                 // Remove session cookies
+                deleteCookie ('session');
+
+                // Sign out from next-auth
+                await signOut({ redirect: true ,callbackUrl: '/signIn'});
                 return
             }else if(type === 'admin'){
                 dispatch(adminLogout())
-                return
+                redirect('/admin/signIn')
+
             }  
         }
        alert('logout causing some errors..!')
     }
 
     useEffect(() => {
-        const handlResize = () => setWidth(window.innerWidth)
-        window.addEventListener('resize',handlResize)
+        if(window){
+            const handlResize = () => setWidth(window.innerWidth)
+            window.addEventListener('resize',handlResize)
 
-        return () => window.removeEventListener('resize',handlResize)
+            return () => window.removeEventListener('resize',handlResize)
+        }
     },[])
 
     useEffect(() => {

@@ -5,7 +5,8 @@ import ReusableDropdown, { DropdownOption } from './DropDownMenu'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
-export default function Setting() {
+export default function ProfileDropDown() {
+  
   const [theme, setTheme] = useState(() =>
     document.documentElement.getAttribute('data-theme') || 'light'
   );
@@ -22,8 +23,8 @@ export default function Setting() {
   };
 
   const options :  DropdownOption[] = [
-    {label:theme === 'light' ? 'Dark' : 'Light',action:() => toggleTheme()},
-    ]
+    {label:theme === 'light' ? 'Dark' : 'Light',action:() => toggleTheme()}
+  ]
 
 
   return (
@@ -46,7 +47,7 @@ export default function Setting() {
                 ))}
             </DropdownMenuContent>
         </DropdownMenu>  
-        </div>
-        </div>
+      </div>
+    </div>
   )
 }

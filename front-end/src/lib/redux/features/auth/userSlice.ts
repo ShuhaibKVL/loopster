@@ -2,25 +2,25 @@ import { createSlice } from "@reduxjs/toolkit";
 import { ObjectId } from "mongoose";
 
 export interface userState{
-    accessToken:string,
-    isAuthenticated:boolean,
-    loading:boolean,
-    user:any,
-    userId:string,
-    userProfile:string,
-    totalUnReadMessages:number,
-    unReadMsgPerChat:{ _id: ObjectId, unReadMsg: number }[] | null
+    accessToken:string;
+    isAuthenticated:boolean;
+    loading:boolean;
+    user:any;
+    userId:string;
+    userProfile:string;
+    totalUnReadMessages:number;
+    unReadMsgPerChat:{ _id: ObjectId, unReadMsg: number }[] | null;
 }
 
 const initialState:userState = {
     accessToken:'',
     isAuthenticated:false,
-    loading:true,
+    loading:false,
     user:null,
     userId:'',
     userProfile:'',
     totalUnReadMessages:0,
-    unReadMsgPerChat:null
+    unReadMsgPerChat:null,
 }
 
 const userAuthReducer = createSlice({
@@ -28,18 +28,20 @@ const userAuthReducer = createSlice({
     initialState,
     reducers:{
         login : (state , action) =>{
-           console.log('inside login in slice :',action.payload)
+            console.log('login slice : >>>>>>>>>',action.payload)
             state.accessToken = action.payload.accessToken
             state.isAuthenticated = true
             state.user = action.payload.user.userName
             state.userId = action.payload.user._id
             state.userProfile = action.payload.user.profileImg
             state.totalUnReadMessages = action.payload.totalUnReadMessages
+            state.loading = false
+            console.log('slice updated currectly',state)
         },
         logout : (state) => {
             state.accessToken = ''
             state.isAuthenticated = false
-            state.loading = true
+            state.loading = false
             state.user = null
             state.userId = ''
             state.userProfile = ''
@@ -53,9 +55,12 @@ const userAuthReducer = createSlice({
         updateUnReadMsgPerChat : (state,action) => {
             console.log('update Unreaded messages iniside slice :',action.payload)
             state.unReadMsgPerChat = action.payload
+        },
+        setLoading : (state, action) => {
+            state.loading = action.payload
         }
-    },
+    }
 })
 
-export const { login, logout , updateTotalUnReadMsg , updateUnReadMsgPerChat } = userAuthReducer.actions
+export const { login, logout , updateTotalUnReadMsg , updateUnReadMsgPerChat, setLoading } = userAuthReducer.actions
 export default userAuthReducer.reducer

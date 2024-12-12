@@ -1,6 +1,6 @@
 'use client'
 
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -9,31 +9,34 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAppSelector } from '@/hooks/typedUseDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
 import userAuthService from '@/services/user/userAuthService';
 import { IFollowedUser } from './FollowUnFollow';
 import { RootState } from '@/lib/redux/store/store';
 import AvatarComponent from '../cm/Avatar';
-import { Button } from '../ui/button';
 import Link from 'next/link';
+import UnFollowHandleButton from './UnFollowHandelButton';
+import { getProfileUserData } from '@/lib/redux/features/storySlice';
 
-export default function FollowedUsers({follow}:{follow:number}) {
+export default function FollowedUsers({follow,profileUserId}:{follow:number,profileUserId:string}) {
     const [ isOpen , setIsOpen ] = useState<boolean>(false)
     const [users , setUsers ] = useState<IFollowedUser[] | []>([])
+    const dispatch = useAppDispatch()
 
     const userId  = useAppSelector((state:RootState) => state?.user?.userId)
 
     const getFollowedUsers = async() => {
-        const response = await userAuthService.getFollowedUsers(userId)
-        console.log('response :>>',response)
+        const response = await userAuthService.getFollowedUsers(profileUserId)
+        console.log('followed users :>>',response)
         setUsers(response?.data)
         setIsOpen(true)
+        dispatch(getProfileUserData(profileUserId))
     }
 
   return (
     <div className='space-y-1'>
         <p className='px-1 rounded-lg py-1 font-mono'>Following</p>
-        <p className='text-center cursor-pointer' onClick={getFollowedUsers}>{follow}</p>
+        <p className='text-center cursor-pointer' onClick={getFollowedUsers}>{follow || 0}</p>
 
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild> 
@@ -54,7 +57,11 @@ export default function FollowedUsers({follow}:{follow:number}) {
                                         </div>
                                     </div>
                                     </Link>
-                                    <Button >Follow</Button>
+                                    {profileUserId === userId && (
+                                        <div>
+                                        <UnFollowHandleButton following={user?.following?._id} refetchPosts={getFollowedUsers} />
+                                    </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

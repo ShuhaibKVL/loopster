@@ -66,5 +66,9 @@ export class userServices implements IUserService {
     async findFollowedUsersBySearch(userId:string,query:string):Promise<unknown>{
         return await this.userRepository.findFollowedUsersBySearch(userId,query)
     }
+
+    async updateIsPrivateAccount(userId: string): Promise<unknown> {
+        return await this.userRepository.updateIsPrivateAccount(userId)
+    }
 }
 

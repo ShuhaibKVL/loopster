@@ -8,10 +8,10 @@ import Image from 'next/image';
 export default function Home() {
   return (
     <div className='min-h-screen w-full bg-[var(--secondary-bg)]'>
-        <BackgroundLines className="flex items-center justify-center w-full min-h-screen flex-col px-4">
+        <BackgroundLines className="flex items-center justify-center w-full min-h-screen flex-col px-4 gap-4">
         <div className='absolute right-10 top-3'>
         <ThemeToggle />
-      </div>
+        </div>
 
       <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b 
         from-neutral-900 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl 
@@ -25,13 +25,13 @@ export default function Home() {
         Goin with us to embrak your journey with your freinds.Share your thoughts and inspired others and connect with each
       </p>
       <Link href={'/signIn'}>
-      <HoverBorderGradient>
+      <HoverBorderGradient className='border-none px-10'>
         Sign In
       </HoverBorderGradient>
       </Link>
         </BackgroundLines>
 
-        <div className='min-h-screen w-full flex items-center'>
+        {/* <div className='min-h-screen w-full flex items-center'>
         <div className="mockup-phone border-primary">
             <div className="camera"></div>
             <div className="display">
@@ -40,7 +40,7 @@ export default function Home() {
               </div>
             </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

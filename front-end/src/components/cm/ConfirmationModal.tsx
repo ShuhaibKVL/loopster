@@ -9,6 +9,7 @@ interface ConfirmOptions {
 }
 
 export const confirmAction = async (options: ConfirmOptions): Promise<boolean> => {
+  
 const {
     title = 'Are you sure?',
     text = 'This action cannot be undone.',

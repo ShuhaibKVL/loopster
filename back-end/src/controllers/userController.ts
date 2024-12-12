@@ -26,6 +26,7 @@ export class UserController{
 
     async signUp(req: Request, res: Response): Promise<void> {
         try {
+            console.log('signup data :',req?.body)
             const userData : IUser = req.body
             //Validate the form
             await signUpSchema.validate(userData , {abortEarly:false})
@@ -45,9 +46,10 @@ export class UserController{
             const otp = await this.otpService.generateAndSaveOtp(userData.email)
             const emailSend = await this.emailService.sendVerificationEmail(userData.email,otp)
             res.status(HttpStatus.CREATED).json({
-                message:SuccessMessages.EMAIL_SENT+ ' , Please check your email.',
+                message:SuccessMessages.EMAIL_SENT+ ', Please check your email.',
                 status:true,user:userData.email})
         } catch (error) {
+
             if (error instanceof ValidationError) {
                 const validationErrors = error.inner.map((err) => ({
                     path: err.path,
@@ -118,12 +120,55 @@ export class UserController{
         }
     }
 
+    async signInWithGoogle(req:Request,res:Response):Promise<unknown>{
+        try {
+            console.log('signup data in sign with google :',req?.body)
+            const userData : IUser = req.body
+            let newUser ;
+            const isExistUserEmail = await this.userService.findUserByEmail(userData.email)
+            console.log('isExistUserEmail :',isExistUserEmail)
+            if(isExistUserEmail){
+                newUser = isExistUserEmail
+            }else{
+                newUser = await this.userService.createUser(userData)
+                console.log('new user :',newUser)
+            }
+
+            const token = this.authService.generateToken(newUser._id,'1h')
+
+            const totalUnReadMessages = await this.messageService.totalUnReadMessages(newUser?._id.toString())
+            console.log('total unread messages :',totalUnReadMessages)
+
+            res.status(HttpStatus.OK).json({
+                message:SuccessMessages.LOGIN_SUCCESSFUL,
+                accessToken:token,
+                userData:{
+                    _id:newUser?._id,
+                    firstName:newUser?.fullName,
+                    userName:newUser?.userName,
+                    profileImg:newUser?.profileImage
+                },
+                totalUnReadMessages:totalUnReadMessages,
+                status:true
+            })
+            return
+
+        } catch (error:any) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+        }
+    }
+
     logout(req: Request, res: Response): Promise<void> {
         return Promise.resolve()
     }
 
     async getUser(req: Request, res: Response): Promise<void> {
         const userId = req.params.userId
+
+        if(!userId){
+            res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'userId missng..!',status:false})
+            return
+        }
         try {
             const user = await this.userService.findUserById(userId)
             if(!user){
@@ -169,6 +214,11 @@ export class UserController{
         try {
             const userId = req.params.userId
             const formData  = req.body
+
+            if(!userId && formData){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'userId missng..!',status:false})
+                
+            }
 
             const updateProfile = await this.userService.updateProfile(userId,formData)
             res.status(HttpStatus.OK).json({data:updateProfile,status:true})
@@ -216,6 +266,27 @@ export class UserController{
             res.status(HttpStatus.OK).json({message:'users searched successfully',status:true,users:searchusers})
         } catch (error) {
             res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
+        }
+    }
+
+    // handle private account 
+    async handlePrivateAccount(req: Request, res: Response): Promise<unknown> {
+        try {
+            const userId = req.params.userId
+            if(!userId){
+                res.status(HttpStatus.INVALIDE_CREDENTIAL).json({message:'userId missng..!',status:false})
+                return
+            }
+            const updateIsPrivateAccount = await this.userService.updateIsPrivateAccount(userId)
+            if(!updateIsPrivateAccount){
+                res.status(HttpStatus.BAD_REQUEST).json({message:'failed to update the account privacy settings',status:false})
+                return
+            }
+            res.status(HttpStatus.OK).json({status:true,message:'Account privacy update successfully.'})
+            return
+
+        } catch (error) {
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to update profile',status:false})
         }
     }
 }

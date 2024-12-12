@@ -22,6 +22,10 @@
   --hover-card:#011927;
 }
 
+.swal-text {
+  color: var(--color-foreign) !important; 
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-foreign);

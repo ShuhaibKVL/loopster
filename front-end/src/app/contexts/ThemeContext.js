@@ -14,7 +14,7 @@ export const ThemeProvider = ({children}) => {
         if(savedTheme){
             setTheme(savedTheme)
             console.log("if")
-        }else if( window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) {
+        }else if( window?.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) {
             console.log("else")
             setTheme('dark')
         }

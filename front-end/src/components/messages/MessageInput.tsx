@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from 'react'
 import { Button } from '../ui/button'
-import InputEmoji from 'react-input-emoji'
 import EmojiPicker , { EmojiClickData} from 'emoji-picker-react'
 import { MdAttachFile } from "react-icons/md";
 import { useChat } from '@/app/contexts/chatContext'
@@ -64,7 +63,7 @@ export default function MessageInput({sendMessage,message,handleMessageChange}:I
             ref={fileRef} 
             hidden 
             onChange={handleFileChange}  
-            accept='image/* , video/*' 
+            accept='image/* , video/* , audio/* , application/*'
             title='Upload medias' 
             />
             <MdAttachFile onClick={invokeFileInput} 

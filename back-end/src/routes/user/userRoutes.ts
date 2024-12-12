@@ -50,18 +50,20 @@ const storyController = new StoryController(sotryService)
 
 const userController = new UserController(userService , authService , emailService,otpService,followService,messageService)
 const otpController = new OtpController(otpService,emailService,userService)
-const followController = new FollowController(followService,notificationService)
+const followController = new FollowController(followService,notificationService,userService)
 
 
 router.post('/register',userController.signUp.bind(userController))
 router.post('/verifyOtp',otpController.verifyOtp.bind(otpController))
 router.post('/resendotp',otpController.resendOtp.bind(otpController))
 router.post('/signIn',userController.signIn.bind(userController))
+router.post('/signin-with-next-auth',userController.signInWithGoogle.bind(userController))
 
 router.use(authorize)
 router.get('/user/:userId',userController.getUser.bind(userController))
 router.post('/user/:userId/upload-profile-img',upload.single('profileImage'),userController.uploadProfileImage.bind(userController))
 router.post('/:userId/update-profile',userController.updateProfile.bind(userController))
+router.get('/:userId/settings/update-private-account',userController.handlePrivateAccount.bind(userController))
 
 router.post('/latest-users',userController.getLatestUsers.bind(userController))
 router.get('/:userId/search-followed-users',userController.search_followed_users.bind(userController))
@@ -71,6 +73,9 @@ router.get('/suggestion-users',followController.findUnFollowedUsers.bind(followC
 
 router.post('/follow-user',followController.follow.bind(followController))
 router.delete('/unfollow-user',followController.unFollow.bind(followController))
+router.get('/accept-follow-request',followController.acceptFollowRequest.bind(followController))
+router.delete('/reject-follow-request',followController.cancelFollow.bind(followController))
+router.delete('/cancle-follow-request',followController.cancleFollowRequest.bind(followController))
 
 router.get('/get-notifications',notificationController.fetchAllNotifications.bind(notificationController))
 router.patch('/mark-as-readed',notificationController.markAsReaded.bind(notificationController))

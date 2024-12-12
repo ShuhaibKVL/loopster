@@ -4,6 +4,8 @@ import { error } from 'console'
 import { logout } from '@/lib/redux/features/auth/userSlice'
 import  Router from 'next/navigation'
 import { toast } from 'react-toastify'
+import { deleteCookie  } from 'cookies-next';
+import { redirect } from 'next/navigation'
 
 // Base URL
 export const BASE_URL = 'http://localhost:5000'
@@ -129,8 +131,10 @@ userApi.interceptors.response.use(
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token
             store.dispatch(logout())
+             // Remove session cookies
+             deleteCookie ('session');
 
-            Router.redirect('/signIn')
+            redirect('/signIn')
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
@@ -151,7 +155,7 @@ adminApi.interceptors.response.use(
             //Logout the user from Redux and clear token
             store.dispatch(logout())
 
-            Router.redirect('/admin/signIn')
+            redirect('/admin/signIn')
              // Router.replace('/signIn')
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
@@ -172,8 +176,10 @@ postApi.interceptors.response.use(
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token
             store.dispatch(logout())
+             // Remove session cookies
+            deleteCookie ('session');
 
-            Router.redirect('/signIn')
+            redirect('/signIn')
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
@@ -193,8 +199,10 @@ chatApi.interceptors.response.use(
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token
             store.dispatch(logout())
+            // Remove session cookies
+            deleteCookie ('session');
 
-            Router.redirect('/signIn')
+            redirect('/signIn')
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }
@@ -213,8 +221,10 @@ chatBotApi.interceptors.response.use(
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token
             store.dispatch(logout())
+             // Remove session cookies
+             deleteCookie ('session');
 
-            Router.redirect('/signIn')
+            redirect('/signIn')
         }else if (response) {
             toast.error('Network issue: Unable to connect to the server. Please try again later.');
         }

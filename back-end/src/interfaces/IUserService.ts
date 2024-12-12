@@ -15,4 +15,6 @@ export interface IUserService {
     findLatestUsers(userId:string):Promise<any>
     //the response to search users on messages
     findFollowedUsersBySearch(userId:string,query:string):Promise<unknown>
+    // To handle account privasy / private account
+    updateIsPrivateAccount(userId:string):Promise<unknown>
 }

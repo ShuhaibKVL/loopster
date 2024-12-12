@@ -5,6 +5,8 @@ import { IPost, IPostResponse } from "./IPost";
 export interface IUserWithCounts extends ISignUp_user {
     follow:number,
     followers:number,
-    counts?:{followedCount:number,followersCount:number},
+    followsData?:{counts:{followedCount:number,followersCount:number},followers:string[],following:string[]},
+    requestPendingFollows?:string[];
+    isPrivateAccount:boolean,
     posts:IPostResponse[],
 }

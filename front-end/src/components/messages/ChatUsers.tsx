@@ -24,7 +24,6 @@ export default function ChatUsers({chatList,setActiveChat,setPrevFileUrl}:ChatUs
     const unReadMsgPerChat = useAppSelector((state:RootState) => state?.user?.unReadMsgPerChat)
 
     const { onlineUsers} = useChat()
-    console.log('online users 😍😍😍😍😍😍 :',onlineUsers)
 
     const router = useRouter()
 
@@ -98,7 +97,7 @@ export default function ChatUsers({chatList,setActiveChat,setPrevFileUrl}:ChatUs
                   <h1 className='font-semibold'>
                     {isGroupChat ? chat.chatName : otherUser?.userName}
                   </h1>
-                  <p className='text-xs'>{chat?.latestMessage?.content}</p>
+                  <p className='text-xs'>{chat?.latestMessage?.content.slice(0,15)}</p>
                 </div>
               </div>
               
