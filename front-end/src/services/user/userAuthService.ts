@@ -3,6 +3,8 @@ import { IUserAuthService } from "./interfaces/IUserAuthService";
 import { user_publicApi, userApi } from "../apis/axiosInstance";
 import { IsignIn } from "@/app/(auth)/signIn/page";
 import { ISearchUsers } from "@/lib/utils/interfaces/ISeacrchUsers";
+import { IFollowedUser, IFollowers } from "@/components/user_components/FollowUnFollow";
+import { IUserData } from "@/components/post_components/Post";
 
 class UserAuthService implements IUserAuthService{
     
@@ -13,7 +15,6 @@ class UserAuthService implements IUserAuthService{
 
     async signIn(userData: IsignIn): Promise<any> {
         const response = await user_publicApi.post('/signIn',userData)
-        console.log("response :",response)
         return response.data
     }
 
@@ -23,10 +24,7 @@ class UserAuthService implements IUserAuthService{
     }
 
     async uploadProfileImg(userId:string,formData: FormData): Promise<any> {
-        console.log('uploadProfileImg invoked')
-        console.log(userId,)
         const response = await userApi.post(`/user/${userId}/upload-profile-img`,formData)
-        console.log('response :',response)
         return response.data
     }
 
@@ -35,14 +33,28 @@ class UserAuthService implements IUserAuthService{
         return response
     }
 
-    async getLatestUsers(userId:string): Promise<any> {
+    async getLatestUsers(userId:string): Promise<{data:IUserData[],status:boolean}> {
         const response = await userApi.post('/latest-users',{userId})
         return response.data
-        
     }
 
     async search_followed_users(userId: string, query: string): Promise<{status:boolean,message:string,users:ISearchUsers[]}> {
         const response = await userApi.get(`/${userId}/search-followed-users?query=${query}`)
+        return response?.data
+    }
+
+    async getFollowedUsers(userId: string): Promise<{data:IFollowedUser[],status:boolean}> {
+        const response = await userApi.get(`/followed-users?userId=${userId}`)
+        return response?.data
+    }
+
+    async getFollowers(userId: string): Promise<{data:IFollowers[],status:boolean}> {
+        const response = await userApi.get(`/followers?userId=${userId}`)
+        return response?.data              
+    }
+
+    async getSuggestionUsers(userId:string):Promise<{status:boolean,data:IFollowers[]}>{
+        const response = await userApi.get(`/suggestion-users?userId=${userId}`)
         return response?.data
     }
 }

@@ -12,6 +12,7 @@ import { HttpStatus } from "../enums/httpStatus"
 import { generateOtp } from "../utils/otpGenerator"
 import { IOtpService } from "../interfaces/IOtpService"
 import { IFollowService } from "../interfaces/follow/IFollowService"
+import { IMessageService } from "../interfaces/message/IMessageService"
 
 export class UserController{
     constructor(
@@ -19,7 +20,8 @@ export class UserController{
         private authService:IAuthService,
         private emailService:IEmailService,
         private otpService : IOtpService,
-        private followService : IFollowService
+        private followService : IFollowService,
+        private messageService :IMessageService
     ){}
 
     async signUp(req: Request, res: Response): Promise<void> {
@@ -31,12 +33,12 @@ export class UserController{
             const isExistUserEmail = await this.userService.findUserByEmail(userData.email)
             console.log('isExistUserEmail :',isExistUserEmail)
             if(isExistUserEmail){
-                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.EMAIL_ALREADY_EXIST , status:false})
+                res.status(HttpStatus.OK).json({message:ErrorMessages.EMAIL_ALREADY_EXIST , status:false})
                 return;
             }
             const isExistUserName = await this.userService.findUserByUserName(userData.userName)
             if(isExistUserName){
-                res.status(HttpStatus.BAD_REQUEST).json({message:ErrorMessages.USERNAME_ALREADY_EXIST ,status:false})
+                res.status(HttpStatus.OK).json({message:ErrorMessages.USERNAME_ALREADY_EXIST ,status:false})
                 return;
             }
             const newUser = await this.userService.createUser(userData)
@@ -82,6 +84,9 @@ export class UserController{
 
             const token = this.authService.generateToken(isExistUser._id,'1h')
 
+            const totalUnReadMessages = await this.messageService.totalUnReadMessages(isExistUser?._id.toString())
+            console.log('total unread messages :',totalUnReadMessages)
+
             res.cookie('accessToken', token, {
                 httpOnly: true,      // Helps prevent XSS attacks
                 secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
@@ -98,7 +103,9 @@ export class UserController{
                     userName:isExistUser.userName,
                     profileImg:isExistUser?.profileImage
                 },
-                status:true})
+                totalUnReadMessages:totalUnReadMessages,
+                status:true
+            })
 
         } catch (error) {
             if(error instanceof ValidationError) {
@@ -211,7 +218,6 @@ export class UserController{
             res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch latest users',status:false})
         }
     }
-
 }
 
 

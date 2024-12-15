@@ -12,12 +12,15 @@ export class PostService implements IPostService {
 
     async createPost(data: IPost ,file : Buffer,fileName:string): Promise<any> {
         const imageUrl = await this.s3Service.uploadFile(file,fileName)
-        console.log('image url :',imageUrl)
         data.mediaUrl = imageUrl
         if(imageUrl){
             return await this.postRepository.create(data)
         }
         return false
+    }
+
+    async findPostById(id: string): Promise<unknown> {
+        return await this.postRepository.findPostById(id)
     }
 
     async deletePost(postId: string): Promise<any> {
@@ -43,5 +46,9 @@ export class PostService implements IPostService {
 
     async getBookMarkedPosts(userId: string,page:number): Promise<unknown> {
         return await this.postRepository.findBookMarkedPosts(userId,page)
+    }
+
+    async getPost(postId: string, userId: string): Promise<unknown> {
+        return await this.postRepository.findPost(postId,userId)
     }
 }

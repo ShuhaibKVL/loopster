@@ -44,7 +44,7 @@ interface IPostFooterProps{
     mediaUrl:string,
     content:string,
   },
-  refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+  refetchPosts: () => Promise<void>| (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
 
 interface IUserData {

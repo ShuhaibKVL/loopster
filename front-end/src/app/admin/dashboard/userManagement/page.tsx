@@ -23,6 +23,7 @@ import { IsignupUserInterface } from '@/lib/utils/interfaces/IsignupUserInterfac
 import userManagementService from '@/services/admin/userManagementService';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const Page = () => {
     const [ users , setUsers] = useState<IsignupUserInterface[]>([])
@@ -109,7 +110,13 @@ const Page = () => {
                          }
                     </div>
               </TableCell>
-              <TableCell>{user.fullName}</TableCell>
+              <TableCell>
+              <Link href={`/admin/dashboard/userManagement/user-details/${user?._id}`}>
+              <p className='font-semibold'>
+                {user.fullName}
+              </p>
+              </Link>
+                </TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell className="text-right mr-3 flex justify-around items-center">
               <TooltipProvider>

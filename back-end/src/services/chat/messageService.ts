@@ -14,4 +14,24 @@ export class MessageService implements IMessageService{
     async findMessages(chatId: string): Promise<unknown> {
         return await this.messageRepository.findMessages(chatId)
     }
+
+    async unReadMessagesPerChat(userId: string): Promise<unknown> {
+        return await this.messageRepository.unReadMessagesPerChat(userId)
+    }
+
+    async totalUnReadMessages(userId: string): Promise<unknown> {
+        return await this.messageRepository.totalUnReadMessages(userId)
+    }
+
+    async markMsgAsReaded(userId: string, messageIds: string[]): Promise<unknown> {
+        return await this.messageRepository.markMsgAsReaded(userId,messageIds)
+    }
+
+    async deleteFromMe(messageId: string, userId: string): Promise<unknown> {
+        return await this.messageRepository.deleteFromMe(messageId,userId)
+    }
+
+    async deleteFromEveryOne(messageId: string): Promise<unknown> {
+        return await this.messageRepository.deleteFromEveryOne(messageId)
+    }
 }

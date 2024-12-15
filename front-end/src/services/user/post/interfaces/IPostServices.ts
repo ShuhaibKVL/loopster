@@ -1,4 +1,3 @@
-import { PostProps } from "@/app/components/post_components/Post"
 import { IPost } from "@/lib/utils/interfaces/IPost"
 import { IReport } from "@/lib/utils/interfaces/IReport"
 import { IPostProps } from "@/lib/utils/interfaces/PostProps"
@@ -11,4 +10,5 @@ export interface IPostServices {
     getLatestPosts(userid:string,page?:number):Promise<any>
     getFollowedUserPosts(userId:string,page?:number):Promise<unknown>
     getBookMarkedPosts(userId:string,page?:number):Promise<{message:string,posts:IPostProps[]}>
+    getPost(postId:string,userId:string):Promise<unknown>
 }

@@ -1,45 +1,35 @@
 'use client'
 
-import React, { Suspense, useEffect } from 'react'
-import Image from 'next/image'
-import defaultProfile from '../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
-import { Button } from '@/components/ui/button'
-import {Pencil2Icon  } from '@radix-ui/react-icons'
-import {UploadIcon} from '@radix-ui/react-icons'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/lib/redux/store/store'
 import withAuth from '@/app/contexts/withAuth'
-import { useState } from 'react'
-import { useRef } from 'react'
-import userAuthService from '@/services/user/userAuthService'
-import { ISignUp_user } from '@/app/(auth)/signUp/page'
-import Form from '@/components/cm/Form'
-import { editProfileSchema } from '../../../lib/utils/validationSchemas'
-import { ValidationError } from 'yup'
-import { useToast } from '@/hooks/use-toast'
 import { confirmAction } from '@/components/cm/ConfirmationModal'
-import { IUserWithCounts } from '../../../lib/utils/interfaces/IUserWIthCounts'
-import PostContentContainer from '@/components/post_components/PostContentContainer'
-import ReusableDropdown from '@/components/cm/DropDownMenu'
-import postService from '@/services/user/post/postServices'
+import Form from '@/components/cm/Form'
+import { Button } from '@/components/ui/button'
 import FollowUnFollow from '@/components/user_components/FollowUnFollow'
-import PostContentSkeleton from '@/components/skeltons/PostContentSkeleton'
-import EditPost from '@/components/post_components/EditPost'
-import { IPostResponse } from '@/lib/utils/interfaces/IPost'
+import { useToast } from '@/hooks/use-toast'
+import { RootState } from '@/lib/redux/store/store'
+import userAuthService from '@/services/user/userAuthService'
+import { Pencil2Icon, UploadIcon } from '@radix-ui/react-icons'
+import Image from 'next/image'
+import React, { useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { ValidationError } from 'yup'
+import { IUserWithCounts } from '../../../../lib/utils/interfaces/IUserWIthCounts'
+import { editProfileSchema } from '../../../../lib/utils/validationSchemas'
+import defaultProfile from '../../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
+import Setting from '@/components/cm/Setting'
+import DefaultPosts from '@/components/post_components/profile/defaultPosts'
 
-
-const Page = () => {
-    const dispatch = useDispatch()
+const Page = ({params}:{params:{userId:string}}) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const userId = useSelector((state:RootState) => state.user.userId)
+    const loginedUserId = useSelector((state:RootState) => state.user.userId)
 
+    const userId = params?.userId || loginedUserId
+    
     const [userData, setUserData] = useState<IUserWithCounts | null>(null);
     const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfile)
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
     const [ error , setError ] = useState('')
     const  { toast } = useToast()
-    const [ isOpen , setIsOpen ] = useState(false)
-    const [ currentPost , setCurrentPost ] = useState<IPostResponse | null>(null)
 
     const editUserFields = [
         {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
@@ -47,20 +37,15 @@ const Page = () => {
         {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
     ]
 
-    const editPostFields = [
-        {name:'fullName',type:"text",label:"Full Name",placeHolder:`${userData?.fullName}`, value:`${userData?.fullName}` },
-        {name:'userName',type:"text",label:"User Name",placeHolder:`${userData?.userName}`, value:`${userData?.userName}` },
-        {name:'email',type:"email",label:"Email",placeHolder:`${userData?.email}` ,value:`${userData?.email}`}
-    ]
-
-    async function getUserData(userId :string){
+    async function getUserData(){
         const user = await userAuthService.user(userId)
+        console.log('user data :',user)
         setUserData(user?.userData[0])
     }
 
     useEffect(() => {
         if(userId){
-            getUserData(userId)
+            getUserData()
         }
     },[userId])
 
@@ -94,10 +79,10 @@ const Page = () => {
                 });
             
                 if(willProceed){
-                    const update = await userAuthService.uploadProfileImg(userId,formData)
+                    const update = await userAuthService.uploadProfileImg(loginedUserId,formData)
                     console.log('update :',update)
                 if(update.status){
-                    getUserData(userId)
+                    getUserData()
                     toast({
                         title: 'Success',
                         description:`${userData?.fullName} data updated successfully`,
@@ -127,11 +112,11 @@ const Page = () => {
         try {
             console.log('formData :',formData)
             await editProfileSchema.validate(formData, {abortEarly:true})
-            const updateProfile = await userAuthService.editProfile(userId,formData)
+            const updateProfile = await userAuthService.editProfile(loginedUserId,formData)
             console.log(updateProfile)
             if(updateProfile.status){
                 handleEditContainer()
-                getUserData(userId)
+                getUserData()
                 toast({
                     title: 'Success',
                     description:`${userData?.fullName} data updated successfully`,
@@ -155,36 +140,10 @@ const Page = () => {
         }
     }
 
-    // Handel post delete
-    const handleDelete = async (postId:string) => {
-
-        const willProceed = await confirmAction({
-            title: `Are you sure to delete ?`,
-            text: `Once deleted, you are not able to return..!`,
-            icon: 'warning',
-        });
-        if(willProceed){
-            const response = await postService.deletePost(postId)
-            console.log('post delete response :',response)
-            if(response?.status){
-                toast({
-                    title: 'Failed',
-                    description: response?.message,
-                    className:"toast-failed"
-                })
-            }
-            getUserData(userId)
-        }
-    }
-
-    // Handel post delete
-    const handleEdit = async (post:IPostResponse) => {
-        setCurrentPost(post)
-         setIsOpen(true)
-    }
     
     return (
     <div className='p-5 space-y-2 sm:space-y-10'>
+        <Setting />
         <div className="relative w-[100px] h-[100px] sm:w-[150px] sm:h-[150px] m-auto group overflow-hidden rounded-full">
             <Image
             src={userData?.profileImage || defaultProfile}
@@ -195,7 +154,7 @@ const Page = () => {
             alt="Profile Image"
             />
             <UploadIcon
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            className={`absolute top-1/2 left-1/2 ${userId !== loginedUserId && 'hidden'} transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
             onClick={handleUploadClick}
             />
             <input
@@ -211,13 +170,13 @@ const Page = () => {
     {/* Follow / Following section */}
     <section className='flex items-center justify-center gap-x-9 w-full'>
         <FollowUnFollow
-        follow={Number(userData?.counts?.followedCount)}
-        followers={Number(userData?.counts?.followersCount)}
+            follow={Number(userData?.counts?.followedCount)}
+            followers={Number(userData?.counts?.followersCount)}
         />
     </section>
         {/* user Details and edit section */}
         <div className='relative p-5 border rounded-lg space-y-1 overflow-hidden'>
-            <Button onClick={handleEditContainer} className='border-2 absolute right-5 ' variant={'destructive'} size='icon'>
+            <Button onClick={handleEditContainer} className={`border-2 absolute right-5 ${userId !== loginedUserId && 'hidden'} `} variant={'destructive'} size='icon'>
                 <Pencil2Icon />
             </Button>
             <section>
@@ -232,52 +191,10 @@ const Page = () => {
             <p className='w-full h-10 text-center text-red-500'>{error}</p>
             <Form fields={editUserFields} onSubmit={handleModalSubmit} />
         </div>
-        {/* User Posts */}
-        <section>
-            <h2 className='w-full p-2 text-center border rounded-lg mb-2 bg-[var(--color-bg)]'>Your Posts</h2>
-            <div className='flex flex-col rounded-sm gap-2 p-2'>
-            
-                {userData?.posts.length !== 0 ? (
-                    userData?.posts.map((post) => (
-                        <div className='relative'>
-                            <div className='absolute z-10 sm:top-2 -right-2'>
-                            <ReusableDropdown
-                                options={[
-                                    { label: 'Delete', action: () => handleDelete(post?._id) },
-                                    { label: 'Edit', action: () => handleEdit(post) }
 
-                                ]}
-                                postId={post?._id}
-                            />
-                            </div>
-                            <Suspense fallback={<PostContentSkeleton />}>
-                                <PostContentContainer 
-                                    key={post?._id}
-                                    mediaUrl={post?.mediaUrl}
-                                    content={post?.content}
-                                    mediaType={post?.mediaType}
-                                    time={post?.createdAt}
-                                    postId={post?._id}
-                                    userId={post?.userId}
-                                    
-                                />
-                            </Suspense>
-                            <EditPost
-                            isOpen={isOpen}
-                            setIsOpen={setIsOpen}
-                            postData={currentPost as IPostResponse}
-                            userId={userId}
-                            getUserData={getUserData}
-                            />
-                        </div>
-                        
-                    ))
-                ) : (
-                    <p>No more posts</p>
-                )}
-            </div>
-        </section>
-        
+        {/* -------------  Users post deault view -------------- */}
+            <DefaultPosts userData={userData as IUserWithCounts} />
+            
     </div>
     )
 }

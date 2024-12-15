@@ -5,10 +5,12 @@ import CreatePostComponent from '@/components/post_components/CreatePost';
 import { Suspense } from 'react';
 import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
 import PostTabs from '@/components/post_components/Tabs';
+import StoryComponent from '@/components/story/StoryComponent';
 
 const Page = () => {
     return (
-        <div className='h-fit flex flex-col gap-2'>
+        <div className='h-fit flex flex-col gap-2 '>
+            <StoryComponent />
             <div className='hidden sm:block'>
                 <Suspense fallback={<CreatePostSkelton />} >
                     <CreatePostComponent />

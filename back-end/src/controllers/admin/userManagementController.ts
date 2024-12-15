@@ -57,4 +57,55 @@ export class UserManagementController implements IUserManagementController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
         }
     }
+
+    // to show all total users on admin dashboard panel
+    async getTotalAccountsCount(req:Request,res:Response):Promise<unknown> {
+        try {
+           const respnse =  await this.userManagementService.getTotalAccountsCount()
+           if (!respnse) {
+            res.status(HttpStatus.BAD_REQUEST).json({ message:'Falied to fetch total uses count' ,status:false});
+            return;
+            }
+            res.status(HttpStatus.OK).json({message:'successful',status:true,totalUsers:respnse})
+        } catch (error:any) {
+            console.log(error)
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+        }
+    }
+
+    async findUsersBasedOnDays(req:Request,res:Response): Promise<unknown> {
+        try {
+            const respnse =  await this.userManagementService.findUsersBasedOnDays()
+            if (!respnse) {
+             res.status(HttpStatus.BAD_REQUEST).json({ message:'Falied to fetch total uses count' ,status:false});
+             return;
+             }
+             res.status(HttpStatus.OK).json({message:'successful',status:true,users:respnse})
+         } catch (error:any) {
+             console.log(error)
+             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+         }
+    }
+
+    // for user data 
+    async findById(req:Request,res:Response):Promise<unknown> {
+        try {
+            const { userId } = req.query
+            if (!userId) {
+                res.status(HttpStatus.BAD_REQUEST).json({ message:'userId is missing' ,status:false});
+                return;
+            }
+
+           const respnse =  await this.userManagementService.findById(userId as string)
+           if (!respnse) {
+            res.status(HttpStatus.BAD_REQUEST).json({ message:'Falied to fetch total uses count' ,status:false});
+            return;
+            }
+            res.status(HttpStatus.OK).json({message:'successful',status:true,user:respnse})
+        } catch (error:any) {
+            console.log(error)
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+        }
+    }
+
 }

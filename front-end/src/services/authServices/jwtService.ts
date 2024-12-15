@@ -13,7 +13,6 @@ export const isVerifiedJwt = async():Promise<any> => {
         });
 
         const response = await res.json()
-        console.log("Resoponse of JWT verifaication :",response)
         if(response.message !== 'Token Valid.'){
             return false
         } 

@@ -16,16 +16,12 @@ const initialState: IInitialState = {
 }
 
 export const fetchLatestPosts = createAsyncThunk('posts/fetchLatestPosts',async({userId,page =1}:{userId:string,page?:number}) => {
-    console.log('the FETCH LATEST POSTS function invoked inside the reducer',userId,page)
     const response = await postService.getLatestPosts(userId,page)
-    console.log('response.posts :',response.posts)
     return response?.posts
 })
 
 export const followedUsersPosts = createAsyncThunk('posts/followedUsersPosts',async({userId,page =1}:{userId:string,page?:number}) => {
-    console.log('the FOLLOWED USERS  function invoked inside the reducer',userId,page)
     const response = await postService.getFollowedUserPosts(userId,page)
-    console.log('response inside the reducer :',response)
     return response?.posts
 })
 
@@ -35,7 +31,6 @@ const postReducer = createSlice({
     initialState,
     reducers:{
        setPage:(state,action) =>{
-        console.log('page is settled to :',action.payload)
         state.page = action.payload
        }
     },
@@ -45,9 +40,7 @@ const postReducer = createSlice({
                 state.status = 'loading'
             })
             .addCase(fetchLatestPosts.fulfilled, (state , action) => {
-                console.log('fetchLatesPosts fullfilled',action)
                 state.posts = action.payload
-                console.log('posts inside the addCase reducer :',state.posts)
             })
             .addCase(fetchLatestPosts.rejected,(state,action) => {
                 state.status = 'failed'
@@ -58,9 +51,7 @@ const postReducer = createSlice({
                 state.status = 'loading'
             })
             .addCase(followedUsersPosts.fulfilled, (state , action) => {
-                console.log('fetchLatesPosts fullfilled',action)
                 state.posts = action.payload
-                console.log('posts inside the addCase reducer :',state.posts)
             })
             .addCase(followedUsersPosts.rejected,(state,action) => {
                 state.status = 'failed'

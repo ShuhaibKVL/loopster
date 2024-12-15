@@ -1,3 +1,4 @@
+import { ITopLikedPost } from "@/components/DashBoard/TopLikedPosts";
 import { adminApi } from "../apis/axiosInstance";
 import { IPostManagementService } from "./interfaces/IPostManagementService";
 
@@ -17,6 +18,13 @@ export class PostMangementService implements IPostManagementService {
         const response = await adminApi.patch(`/post/report-post?postId=${postId}&reportId=${reportId}`)
         return response.data
     }
+
+    async findMostLikedPost(): Promise<{status:boolean,data:ITopLikedPost[]}> {
+        const response = await adminApi.get('/post/most-liked-posts')
+        return response?.data
+    }
+
+    
 }
 
 const postManagementService = new PostMangementService()

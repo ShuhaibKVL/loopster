@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ObjectId } from "mongoose";
 
 export interface userState{
     accessToken:string,
@@ -6,7 +7,9 @@ export interface userState{
     loading:boolean,
     user:any,
     userId:string,
-    userProfile:string
+    userProfile:string,
+    totalUnReadMessages:number,
+    unReadMsgPerChat:{ _id: ObjectId, unReadMsg: number }[] | null
 }
 
 const initialState:userState = {
@@ -15,7 +18,9 @@ const initialState:userState = {
     loading:true,
     user:null,
     userId:'',
-    userProfile:''
+    userProfile:'',
+    totalUnReadMessages:0,
+    unReadMsgPerChat:null
 }
 
 const userAuthReducer = createSlice({
@@ -29,6 +34,7 @@ const userAuthReducer = createSlice({
             state.user = action.payload.user.userName
             state.userId = action.payload.user._id
             state.userProfile = action.payload.user.profileImg
+            state.totalUnReadMessages = action.payload.totalUnReadMessages
         },
         logout : (state) => {
             state.accessToken = ''
@@ -37,9 +43,19 @@ const userAuthReducer = createSlice({
             state.user = null
             state.userId = ''
             state.userProfile = ''
+            state.unReadMsgPerChat = null
+            state.totalUnReadMessages = 0
+        },
+        updateTotalUnReadMsg : (state,action) => {
+            console.log('update total un readed messages :',action.payload.totalUnreadMessage)
+            state.totalUnReadMessages = action.payload.totalUnReadMessages
+        },
+        updateUnReadMsgPerChat : (state,action) => {
+            console.log('update Unreaded messages iniside slice :',action.payload)
+            state.unReadMsgPerChat = action.payload
         }
     },
 })
 
-export const { login, logout } = userAuthReducer.actions
+export const { login, logout , updateTotalUnReadMsg , updateUnReadMsgPerChat } = userAuthReducer.actions
 export default userAuthReducer.reducer

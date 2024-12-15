@@ -12,6 +12,16 @@ export class MessageService implements IMessageService{
         const res = await chatApi.get(`/message/fetch-messages?chatId=${chatId}`)
         return res?.data
     }
+
+    async delteFromMe(messageId: string, userId: string): Promise<{status:boolean,message:string,deletedMsg?:IMessageResponse}> {
+        const res = await chatApi.delete(`/message/delet-from-me?messageId=${messageId}&userId=${userId}`)
+        return res?.data
+    }
+
+    async deleteFromEveryone(messageId: string): Promise<{status:boolean,message:string,messageId?:string}> {
+        const res = await chatApi.delete(`/message/delete-from-everyone?messageId=${messageId}`)
+        return res?.data
+    }
 }
 
 const messageService = new MessageService()

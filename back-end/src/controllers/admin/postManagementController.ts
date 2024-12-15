@@ -76,4 +76,22 @@ export class PostManagementController {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:error.message}) 
         }
     }
+
+    // to get unFollowed users for sugggeston part
+    async findMostLikedPosts(req:Request , res:Response) {
+        try {
+            const posts = await this.postManagementService.findMostLikedPost()
+            console.log('posts on the basis of likes  :',posts)
+            if(!posts){
+                res.status(HttpStatus.BAD_REQUEST).json({message:'posts missng..!',status:false})
+                return false
+            }
+            res.status(HttpStatus.OK).json({data:posts,status:true})
+
+        } catch (error) {
+            console.log(error)
+            res.status(HttpStatus.BAD_REQUEST).json({message:'failed to fetch post basis on likes',status:false})
+        }
+    }
+
 }

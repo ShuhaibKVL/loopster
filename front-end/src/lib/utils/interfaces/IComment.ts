@@ -1,7 +1,7 @@
 export interface IComment{
     postId:string,
     userId:string,
-    comment:string
+    comment:string,
 }
 
 export interface ICommentResponse extends IComment{
@@ -10,5 +10,10 @@ export interface ICommentResponse extends IComment{
     user:{
         userName:string,
         profileImage:string
-    }
+    },
+    likes:string[]
+}
+
+export interface ICommentResponseWInnerComment extends ICommentResponse{
+    innerComments:ICommentResponse[]
 }

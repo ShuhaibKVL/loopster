@@ -16,7 +16,7 @@ import { RootState } from '@/lib/redux/store/store'
 import postService from '@/services/user/post/postServices'
 import { ImageIcon, UploadIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaArrowUp } from "react-icons/fa6"
 import { RiAiGenerate } from "react-icons/ri"
 import { useSelector } from 'react-redux'
@@ -26,6 +26,9 @@ import FileRobot from '../Libraries/Filerobot'
 import Unsplash from '../Libraries/Unsplash'
 import './style.css'
 import TipTap from './TipTap'
+import TypeWriterComponent from '../Libraries/TypeWriterComponent'
+import { MdDelete } from "react-icons/md";
+import EmojiPickerComponent from '../Libraries/EmojiPicker'
 
 export default function CreatePostComponent() {
     const userProfileImg = useAppSelector((state:RootState) => state?.user?.userProfile)
@@ -38,6 +41,7 @@ export default function CreatePostComponent() {
     const [isOpen, setIsOpen] = useState(false);
     const [ isHiddenPrevImg ,setIsHiddenPrevImag ] = useState<'hidden' | 'block'>('hidden')
     const fileRobotRef = useRef<{ openImgEditor: () => void }>(null);
+    const [loading , setLoading ] = useState(false)
     
     const userId = useSelector((state:RootState) => state.user.userId)
     
@@ -191,6 +195,7 @@ export default function CreatePostComponent() {
                 formData.append('mediaUrl', fileBuffer);
             }
             const response = await postService.createPost(formData)
+            setLoading(true)
             if(response.status){
                 toast({
                     title: 'Success',
@@ -208,11 +213,29 @@ export default function CreatePostComponent() {
                     className:"toast-failed"
                 })
             }
+            setLoading(false)
         }
     }
 
+    const setContentByEvent = (e:any) => {
+        SetEditorContent(e.target.value)
+    }
+
+    useEffect(()=>{
+        console.log('edtore content updating :',editorContent)
+    },[editorContent])
+
     return (
         <div className='w-full border-2 rounded-md p-2 flex flex-col gap-2 justify-between min-h-40 h-fit'>
+            
+            {loading && (
+                <p className='text-center text-[var(--color-bg)]'>
+                <TypeWriterComponent
+                cursorStyle='' 
+                words='posting your post ...' />
+                <span className="loading loading-spinner loading-xs"></span>
+            </p>
+            )}
             <div className='w-full flex justify-between md:space-x-3'>
                 <div className='hidden md:block min-w-12'>
                     <AvatarComponent 
@@ -221,7 +244,7 @@ export default function CreatePostComponent() {
                 </div>
                 <Textarea onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')} className={`${isDisplayEditorContent === 'hidden' ? 'block' : 'hidden'}`} />
                 <div className={`${isDisplayEditorContent} w-full border-b rounded`}>
-                    <TipTap onContentChange={handleContentChange} />
+                    <TipTap initialContent={editorContent} onContentChange={handleContentChange} />
                     <div className={`relative w-full flex items-center justify-end`}>
                         <FileRobot
                             ref={fileRobotRef}
@@ -246,7 +269,7 @@ export default function CreatePostComponent() {
                             <button
                             className='px-3 py-1 text-orange-500 text-md hover:border hover:border-orange-500 transition-colors duration-100 rounded-sm'
                             onClick={deleteFile}>
-                                Discard
+                                <MdDelete />
                             </button>
                         </div>
                     </div>
@@ -258,10 +281,15 @@ export default function CreatePostComponent() {
             onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')}
             className={`${isDisplayEditorContent === 'hidden' ? 'hidden' : 'block' } text-gray-300`}  />
             
-            <div className='flex items-center gap-1 text-secondary duration-75 cursor-pointer'>
+            {/* <div className='flex items-center gap-1 text-secondary duration-75 cursor-pointer'>
                 <RiAiGenerate className=''/>
                 <p className='text-sm'>Genarate Caption with AI</p>
-            </div>
+            </div> */}
+            {/* <EmojiPickerComponent
+            message={editorContent}
+            handleMessageChange={setContentByEvent}
+            />    */}
+            
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     <ImageIcon className='w-6 h-6' onClick={() => setIsOpen(true)} />

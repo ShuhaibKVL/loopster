@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IChatRepository } from "../../interfaces/chat/IChatRepository";
 import Chat, { IChat } from "../../models/chat";
 
@@ -14,14 +15,39 @@ export class ChatRepository implements IChatRepository{
     }
 
     async fetchAllChats(currentUserId: string): Promise<unknown> {
-        return await Chat.find({
-            users: { $in: [currentUserId] }
-            }).populate('users', 'userName _id fullName profileImage') // Adjust as needed for user fields
-          .populate('latestMessage')
-          .populate({
-              path: 'latestMessage.sender',
-              select: 'username email', // Adjust as needed
-        });
+        return await Chat.aggregate([
+            { $match: { users: { $in: [new mongoose.Types.ObjectId(currentUserId)] } } },
+            {
+                $lookup: {
+                  from: 'users', // Replace with your actual User collection name
+                  localField: 'users',
+                  foreignField: '_id',
+                  as: 'users', // Populated user data
+                },
+              },
+            {
+              $lookup: {
+                from: 'messages', // Replace with your actual Message collection name
+                localField: '_id',
+                foreignField: 'chatId',
+                as: 'messages',
+              },
+            },
+            {
+              $addFields: {
+                latestMessage: { $arrayElemAt: ['$messages', -1] }, // Get the last message
+              },
+            },
+            {$project:{
+                messages:0,
+                'latestMessage._id' : 0,
+                'latestMessage.sender' : 0,
+                'latestMessage.chatType' : 0,
+                'latestMessage.chatId' : 0,
+                'latestMessage.updatedAt' : 0,
+                'latestMessage.isRead' : 0,
+            }}
+          ]);
     }
 
     async fetchChat(chatId: string): Promise<unknown> {

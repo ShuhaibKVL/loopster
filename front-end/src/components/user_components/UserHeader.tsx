@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux'
 import FollowHandleButton from './FollowHandleButton'
 import FollowUnFollow from './FollowUnFollow'
 import UnFollowHandleButton from './UnFollowHandelButton'
+import Link from 'next/link'
 
 
 export interface IUserHeader {
@@ -23,7 +24,7 @@ export interface IUserHeader {
     isFollowed:boolean,
     followedCount:number,
     followersCount:number,
-    refetchPosts: () => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>>;
+    refetchPosts:() => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
 
 export default function UserHeader({
@@ -42,7 +43,8 @@ export default function UserHeader({
     const userId = useSelector((state:RootState) => state?.user?.userId)
 
     return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 max-w-60">
+        <div className="flex items-center justify-between ">
         <div className="flex items-center gap-4">
         <HoverCard >
             <HoverCardTrigger className='z-50'>
@@ -78,10 +80,13 @@ export default function UserHeader({
                         )}
                     </Avatar>
                 </div>
-                <div className="flex flex-col gap-1">
-                <h1 className='font-bold'>{fullName || 'fullName'}</h1>
-                <p className='font-mono'>{userName || 'userName'}</p>
-                </div>
+                <Link href={`/feed/profile/${_id}`} >
+                    <div className="flex flex-col gap-1">
+                    <h1 className='font-bold'>{fullName || 'fullName'}</h1>
+                    <p className='font-mono'>{userName || 'userName'}</p>
+                    </div>
+                </Link>
+                
                 </div>
                 <FollowUnFollow follow={followedCount} followers={followersCount} />
 
@@ -95,10 +100,22 @@ export default function UserHeader({
             ) : ('')}
             
             </HoverCard>
-            <div className="flex flex-col gap-1">
+            <Link href={`/feed/profile/${_id}`} >
+                <div className="flex flex-col gap-1">
                 <h1 className='font-bold'>{fullName || 'fullName'}</h1>
                 <p className='font-mono'>{userName || 'userName'}</p>
+                </div>
+            </Link>
             </div>
+            {/* Follow / UnFollow section */}
+            <div className=''>
+            {isFollowed ? (
+                <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
+            ) : (
+                <FollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
+            )}
+            </div>
+            
         </div>
         </div>
     )

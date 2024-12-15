@@ -1,7 +1,8 @@
-import { ClientSession } from "mongoose";
+import mongoose, { ClientSession } from "mongoose";
 import { IPostManagementRepository } from "../../interfaces/admin/postManagement/IPostManagementRepository";
 import Post from "../../models/Post";
 import Report from "../../models/Report";
+import Like from "../../models/Like";
 
 export class PostManagementRepository implements IPostManagementRepository {
 
@@ -51,7 +52,7 @@ export class PostManagementRepository implements IPostManagementRepository {
         console.log('updateIsReport :',postId)
         try {
             const report = await Post.findById(postId)
-        console.log('report existed :',report)
+            console.log('report existed :',report)
             if(report){
                 console.log('if')
                 report.isReported = !report?.isReported;
@@ -59,10 +60,43 @@ export class PostManagementRepository implements IPostManagementRepository {
                 console.log('update in repository :',update)
                 return true
             }
-        return false
+            return false
         } catch (error) {
-           console.log(error) 
+            console.log(error) 
+            return false 
+        }
+    } 
+
+    async findMostLikedPost(): Promise<unknown> {
+        return await Like.aggregate([
+            {$group:{_id:{$toObjectId:'$postId'},likeCount:{$sum:1}}},
+            {$lookup:{
+                from:'posts',
+                localField:'_id',
+                foreignField:'_id',
+                as:'postDetails'
+            }},
+            {$sort:{likeCount:-1}},
+            {$limit:10}
+        ])
+    }
+
+    async findPostsBasedOnDay(): Promise<unknown> {
+        try {
+            return await Post.aggregate([
+                {$group:
+                    {_id:{
+                        $dateToString:{format:"%Y-%m-%d",date:"$createdAt"}
+                    },
+                    posts:{$sum:1}
+                }  
+                },
+                {$sort:{_id:1}}
+            ])
+        } catch (error) {
+            console.log(error)
         }
         
     }
+
 }

@@ -33,7 +33,7 @@ export const authorize = async (req:Request , res:Response , next:NextFunction) 
             res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.BLOCKED})
             return
         }
-
+        console.log('middleware > next')
         next()
         
     } catch (error : any) {

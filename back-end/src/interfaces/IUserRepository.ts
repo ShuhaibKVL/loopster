@@ -14,5 +14,4 @@ export interface IUserRepository {
     findLatestUsers(userId:string):Promise<any>
     // To find the users on messages 
     findFollowedUsersBySearch(userId:string,query:string):Promise<unknown>
-
 }

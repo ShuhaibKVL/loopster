@@ -9,4 +9,7 @@ export interface IUserAuthService {
     editProfile(userId:string,formData:FormData):Promise<any>
     getLatestUsers(userId:string):Promise<any>
     search_followed_users(userId:string,query:string):Promise<unknown>
+    getFollowedUsers(userId:string):Promise<unknown>
+    getFollowers(userId:string):Promise<unknown>
+    getSuggestionUsers(userId:string):Promise<unknown>
 }

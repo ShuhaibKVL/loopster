@@ -5,11 +5,13 @@ import { persistStore , persistReducer } from 'redux-persist'
 import userAuthReducer from '../features/auth/userSlice'
 import adminAuthReducer from '../features/auth/adminSlice'
 import postReducer from '../features/postSlice'
+import storyReducer from '../features/storySlice'
 
 const rootReducer = combineReducers({
     user:userAuthReducer,
     admin:adminAuthReducer,
-    post:postReducer
+    post:postReducer,
+    stories:storyReducer
 })
 
 const persistConfig = {

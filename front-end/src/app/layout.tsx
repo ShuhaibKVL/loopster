@@ -6,8 +6,10 @@ import { ToastContainer } from 'react-toastify'
 import { Inter } from 'next/font/google'
 import ReduxProvider from "./contexts/ReduxProvider";
 import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
-import { io } from "socket.io-client";
-
+import { SocketProvider } from "./contexts/socketContext";
+import CsFallBack from "@/components/cm/CsFallBack";
+import { ChatProvider } from "./contexts/chatContext";
+import { NotificationProvider } from "./contexts/notificationContext";
 
 export const metadata: Metadata = {
   title: "loopster",
@@ -25,7 +27,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) { 
 
-
   return (
     <html lang="en">
       <head>
@@ -33,15 +34,21 @@ export default function RootLayout({
         <title>Loopster</title>
       </head>
       <body className={`${inter.className} rounded-sm`}>
-      <Toaster /> 
+      <Toaster />
+      <SocketProvider>
         <TanStackQueryClientProvider>
           <ReduxProvider>
             <ThemeProvider>
-              {children}
-            </ThemeProvider>
-          </ReduxProvider>
-        </TanStackQueryClientProvider>
-        <ToastContainer position="top-right" autoClose={3000} />  
+              <NotificationProvider>
+                <CsFallBack>
+                  {children}
+                </CsFallBack>
+              </NotificationProvider>
+              </ThemeProvider>
+            </ReduxProvider>
+          </TanStackQueryClientProvider>
+        </SocketProvider>
+      <ToastContainer position="top-right" autoClose={3000} />  
       </body>
     </html>
   );

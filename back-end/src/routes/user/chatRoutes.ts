@@ -10,14 +10,13 @@ import { MessageController } from "../../controllers/chat/messageController";
 
 const router:Router = Router()
 
-export const chatRepository = new ChatRepository()
-const chatService = new ChatService(chatRepository)
-const chatController = new ChatController(chatService)
-
 const messageRepository = new MessageRepository()
 export const messageService = new MessageService(messageRepository)
 const messageController = new MessageController(messageService)
 
+export const chatRepository = new ChatRepository()
+const chatService = new ChatService(chatRepository)
+const chatController = new ChatController(chatService,messageService)
 
 router.use(authorize)
 
@@ -26,5 +25,8 @@ router.get('/get-all-chats',chatController.fetchAllChats.bind(chatController))
 
 router.post('message/create',messageController.createMessage.bind(messageController))
 router.get('/message/fetch-messages',messageController.fetchMessages.bind(messageController))
+router.delete('/message/delet-from-me',messageController.delteFrom_me.bind(messageController))
+router.delete('/message/delete-from-everyone',messageController.delteFrom_everyOne.bind(messageController))
+
 
 export default router

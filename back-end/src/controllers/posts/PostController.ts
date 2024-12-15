@@ -148,5 +148,26 @@ export class PostController{
         }
     }
 
-    
+    async getPost(req:Request,res:Response):Promise<unknown>{
+        try {
+            const { postId } = req.query
+            const userId = req.params.userId
+            console.log('postId :',postId,"userId :",userId)
+            if(!postId && userId){
+                res.status(HttpStatus.BAD_REQUEST).json({message:'postId & userId id missing',status:false})
+                return
+            }
+            const posts = await this.postServices.getPost(postId as string,userId)
+            console.log('posts :',posts)
+            if(!posts){
+                res.status(HttpStatus.NOT_FOUND).json({message:'Failed to find post.'})
+                return
+            }
+            res.status(HttpStatus.OK).json({message:'Post data find successfully',posts:posts})
+            return
+        } catch (error:any) {
+            console.log(error)
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error.message)
+        }
+    }
 }

@@ -26,4 +26,16 @@ export class UserManagementService implements IUserManagementService {
         console.log('listUnlist service invoked..')
         return await this.userManagementRepo.updateIsList(userId)
     }
+
+    async getTotalAccountsCount(): Promise<unknown> {
+        return await this.userManagementRepo.getTotalAccountsCount()
+    }
+
+    async findUsersBasedOnDays(): Promise<unknown> {
+        return await this.userManagementRepo.findUsersBasedOnDays()
+    }
+
+    async findById(_id: string): Promise<unknown> {
+        return await this.userManagementRepo.findById(_id)
+    }
 }

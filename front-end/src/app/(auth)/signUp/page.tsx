@@ -55,6 +55,7 @@ const Page = () => {
         setFieldErrors({ confirmPassword: 'Password does not match' });
         return false;
       } else {
+
         await signUpSchema.validate(formData, { abortEarly: false });
 
         const response = await userAuthService.signUp(formData);
@@ -90,10 +91,11 @@ const Page = () => {
 
         } else {
           toast({
-            variant: 'destructive',
+            className: "toast-failed",
             title: response.message,
             description: "SignUp failed",
           });
+          return
         }
       }
 
