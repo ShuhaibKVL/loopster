@@ -97,6 +97,7 @@ const Page = () => {
                 const validationErrors = error.inner.map((err:Error) => err.message).join(', ')
                 setError(validationErrors)
             }
+            
             if (error instanceof AxiosError && error?.response) {
                 console.log(error,error?.response)
                 const { status } = error?.response;

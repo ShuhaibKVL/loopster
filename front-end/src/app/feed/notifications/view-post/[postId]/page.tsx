@@ -1,6 +1,4 @@
-'use client'
-
-import withAuth from '@/app/contexts/withAuth'
+// import withAuth from '@/app/contexts/withAuth'
 import ViewPost from '@/components/notification/ViewPost'
 import React from 'react'
 const Page = ({params}:{params:{postId:string}}) => {
@@ -9,4 +7,4 @@ const Page = ({params}:{params:{postId:string}}) => {
   )
 }
 
-export default withAuth(Page,true)
+export default Page

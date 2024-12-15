@@ -37,6 +37,7 @@ export default function RecommendPosts() {
 
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleIntersection = (entries:IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
       setIsLoadingMore(true);
@@ -66,8 +67,8 @@ export default function RecommendPosts() {
 
   return (
     <div>
-      {posts.map((post) => (
-        <Post key={post?._id} postData={post} refetchPosts={refetch} />
+      {posts.map((post,index) => (
+        <Post key={index} postData={post} refetchPosts={refetch} />
       ))}
       <div ref={listRef} className='w-full h-2 flex flex-col items-center justify-center'>
       {!hasNextPage &&

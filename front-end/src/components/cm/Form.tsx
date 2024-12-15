@@ -14,14 +14,14 @@ interface Field {
   value?:string;
 }
 
-interface FormProps {
+interface FormProps<T> {
   fields: Field[];
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: T) => void;
   fieldErrors?: { [key: string]: string };
 }
 
-const Form: React.FC<FormProps> = ({ fields, onSubmit, fieldErrors }) => {
-  const [formData, setFormData] = React.useState<any>({});
+const Form = <T,>({ fields, onSubmit, fieldErrors }: FormProps<T>) => {
+  const [formData, setFormData] = React.useState<T>({} as T);
   const loading = useAppSelector((state:RootState) => state?.user?.loading)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

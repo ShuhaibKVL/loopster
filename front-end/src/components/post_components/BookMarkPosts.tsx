@@ -41,6 +41,7 @@ export default function BookMarkPosts() {
 
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleIntersection = (entries:IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
       setIsLoadingMore(true);

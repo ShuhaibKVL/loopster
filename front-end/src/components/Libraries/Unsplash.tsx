@@ -10,7 +10,17 @@ import {
 } from "@/components/ui/dialog"
 import { RiUnsplashLine } from 'react-icons/ri'
 import { IoIosSearch } from "react-icons/io";
+import Image from 'next/image';
 
+export interface UnsplashImage {
+    urls: {
+      small: string;
+      raw: string;
+    };
+    alt_description?: string;
+  }
+
+  
 interface IUnsplashProps {
     onSaveImage : (unsplashImgFile:File,prevImageUrl:string) => void
 }
@@ -18,7 +28,7 @@ interface IUnsplashProps {
 
 // eslint-disable-next-line react/display-name
 const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
-    const [ imgData , setImgData ] = useState<null | object[]>(null)
+    const [ imgData , setImgData ] = useState<null | UnsplashImage[]>(null)
     const [ query , setQuery ] = useState<string | 'nature'>('nature')
     const [ isLoading , setIsLoading ] = useState<boolean>(true)
     const [ timeoutId , setTimeoutId ] = useState<NodeJS.Timeout | null>(null)
@@ -27,7 +37,7 @@ const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
     const fetchUnsplashImages = async() => {
         const result = await unsplashService.searchImages(1,query,10)
         console.log('unsplash result :',result)
-        setImgData(result?.result || [])
+        setImgData(result?.result as UnsplashImage[] || [])
         setIsLoading(false)
     }
 
@@ -96,17 +106,19 @@ const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
                 ) : (
                     imgData && imgData.length > 0 ? (
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3 lg:grid-cols-3 lg:gap-4">
-                        {imgData.map((val: any, index) => (
-                            <img
+                        {imgData.map((val: UnsplashImage, index) => (
+                            <Image
                                 key={index}
                                 className="col-span-1 img-fluid img-thumbnail"
+                                width={200}
+                                height={100}
                                 src={val?.urls?.small}
                                 alt={val?.alt_description || 'Unsplash Image'}
                                 onClick={() => selectImage(val?.urls?.raw)}
                             />
                         ))}
                     </div>
-                    ) : (<p>No images available. Please click the button to fetch images.</p>)
+                    ) : (<p>No images available. Please check your internet.</p>)
                 )}
             </DialogDescription>
             </DialogHeader>

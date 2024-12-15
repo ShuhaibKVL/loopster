@@ -86,7 +86,8 @@ const Page =() => {
                     alt='Login Page Illustrator'
                     fill
                     style={{objectFit:'contain'}}
-                    priority/>
+                    priority
+                />
             </div>
         </div>
     </div>

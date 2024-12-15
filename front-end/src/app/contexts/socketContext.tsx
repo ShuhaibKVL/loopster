@@ -1,4 +1,4 @@
-'use client'
+  'use client'
 
 import React, { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
@@ -14,7 +14,12 @@ const SocketContext = createContext<Socket>(socket);
       console.log('connected to socket');
   })
 
-const SocketProvider = ({ children }: any) => {
+  interface SocketProviderProps {
+    children: React.ReactNode;
+  }
+  
+
+const SocketProvider : React.FC<SocketProviderProps> = ({ children }) => {
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );

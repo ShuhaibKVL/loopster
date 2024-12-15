@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 import { NotificationProvider } from "./contexts/notificationContext";
 import ReduxProvider from "./contexts/ReduxProvider";
-import { SocketProvider } from "./contexts/SocketContext";
+import { SocketProvider } from "./contexts/socketContext";
 import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
 import { ThemeProvider } from './contexts/ThemeContext';
 import "./globals.css";

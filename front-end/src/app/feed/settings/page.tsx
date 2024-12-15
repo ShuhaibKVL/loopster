@@ -4,8 +4,8 @@ import ThemeToggle from '@/components/cm/ThemeToggle';
 import PrivateAccountHandler from '@/components/settings/PrivateAccountHandler';
 import React, { useState } from 'react'
 
-export default function page() {
-    const [theme, setTheme] = useState(() =>
+export default function Page() {
+    const [theme] = useState(() =>
         document.documentElement.getAttribute('data-theme') || 'light'
     );
 

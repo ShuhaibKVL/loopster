@@ -36,12 +36,23 @@ export default function FollowersPosts() {
 
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleIntersection = (entries:IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
       setIsLoadingMore(true);
       fetchNextPage();
     }
   };
+
+  // const handleIntersection = useCallback(
+  //     (entries: IntersectionObserverEntry[]) => {
+  //       if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
+  //         setIsLoadingMore(true);
+  //         fetchNextPage();
+  //       }
+  //     },
+  //     [hasNextPage, isFetching, isLoadingMore, fetchNextPage]
+  //   );
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
@@ -65,8 +76,8 @@ export default function FollowersPosts() {
 
   return (
     <div className=''>
-      {posts.map((post) => (
-        <Post key={post?._id} postData={post} refetchPosts={refetch} />
+      {posts.map((post,index) => (
+        <Post key={index} postData={post} refetchPosts={refetch} />
       ))}
       <div ref={listRef} className='w-full h-2 flex flex-col items-center justify-center'>
       {!hasNextPage &&

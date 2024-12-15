@@ -7,7 +7,7 @@ import { RootState } from "@/lib/redux/store/store";
 import { IMessageResponse } from "@/lib/utils/interfaces/iMessages";
 import messageService from "@/services/user/messages/messageService";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "./socketContext";
 
 export interface ActiveChat{
     recipientId?:string,
