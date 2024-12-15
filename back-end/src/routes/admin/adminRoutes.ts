@@ -19,6 +19,7 @@ import FollowController from "../../controllers/followController";
 import { NotificationRepository } from "../../repositories/notification/notificationRepository";
 import { NotificationService } from "../../services/notification/notificationService";
 import { DashBoardController } from "../../controllers/admin/dashboardController";
+import { userService } from "../user/userRoutes";
 
 const router:Router = Router()
 
@@ -44,7 +45,7 @@ const notificationService = new NotificationService(notificationRepository)
 
 const followRepository = new FollowRespository()
 const followService = new FollowService(followRepository)
-const followController = new FollowController(followService,notificationService)
+const followController = new FollowController(followService,notificationService,userService)
 
 const dashBoardController = new DashBoardController(postManagementService,userManagementService)
 

@@ -35,32 +35,98 @@ export class UserRepository implements IUserRepository {
                         pipeline: [
                             {
                                 $match: {
-                                    $expr: {
-                                        $or: [
-                                            { $eq: ['$follower', '$$userId'] },
-                                            { $eq: ['$following', '$$userId'] }
-                                        ]
-                                    }
+                                    $and:[
+                                        {$expr: {
+                                            $or: [
+                                                { $eq: ['$follower', '$$userId'] },
+                                                { $eq: ['$following', '$$userId'] }
+                                            ]
+                                            }
+                                        },
+                                        {isRequestPending:false}
+                                    ]
+                                    
                                 }
                             },
                             {
-                                $group: {
-                                    _id: null,
-                                    followedCount: {
-                                        $sum: { $cond: [{ $eq: ['$follower', '$$userId'] }, 1, 0] }
-                                    },
-                                    followersCount: {
-                                        $sum: { $cond: [{ $eq: ['$following', '$$userId'] }, 1, 0] }
-                                    }
+                                $facet: {
+                                    counts: [
+                                        {
+                                            $group: {
+                                                _id: null,
+                                                followedCount: {
+                                                    $sum: { $cond: [{ $eq: ['$follower', '$$userId'] }, 1, 0] }
+                                                },
+                                                followersCount: {
+                                                    $sum: { $cond: [{ $eq: ['$following', '$$userId'] }, 1, 0] }
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    followers: [
+                                        {
+                                            $match: { $expr: { $eq: ['$following', '$$userId'] } }
+                                        },
+                                        {
+                                            $project: { _id: 0, userId: '$follower' }
+                                        }
+                                    ],
+                                    following: [
+                                        {
+                                            $match: { $expr: { $eq: ['$follower', '$$userId'] } }
+                                        },
+                                        {
+                                            $project: { _id: 0, userId: '$following' }
+                                        }
+                                    ],
+                                }
+                            },
+                            {
+                                $project: {
+                                    counts: { $arrayElemAt: ['$counts', 0] },
+                                    followers: { $map: { input: '$followers', as: 'f', in: '$$f.userId' } },
+                                    following: { $map: { input: '$following', as: 'f', in: '$$f.userId' } },
                                 }
                             }
                         ],
-                        as: 'counts'
+                        as: 'followsData'
                     }
                 },
+                // Lookup for pending follows (isRequestPending: true)
+                {
+                  $lookup: {
+                    from: "follows",
+                    let: { userId: "$_id" },
+                    pipeline: [
+                      {
+                        $match: {
+                          $and: [
+                            { $expr: { $eq: ["$following", "$$userId"] } },
+                            { isRequestPending: true }
+                          ]
+                        }
+                      },
+                      {
+                        $project: { _id: 0, userId: "$follower" }
+                      }
+                    ],
+                    as: "requestPendingFollows"
+                  }
+                },
+                {
+                    $addFields: {
+                      requestPendingFollows: {
+                        $map: {
+                          input: "$requestPendingFollows",
+                          as: "f",
+                          in: "$$f.userId" // Extract userId as strings
+                        }
+                      }
+                    }
+                  },
                 {
                     $unwind: {
-                        path: '$counts',
+                        path: '$followsData',
                         preserveNullAndEmptyArrays: true
                     }
                 },
@@ -85,9 +151,14 @@ export class UserRepository implements IUserRepository {
                     }
                     },
                 {
-                    $project : {password : 0}
+                    $project : {
+                        password : 0,
+                    }
+                    
                 }
             ]);
+            
+
         } catch (error) {
             console.log("error on finById respository :",error)
             return error
@@ -122,98 +193,105 @@ export class UserRepository implements IUserRepository {
                 throw new Error('Invalid user ID');
             }
 
-    const users = await User.aggregate([
-        {
-            $lookup: {
-                from: 'follows',
-                let: { currentUserId: new mongoose.Types.ObjectId(userId), fetchedUserId: '$_id' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ['$follower', '$$currentUserId'] },
-                                    { $eq: ['$following', '$$fetchedUserId'] }
-                                ]
-                            }
-                        }
-                    },
-                    { $project: { _id: 1 } }
-                ],
-                as: 'followInfo'
-            }
-        },
-        {
-            $addFields: {
-                isFollowed: { $gt: [{ $size: '$followInfo' }, 0] }
-            }
-        },
-        {
-            $lookup: {
-                from: 'follows',
-                let: { fetchedUserId: '$_id' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $eq: ['$following', '$$fetchedUserId']
-                            }
-                        }
-                    },
-                    {
-                        $count: 'followersCount'
+            const users = await User.aggregate([
+                {
+                    $lookup: {
+                        from: 'follows',
+                        let: { currentUserId: new mongoose.Types.ObjectId(userId), fetchedUserId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$follower', '$$currentUserId'] },
+                                            { $eq: ['$following', '$$fetchedUserId'] }
+                                        ]
+                                    }
+                                }
+                            },
+                            { $project: { _id: 1 ,isRequestPending:1} }
+                        ],
+                        as: 'followInfo'
                     }
-                ],
-                as: 'followers'
-            }
-        },
-        {
-            $lookup: {
-                from: 'follows',
-                let: { fetchedUserId: '$_id' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $eq: ['$follower', '$$fetchedUserId']
+                },
+                {
+                    $addFields: {
+                        isFollowed: { $gt: [{ $size: '$followInfo' }, 0] },
+                        isRequestPending:{
+                            $cond:{
+                                if: { $gt: [{ $size: '$followInfo' }, 0] },
+                                then: { $arrayElemAt: ['$followInfo.isRequestPending', 0] },
+                                else: false
                             }
                         }
-                    },
-                    {
-                        $count: 'followedCount'
                     }
-                ],
-                as: 'followed'
-            }
-        },
-        {
-            $addFields: {
-                followersCount: { $ifNull: [{ $arrayElemAt: ['$followers.followersCount', 0] }, 0] },
-                followedCount: { $ifNull: [{ $arrayElemAt: ['$followed.followedCount', 0] }, 0] }
-            }
-        },
-        {
-            $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } }
-        },
-        {
-            $sort: {
-                createdAt: -1
-            }
-        },
-        {
-            
-            $project: {
-                followInfo: 0,
-                password: 0,
-                isBlocked: 0,
-                isVerified: 0,
-                email: 0,
-                isList: 0,
-                createdAt: 0,
-                updatedAt: 0
-            }
-        }
-    ]);
+                },
+                {
+                    $lookup: {
+                        from: 'follows',
+                        let: { fetchedUserId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$following', '$$fetchedUserId']
+                                    }
+                                }
+                            },
+                            {
+                                $count: 'followersCount'
+                            }
+                        ],
+                        as: 'followers'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'follows',
+                        let: { fetchedUserId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$follower', '$$fetchedUserId']
+                                    }
+                                }
+                            },
+                            {
+                                $count: 'followedCount'
+                            }
+                        ],
+                        as: 'followed'
+                    }
+                },
+                {
+                    $addFields: {
+                        followersCount: { $ifNull: [{ $arrayElemAt: ['$followers.followersCount', 0] }, 0] },
+                        followedCount: { $ifNull: [{ $arrayElemAt: ['$followed.followedCount', 0] }, 0] }
+                    }
+                },
+                {
+                    $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } }
+                },
+                {
+                    $sort: {
+                        createdAt: -1
+                    }
+                },
+                {
+
+                    $project: {
+                        followInfo: 0,
+                        password: 0,
+                        isBlocked: 0,
+                        isVerified: 0,
+                        email: 0,
+                        isList: 0,
+                        createdAt: 0,
+                        updatedAt: 0
+                    }
+                }
+            ]);
     
             return users
         } catch (error) {
@@ -224,7 +302,7 @@ export class UserRepository implements IUserRepository {
     
     async findFollowedUsersBySearch(userId: string, query: string): Promise<unknown> {
         try {
-            const followedUsers = await Follow.find({follower:userId},{follower:0,_id:0})
+            const followedUsers = await Follow.find({follower:userId,isRequestPending:false},{follower:0,_id:0})
             // Extract the followed user IDs into an array
             const followedUserIds = followedUsers.map(follow => new mongoose.Types.ObjectId(follow.following.toString()));
             console.log('followed users Id :',followedUserIds)
@@ -260,5 +338,10 @@ export class UserRepository implements IUserRepository {
             console.log(error)
             return false
         }
+    }
+
+    async updateIsPrivateAccount(userId: string): Promise<unknown> {
+        const user :IUser = await User.findById(userId) as IUser
+        return await User.findByIdAndUpdate(userId,{$set:{isPrivateAccount:user?.isPrivateAccount ? false : true}},{new:true})
     }
 }

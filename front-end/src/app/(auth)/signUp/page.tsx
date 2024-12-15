@@ -16,8 +16,9 @@ export interface ISignUp_user {
   userName: string;
   email: string;
   profileImage?: string;
-  password: string;
-  confirmPassword: string;
+  password?: string;
+  confirmPassword?: string;
+  isGoogleSignIn?:boolean
 }
 
 const Page = () => {
@@ -112,7 +113,7 @@ const Page = () => {
     }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-[var(--color-bg)]'>
+    <div className='min-h-screen flex items-center justify-center bg-[var(--secondary-bg)]'>
       <div className='flex flex-col md:flex-row bg-[var(--secondary-bg)] items-center justify-center max-w-4xl w-full h-full m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
         {/* Form Section */}
         <div className='w-full md:w-1/2 h-full bg-[var(--secondary-bg)]'>
@@ -129,16 +130,15 @@ const Page = () => {
         {/* Image Section */}
         <div className='hidden md:block md:w-1/2 h-full bg-[var(--secondary-bg)]'>
           <div className='h-full w-full border-yellow-800 flex items-center justify-center'>
-          <Image
-            src='/Images/iPhone14Pro.png'
-            alt='Sign Up Page Illustrator'
+            <Image src='/Images/iPhone14Pro.png'
+            alt='Login Page Illustrator'
             width={100}
             height={500}
             sizes='100vw'
             quality={100}
             priority
-          />
-
+            style={{width:'100%',height:'100%'}}
+            />
           </div>
         </div>
       </div>

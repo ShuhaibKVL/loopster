@@ -43,7 +43,7 @@ export default function DefaultPosts({userData}:{userData:IUserWithCounts}) {
                         post?.mediaType === 'image' && (
                             post?.mediaUrl ? (
                             <Link href={`/feed/notifications/view-post/${post?._id}`}>
-                            <div className='relative w-16 h-16 md:w-44 md:h-44 overflow-hidden transition-transform duration-300 hover:scale-110'>
+                            <div className='relative w-16 h-16 md:w-44 md:h-44 overflow-hidden scrollbar-hide transition-transform duration-300 hover:scale-110'>
                               <Image
                                 src={`${post?.mediaUrl}`}
                                 alt="Postcard Image"

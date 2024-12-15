@@ -5,6 +5,7 @@ import { IsignIn } from "@/app/(auth)/signIn/page";
 import { ISearchUsers } from "@/lib/utils/interfaces/ISeacrchUsers";
 import { IFollowedUser, IFollowers } from "@/components/user_components/FollowUnFollow";
 import { IUserData } from "@/components/post_components/Post";
+import { IUserDataSession } from "@/lib/utils/sessionHandler";
 
 class UserAuthService implements IUserAuthService{
     
@@ -15,6 +16,11 @@ class UserAuthService implements IUserAuthService{
 
     async signIn(userData: IsignIn): Promise<any> {
         const response = await user_publicApi.post('/signIn',userData)
+        return response.data
+    }
+
+    async signInWithGoogle(userData: ISignUp_user): Promise<{status:boolean,message:string,accessToken:string,userData:IUserDataSession,totalUnReadMessages:number}> {
+        const response = await user_publicApi.post('/signin-with-next-auth',userData)
         return response.data
     }
 
@@ -31,6 +37,11 @@ class UserAuthService implements IUserAuthService{
     async editProfile(userId: string, formData: FormData): Promise<any> {
         const response = await userApi.post(`/${userId}/update-profile`,formData)
         return response
+    }
+
+    async updateIsPrivateAccount(userId: string): Promise<{status:boolean,message:string}> {
+        const response = await userApi.get(`/${userId}/settings/update-private-account`)
+        return response?.data
     }
 
     async getLatestUsers(userId:string): Promise<{data:IUserData[],status:boolean}> {

@@ -6,12 +6,14 @@ import React, { useContext, createContext, useState, useEffect } from "react";
 import { useAppSelector } from "@/hooks/typedUseDispatch";
 import { RootState } from "@/lib/redux/store/store";
 import { INotificationResponse } from "@/lib/utils/interfaces/INotification";
+import { ObjectId } from "mongoose";
 
 interface NotificationContextProps {
     notifications: INotificationResponse[] | [];
     unReadedNotifications:number;
     markAsRead: (id: string) => void;
-    clearNotifications: () => void
+    clearNotifications: () => void;
+    fetchNotifications:() => void
 }
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(undefined)
@@ -24,30 +26,36 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
 
     useEffect(() => {
-        console.log('waiting .................');
         const handleNotification = (newNotification : INotificationResponse) => {
-            console.log('notification response reached on client:', newNotification);
             setNotifications((prev) => [newNotification, ...prev]);
         };
         socket.on('notification', handleNotification);
+        // while user cancle the follow request
+        socket.on('notification-deleted',(notification) => {
+            deleteNotification(notification?._id)
+        })
     
         return () => {
             socket.off('notification', handleNotification); // Only remove the listener
         };
     }, []);
 
+    const deleteNotification = (deleteId:string) => {
+        setNotifications((prev) => 
+            prev.filter((notification) => notification?._id !== deleteId)
+        )
+    }
+
     const findUnReaded = (notifications:INotificationResponse[]) =>{
         let count : number = 0
         notifications?.map((item:INotificationResponse) => {
             if(item?.isRead === false) count++
         })
-        console.log('unReaded notifications :',count)
         setUnReadedNotifications(count)
     }
     
     const fetchNotifications = async() => {
         const response = await notificationService.fetchNotification(userId)
-        console.log('response inside the notification context :',response)
         setNotifications(response?.notifications)
 
         findUnReaded(response?.notifications)
@@ -61,13 +69,12 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
     const markAsRead =  async(id: string) => {
         setNotifications((prev) =>
           prev.map((notification:INotificationResponse) =>
-            notification._id.toString() === id ? { ...notification, isRead: true } : notification
+            notification?._id?.toString() === id ? { ...notification, isRead: true } : notification
           )
         );
 
         const update = await notificationService.markAsReaded(id)
-        console.log('mark as readed upated :',update)
-
+ 
         findUnReaded(notifications)
     };
 
@@ -80,7 +87,8 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
             notifications,
             unReadedNotifications,
             markAsRead,
-            clearNotifications
+            clearNotifications,
+            fetchNotifications
         }} >
             {children}
         </NotificationContext.Provider>

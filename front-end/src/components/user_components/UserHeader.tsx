@@ -12,6 +12,7 @@ import FollowHandleButton from './FollowHandleButton'
 import FollowUnFollow from './FollowUnFollow'
 import UnFollowHandleButton from './UnFollowHandelButton'
 import Link from 'next/link'
+import FollowRequest from './FollowRequest'
 
 
 export interface IUserHeader {
@@ -24,6 +25,7 @@ export interface IUserHeader {
     isFollowed:boolean,
     followedCount:number,
     followersCount:number,
+    isRequestPending?:boolean
     refetchPosts:() => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
 
@@ -37,11 +39,12 @@ export default function UserHeader({
     isFollowed,
     followedCount,
     followersCount,
+    isRequestPending,
     refetchPosts
 }:IUserHeader) {
 
     const userId = useSelector((state:RootState) => state?.user?.userId)
-
+    console.log('is request in userHeader :',isRequestPending)
     return (
     <div className="flex flex-col gap-4 max-w-60">
         <div className="flex items-center justify-between ">
@@ -88,13 +91,16 @@ export default function UserHeader({
                 </Link>
                 
                 </div>
-                <FollowUnFollow follow={followedCount} followers={followersCount} />
+                <FollowUnFollow  profileUserId={_id} follow={followedCount} followers={followersCount} />
 
                 {/* Follow / UnFollow section */}
-                {isFollowed ? (
-                <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} />
+                {
+                isRequestPending ? (
+                    <FollowRequest following={_id} refetchPosts={refetchPosts} isButton={true}  />
+                ) :isFollowed ? (
+                    <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} />
                 ) : (
-                <FollowHandleButton following={_id} refetchPosts={refetchPosts} />
+                    <FollowHandleButton following={_id} refetchPosts={refetchPosts} />
                 )}
                 </HoverCardContent>
             ) : ('')}
@@ -108,14 +114,19 @@ export default function UserHeader({
             </Link>
             </div>
             {/* Follow / UnFollow section */}
-            <div className=''>
-            {isFollowed ? (
-                <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
-            ) : (
-                <FollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
+            {userId !== _id && (
+                <div className=''>
+                {
+                isRequestPending ? (
+                    <FollowRequest following={_id} refetchPosts={refetchPosts} isButton={false}  />
+                ) :
+                isFollowed ? (
+                    <UnFollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
+                ) : (
+                    <FollowHandleButton following={_id} refetchPosts={refetchPosts} isButton={false} />
+                )}
+                </div>
             )}
-            </div>
-            
         </div>
         </div>
     )

@@ -23,7 +23,7 @@ export default function StoryCreator({isOpen,setIsOpen}:StoryCreatorProps) {
     const [note , setNot ] = useState<string | null>(null)
     const [ selecetedColor , setSelectedColor ] = useState<IColorTheme | null | string>(null)
     const [ error ,setError ] = useState<string | null>(null)
-    const { userId } = useAppSelector((state:RootState) =>  state?.user)
+    const userId  = useAppSelector((state:RootState) =>  state?.user?.userId)
     const dispatch = useAppDispatch()
 
     const noteSubmit = async() => {

@@ -42,7 +42,6 @@ export default function FollowNotification({ notification }:FollowNotificationPr
             ) : dateToMinutes(notification?.createdAt as Date) > 0 ? (
                 <time className='text-xs'>{dateToMinutes(notification?.createdAt as Date)}minutes ago</time>
             ) :(<p className='text-xs'>jus now</p>)}
-        {/* <Link href={`/feed/profile/${notification?.userId?._id}`} ><p className='text-blue-600 text-xs'>View</p></Link> */}
     </div>
   )
 }

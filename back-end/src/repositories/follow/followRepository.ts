@@ -1,30 +1,36 @@
+import { ObjectId } from "mongoose";
 import { IFollowRepository } from "../../interfaces/follow/IFollowRepository";
 import Follow, { IFollow } from "../../models/followCollectionModal";
 
 export class FollowRespository implements IFollowRepository {
 
     async create(data:IFollow): Promise<any> {
-        console.log('follow repository invoked..!',data)
         return await Follow.create(data)
-
     }
 
     async delete(data:IFollow): Promise<any> {
-        console.log('delete follow invoked')
         return await Follow.deleteOne(data)
+    }
+
+    async deleteById(followId: string): Promise<unknown> {
+        return await Follow.findByIdAndDelete(followId)
     }
 
     async isExist(data: IFollow): Promise<any> {
         return await Follow.findOne({follower:data.follower , following:data.following})
     }
 
+    async findByDoc(data: IFollow): Promise<unknown> {
+        return await Follow.findOne(data)
+    }
+
     async findFollowedUsers(userId: string): Promise<unknown> {
-        return await Follow.find({follower:userId})
+        return await Follow.find({follower:userId,isRequestPending:false})
         .populate('following', 'userName _id profileImage fullName')
     }
 
     async findFollowers(userId: string): Promise<unknown> {
-        return await Follow.find({following:userId})
+        return await Follow.find({following:userId,isRequestPending:false})
         .populate('follower', 'userName _id profileImage fullName')
     }
 
@@ -35,6 +41,7 @@ export class FollowRespository implements IFollowRepository {
 
     async findMostFollowersUsers(): Promise<unknown> {
         return await Follow.aggregate([
+            {$match:{isRequestPending:false}},
             {$group:{_id:{$toObjectId:'$following'},followersCount:{$sum:1}}},
             {$lookup:{
                 from:'users',
@@ -54,5 +61,9 @@ export class FollowRespository implements IFollowRepository {
             }},
             {$limit:10}
         ])
+    }
+
+    async AcceptFollowRequest(followId: string): Promise<unknown> {
+        return await Follow.findByIdAndUpdate(followId,{isRequestPending:false},{new:true})
     }
 }

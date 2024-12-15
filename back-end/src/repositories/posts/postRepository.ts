@@ -62,7 +62,7 @@ export class PostRepository implements IPostRepository {
                             }
                         },
                         isList: true,
-                        isReported: false
+                        isReported: false,
                     }
                 },
                 {
@@ -166,6 +166,11 @@ export class PostRepository implements IPostRepository {
                         localField: 'userObjectId',  // Field to match from Post
                         foreignField: '_id',  // Field to match in User
                         as: 'user'
+                    }
+                },
+                {
+                    $match:{
+                        'user.isPrivateAccount': { $ne: true } // Only include posts from non-private accounts
                     }
                 },
                 {
@@ -287,7 +292,7 @@ export class PostRepository implements IPostRepository {
         try {
             const limit = 7
             const user = await User.findById(userId,{reportedPosts:1})
-            const followedUsers = await Follow.find({follower:userId},{follower:0,_id:0})
+            const followedUsers = await Follow.find({follower:userId,isRequestPending:false},{follower:0,_id:0})
             // Extract the followed user IDs into an array
             const followedUserIds = followedUsers.map(follow => follow.following.toString());
 

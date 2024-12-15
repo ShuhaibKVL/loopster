@@ -1,21 +1,23 @@
 import { IMessage, Message } from "../../models/message";
 import express from 'express'
-import http from 'http'
+import http, { maxHeaderSize } from 'http'
 import { Server } from 'socket.io'
 import { MessageService } from "../../services/chat/messageService";
 import { chatRepository, messageService } from "../../routes/user/chatRoutes";
 import { ObjectId } from "mongoose";
 import { S3Service } from "../../services/admin/S3Services.ts/S3Service";
+import FileType from 'file-type';
 
 const app = express()
 
 const server = http.createServer(app)
 
-const io = new Server(server, {
+const io = new Server(server,{
     cors: {
       origin: "http://localhost:3000",
       methods: ["GET", "POST"]
-    }
+    },
+    maxHttpBufferSize: 25 * 1024 * 1024,
 });
 
 export interface IChatResponse{
@@ -74,15 +76,17 @@ io.on('connection',(socket) => {
     socket.on('sendIndividualMessage',async(data) => {
         try {
             console.log('socket io sendIndividualmessage invoked...')   
-            const { senderId , chatId , content,mediaType,fileBuffer } = data
-            console.log(senderId,"<>",chatId,"<>",content,"<>",mediaType,"<>",fileBuffer)
+            const { senderId , chatId , content,mediaType,fileBuffer, filename } = data
+            console.log(senderId,"<>",chatId,"<>",content,"<>",mediaType,"<>",fileBuffer,'<>',filename)
 
             let imageUrl ;
             if(mediaType !== 'none'){
                 if(!fileBuffer){
                     throw Error('file is missing')
                 }
-                const fileName = `profile-images/${fileBuffer?.originalname}-${Date.now()}.jpeg`;
+    
+                //  fileName = `${filename}-${Date.now()}.${fileExtension}`;
+                 let fileName = `${filename}`;
                 console.log('fileName :',fileName,"FileBuffer :",fileBuffer)
                 imageUrl = await s3Service.uploadFile(fileBuffer,fileName)
                 console.log("s3 response image url :",imageUrl)   
@@ -94,6 +98,7 @@ io.on('connection',(socket) => {
                 chatType:'individual',
                 chatId:chatId,
                 mediaType:mediaType,
+                fileName:filename,
                 mediaUrl:imageUrl
             }
 
@@ -101,6 +106,7 @@ io.on('connection',(socket) => {
             const existedChat :IChatResponse = chat as IChatResponse
             const receiverId = existedChat?.users.find((id) => id._id.toString() !==  senderId)
             const response = await messageService.create(newMessage)
+            console.log('message created :',response)
 
             //Emit to sender and receiver
             io.to(`user:${senderId}`).to(`user:${receiverId}`).emit('receiveMessage',{
@@ -117,12 +123,19 @@ io.on('connection',(socket) => {
     //Handle group message
     socket.on('sendGroupMessage',async(data) => {
         try {
-            const { senderId, content ,chatId,mediaType,fileBuffer} = data;
+            const { senderId, content ,chatId,mediaType,fileBuffer,filename} = data;
             console.log(senderId,"<>",chatId,"<>",content,"<>",mediaType,"<>",fileBuffer)
 
+            let imageUrl ;
             if(mediaType !== 'none' && !fileBuffer ){
                 throw Error('file is missing')
             }
+
+            //  fileName = `${filename}-${Date.now()}.${fileExtension}`;
+            let fileName = `${filename}`;
+            console.log('fileName :',fileName,"FileBuffer :",fileBuffer)
+            imageUrl = await s3Service.uploadFile(fileBuffer,fileName)
+            console.log("s3 response image url :",imageUrl)   
 
             const newMessage : IMessage = {
                 sender:senderId,
@@ -130,7 +143,8 @@ io.on('connection',(socket) => {
                 chatType:'group',
                 chatId:chatId,
                 mediaType:mediaType,
-                mediaUrl:'' //mediaUrl
+                fileName:filename,
+                mediaUrl:imageUrl
             }
             
             const response = await messageService.create(newMessage)

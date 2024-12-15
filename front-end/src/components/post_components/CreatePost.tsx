@@ -43,7 +43,7 @@ export default function CreatePostComponent() {
     const fileRobotRef = useRef<{ openImgEditor: () => void }>(null);
     const [loading , setLoading ] = useState(false)
     
-    const userId = useSelector((state:RootState) => state.user.userId)
+    const userId = useSelector((state:RootState) => state?.user?.userId)
     
     const { toast} = useToast()
 
@@ -100,7 +100,9 @@ export default function CreatePostComponent() {
                             className:"toast-failed"
                         })
                         return
-                    }else{setFileType('video')}
+                    }else{
+                        setFileType('video')
+                    }
                 }
             }else{
                 toast({
@@ -246,11 +248,14 @@ export default function CreatePostComponent() {
                 <div className={`${isDisplayEditorContent} w-full border-b rounded`}>
                     <TipTap initialContent={editorContent} onContentChange={handleContentChange} />
                     <div className={`relative w-full flex items-center justify-end`}>
-                        <FileRobot
+                        {/* {fileType === 'image' && ( */}
+                            <FileRobot
                             ref={fileRobotRef}
                             mediaUrl={prevFileUrl as string}
                             onSaveImage={handleEditedImage}
                         />
+                        {/* // )} */} bn 0
+                        
                         <div className={`${isHiddenPrevImg} relative w-full h-fit flex items-start`}>
                         {fileType === 'image' ? (
                             prevFileUrl ? (

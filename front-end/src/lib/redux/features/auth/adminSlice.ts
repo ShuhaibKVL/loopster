@@ -10,7 +10,7 @@ export interface adminState{
 const initialState:adminState = {
     accessToken:'',
     isAuthenticated:false,
-    loading:true,
+    loading:false,
     admin:null,
 }
 

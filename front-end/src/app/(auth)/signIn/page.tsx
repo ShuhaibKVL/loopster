@@ -3,16 +3,21 @@
 import Form from '@/components/cm/Form';
 import withAuth from '@/app/contexts/withAuth';
 import { useToast } from "@/hooks/use-toast";
-import { login } from '@/lib/redux/features/auth/userSlice';
+import { login , setLoading } from '@/lib/redux/features/auth/userSlice';
 import userAuthService from '@/services/user/userAuthService';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ValidationError } from 'yup';
 import "../../globals.css";
-import { SignIn } from '@/app/actions/auth';
+import { signIn } from 'next-auth/react'
+import { Button } from '@/components/ui/button';
+import { FcGoogle } from "react-icons/fc";
+import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
+import { RootState } from '@/lib/redux/store/store';
+import { setCookie } from "cookies-next";
 
 export interface IsignIn{
     email:string,
@@ -26,7 +31,13 @@ const signInFields = [
 const Page = () => {
     const router = useRouter()
     const { toast} = useToast()
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch() //useDispatch()
+    
+    
+    const [ isLoadingGoogleSign , setIsLoadingGoogleSign] = useState<boolean>(false)
+
+    const loading = useAppSelector((state:RootState) => state?.user?.loading)
+    console.log('loading :',loading)
 
     const [ error , setError ] = useState('')
 
@@ -34,7 +45,7 @@ const Page = () => {
         setTimeout(() => {
             setError('')
         },3000)
-    })
+    },[error])
 
     const handleSubmit = async(formData:IsignIn) => {
         if(formData?.email.length <= 1 ){
@@ -47,7 +58,9 @@ const Page = () => {
         }
 
         try {
+            dispatch(setLoading(true))
             const user =  await userAuthService.signIn(formData)
+            console.log('user response :',user)
             if(user.status){
                 toast({
                     title: 'Success',
@@ -60,6 +73,16 @@ const Page = () => {
                     accessToken:user?.accessToken,
                     totalUnReadMessages:user?.totalUnReadMessages
                 }
+
+                console.log('user data :',userData)
+
+                setCookie("session", JSON.stringify(userData), {
+                    httpOnly: false,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "strict",
+                });
+                console.log('next set slice login')
+
                 dispatch(login(userData))
                 router.replace('/feed')
 
@@ -73,6 +96,7 @@ const Page = () => {
                 });
             })}
         } catch (error:any) {
+            dispatch(setLoading(false))
             if(error instanceof ValidationError) {
                 const validationErrors = error.inner.map((err:any) => err.message).join(', ')
                 setError(validationErrors)
@@ -94,8 +118,13 @@ const Page = () => {
         }
     }
 
+    const signInWithGoogle = () => {
+        setIsLoadingGoogleSign(true)
+        signIn('google')
+    }
+
     return (
-        <div className='min-h-screen flex items-center justify-center bg[var(--secondary-bg)'>
+        <div className='min-h-screen flex items-center justify-center bg-[var(--secondary-bg)]'>
             <div className='flex flex-col md:flex-row items-center justify-center max-w-4xl w-full bg-[var(--secondary-bg)] m-4 p-4 border shadow-sm rounded-lg overflow-hidden'>
                 {/* Form Section */}
                 <div className='w-full md:w-1/2 h-full'>
@@ -108,6 +137,20 @@ const Page = () => {
                         <p className='text-red-600'>{error}</p> }
                     </div>
                     <Form fields={signInFields} onSubmit={handleSubmit} />
+
+                    {/* signIn with google signIn */}
+                    {/* <Button 
+                        onClick={signInWithGoogle} 
+                        className='bg-white text-blue-400 flex items-center justify-center gap-2 w-full mt-2 hover:bg-blue-500 hover:text-white text-md overflow-hidden'
+                    >
+                        <FcGoogle /> 
+                        {isLoadingGoogleSign ? (
+                            <span className="loading loading-spinner loading-xs"></span>
+                        ) : (
+                            <span>sign in with google</span>
+                        )}
+                    </Button> */}
+
                     <p className='text-right w-full p-4 text-md'>
                     <span className='opacity-50'>
                         You have not a account ?
@@ -133,5 +176,5 @@ const Page = () => {
         </div>
     )
 }
-// export default Page
-export default withAuth(Page,false)
+export default Page
+// export default withAuth(Page,false)

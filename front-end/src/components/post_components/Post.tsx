@@ -30,7 +30,8 @@ export interface IUserData {
     followers:number,
     isFollowed:boolean,
     followedCount:number,
-    followersCount:number
+    followersCount:number,
+    isRequestPending?:boolean,
 }
 
 import { InfiniteData } from '@tanstack/react-query';

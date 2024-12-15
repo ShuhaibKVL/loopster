@@ -107,7 +107,7 @@ export default function page() {
                     <div className='w-full flex justify-center min-h-20'>
                     
                     <InputOTP maxLength={6}
-                    onChange={(otp) => setOtp(otp)}
+                     onChange={(otp) => setOtp(otp)}
                     >
                         <InputOTPGroup>
                             <InputOTPSlot index={0} />

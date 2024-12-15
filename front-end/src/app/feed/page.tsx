@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 
 import withAuth from '@/app/contexts/withAuth';
 import CreatePostComponent from '@/components/post_components/CreatePost';
@@ -6,8 +6,24 @@ import { Suspense } from 'react';
 import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
 import PostTabs from '@/components/post_components/Tabs';
 import StoryComponent from '@/components/story/StoryComponent';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../api/auth/[...nextauth]/route';
+import { cookies } from "next/headers";
 
-const Page = () => {
+const Page = async () => {
+
+    const cookieStore = cookies();
+
+    const session = cookieStore.get("session");
+    console.log('session in feed server component :',session)
+    
+    if(session){
+    const sessionData = JSON.parse(session?.value as string);
+
+    console.log('session data on feed :',sessionData)
+    }
+ 
+
     return (
         <div className='h-fit flex flex-col gap-2 '>
             <StoryComponent />
@@ -21,5 +37,5 @@ const Page = () => {
     );
 };
 
-export default withAuth(Page, true);
-// export default Page
+// export default withAuth(Page, true);
+export default Page

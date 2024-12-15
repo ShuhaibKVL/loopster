@@ -5,7 +5,8 @@ export interface IMessage{
     content:string;
     chatType:'individual' | 'group';
     chatId:string | ObjectId;
-    mediaType:'none' | 'video' |'image';
+    mediaType:'none' | 'video' |'image'| 'audio'|'application';
+    fileName?:string;
     mediaUrl?:string;
     deleteFromMe?:string[];
 }
@@ -16,7 +17,8 @@ export interface IMessageResponse {
     content:string;
     chatType:'individual' | 'group';
     chatId:string | ObjectId;
-    mediaType:'none' | 'video' |'image';
+    mediaType:'none' | 'video' |'image'| 'audio'|'application';
+    fileName?:string;
     mediaUrl?:string;
     deleteFromMe?:string[]
     isRead:string[];

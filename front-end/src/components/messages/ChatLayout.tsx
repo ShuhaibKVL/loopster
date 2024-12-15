@@ -22,6 +22,7 @@ import { updateUnReadMsgPerChat } from '@/lib/redux/features/auth/userSlice'
 import { useChat } from '@/app/contexts/chatContext'
 import Image from 'next/image'
 import { IoMdClose } from "react-icons/io";
+import { FaFilePdf } from 'react-icons/fa'
 
 
 export interface activeChat{
@@ -56,7 +57,9 @@ export default function ChatLayout() {
             chatContainerRef 
             ,typing,onlineUsers,
             prevFileUrl,
-            setPrevFileUrl
+            setPrevFileUrl,
+            fileType,
+            fileName
           } = useChat()
  
     const socket = useContext(SocketContext);
@@ -223,14 +226,33 @@ export default function ChatLayout() {
         {/* ----------- to show the prev image if user select a file ----------  */}
         {prevFileUrl ? (
           <>
-          <Image
-            src={prevFileUrl}
-            className='w-full h-[95%] absolute'
-            width={100}
-            height={100}
-            objectFit='fill'
-            alt='prev'
-          />
+          {fileType === 'image' ? (
+              <Image
+              src={prevFileUrl}
+              className='w-full h-[95%] absolute'
+              width={100}
+              height={100}
+              objectFit='fill'
+              alt='prev'
+            />
+          ) : fileType === 'video' ? (
+            <video
+              src={`${prevFileUrl}`}
+              className="w-full h-[95%] rounded-md"
+              controls
+              playsInline
+            />
+          ) : fileType === 'audio' ? (
+            <audio controls className='absolute bottom-10 left-5'>  
+              <source src={prevFileUrl} type="audio/mp3"/>
+            </audio>
+          ) : fileType === 'application' ? (
+            <div className="min-w-[50%] flex items-center justify-between space-x-2 px-3 h-8 rounded border absolute left-5 bottom-10 bg-[var(--color-bg)]">
+               <FaFilePdf />
+              <a href={prevFileUrl} >{fileName}</a>
+            </div>
+          ) : null}
+          
           <IoMdClose 
             onClick={() => setPrevFileUrl(null)}
             className='w-7 h-7 absolute bottom-0 left-2 ' 
@@ -255,6 +277,7 @@ export default function ChatLayout() {
         sendMessage={sendMessage} 
       />
       )}
+      
      </div>
     </div>
   )

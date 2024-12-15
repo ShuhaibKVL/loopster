@@ -1,3 +1,5 @@
+'use client'
+
 import { logout } from "@/lib/redux/features/auth/userSlice";
 import store, { RootState } from "@/lib/redux/store/store";
 import isTokenExpired from "@/lib/utils/isTokenExpired";

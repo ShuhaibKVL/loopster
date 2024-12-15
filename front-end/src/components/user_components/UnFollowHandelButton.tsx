@@ -1,3 +1,4 @@
+'use client'
 
 import { Button } from '@/components/ui/button'
 import { RootState } from '@/lib/redux/store/store'
@@ -5,19 +6,22 @@ import followService from '@/services/folllow/followService'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { confirmAction } from '../cm/ConfirmationModal'
-import { fetchLatestPosts } from '@/lib/redux/features/postSlice'
-import { useAppDispatch } from '@/hooks/typedUseDispatch'
 import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
+import { IFollow } from '@/services/folllow/interfaces/IFollowService'
+import { useAppDispatch } from '@/hooks/typedUseDispatch'
+import { getProfileUserData } from '@/lib/redux/features/storySlice'
 
 interface IFollowUserIds{
     following:string,
     isButton?:boolean,
+    isFromProfile?:boolean,
     isDisplay?:boolean,
+    label?:string,// for accepting the remove follower also
+    removeFollower?:IFollow | null,
     refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
 }
-export default function UnFollowHandleButton({following,refetchPosts,isButton = true,isDisplay=false}:IFollowUserIds) {
+export default function UnFollowHandleButton({following,refetchPosts,isButton = true,isDisplay=false,label = 'UnFollow',removeFollower = null,isFromProfile=false}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
-
     const dispatch = useAppDispatch()
 
     async function handleUnFollow(){
@@ -27,27 +31,42 @@ export default function UnFollowHandleButton({following,refetchPosts,isButton = 
 
         const willProceed = await confirmAction({
             title: `CAUTION !!!`,
-            text: `Are you sure to UNFOLLOW the user?`,
+            text: `Are you sure to ${label} the user?`,
             icon: 'warning',
         });
     
         if(willProceed){
-            const newFollowDoc = {
-                follower : userId,
-                following: following
-            }
+            let newFollowDoc ;// the unfollow / remove follower is same functionality. so to dynamically use this component for unfollow and remove follower
 
-            const follow = await followService.unFollow(newFollowDoc)
-            await refetchPosts()
+            if(!removeFollower){
+                console.log('unfollow')
+                newFollowDoc = {
+                    follower : userId,
+                    following: following
+                }
+            }else {
+                console.log('remove follower')
+                newFollowDoc = {
+                    follower:following,
+                    following:userId
+                }
+            }
+            if(newFollowDoc){
+                const follow = await followService.unFollow(newFollowDoc)
+                await refetchPosts()
+                if(isFromProfile){
+                    dispatch(getProfileUserData(userId))
+                }
+            }
         }
         
     }
     return (
         <>
         {isButton ? (
-            <Button onClick={handleUnFollow} className='w-full'>UnFollow</Button>
+            <Button onClick={handleUnFollow} className='w-full'>{label}</Button>
         ) : (
-            <p onClick={handleUnFollow} className='text-blue-500 cursor-pointer text-md'>Unfollow</p>
+            <p onClick={handleUnFollow} className='text-blue-500 cursor-pointer text-md'>{label}</p>
         )}
         </> 
     )

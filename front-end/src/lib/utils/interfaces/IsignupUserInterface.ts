@@ -8,4 +8,6 @@ export interface IsignupUserInterface{
     isList?:boolean,
     isBlocked?:boolean,
     isVerified?:boolean
+    isGoogleSignIn?:boolean
+    isPrivateAccount?:boolean
 }

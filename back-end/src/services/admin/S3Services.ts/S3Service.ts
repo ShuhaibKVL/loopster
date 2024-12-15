@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { IS3Service } from "../../../interfaces/S3/IS3Service";
 import dotenv from 'dotenv'
+import FileType from 'file-type';
 
 dotenv.config()
 
@@ -26,18 +27,22 @@ export class S3Service implements IS3Service {
             },
         });
 
-        this.bucketName = process.env.AWS_BUCKET_NAME; // S3 bucket name
+        this.bucketName = process.env.AWS_BUCKET_NAME;
     }
 
     // Upload file to S3
     async uploadFile(file: Buffer, fileName: string): Promise<string> {
         console.log('upload file invoked',file,fileName)
         try {
+            // Determine the Content-Type dynamically
+            const fileType = await FileType.fromBuffer(file);
+            const contentType = fileType?.mime || 'application/octet-stream'
+
             const uploadParams = {
                 Bucket: this.bucketName,
                 Key: fileName,
                 Body: file,
-                ContentType: 'image/png', // Example content type; this could be dynamic
+                ContentType: contentType, 
             };
     
             const command = new PutObjectCommand(uploadParams);

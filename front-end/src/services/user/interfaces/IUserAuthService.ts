@@ -4,9 +4,11 @@ import { ISignUp_user } from "@/app/(auth)/signUp/page";
 export interface IUserAuthService {
     signUp(userData:ISignUp_user):Promise<any>
     signIn(userData:IsignIn):Promise<any>
+    signInWithGoogle(userData:ISignUp_user):Promise<any>
     user(user_id:any):Promise<any>
     uploadProfileImg(userId:string,formData:FormData):Promise<any>
     editProfile(userId:string,formData:FormData):Promise<any>
+    updateIsPrivateAccount(userId:string):Promise<unknown>
     getLatestUsers(userId:string):Promise<any>
     search_followed_users(userId:string,query:string):Promise<unknown>
     getFollowedUsers(userId:string):Promise<unknown>
