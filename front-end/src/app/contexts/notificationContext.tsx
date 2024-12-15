@@ -1,12 +1,11 @@
 'use client'
 
-import notificationService from "@/services/notification/notificationService";
-import { SocketContext } from "./socketContext";
-import React, { useContext, createContext, useState, useEffect } from "react";
 import { useAppSelector } from "@/hooks/typedUseDispatch";
 import { RootState } from "@/lib/redux/store/store";
 import { INotificationResponse } from "@/lib/utils/interfaces/INotification";
-import { ObjectId } from "mongoose";
+import notificationService from "@/services/notification/notificationService";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { SocketContext } from "./SocketContext";
 
 interface NotificationContextProps {
     notifications: INotificationResponse[] | [];
@@ -38,7 +37,7 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
         return () => {
             socket.off('notification', handleNotification); // Only remove the listener
         };
-    }, []);
+    }, [socket]);
 
     const deleteNotification = (deleteId:string) => {
         setNotifications((prev) => 
@@ -63,6 +62,7 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
 
     useEffect(() => {
         fetchNotifications()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[userId])
 
     // Mark a notification as read
@@ -73,7 +73,7 @@ export const NotificationProvider : React.FC<{children: React.ReactNode}> = ({ch
           )
         );
 
-        const update = await notificationService.markAsReaded(id)
+        await notificationService.markAsReaded(id)
  
         findUnReaded(notifications)
     };

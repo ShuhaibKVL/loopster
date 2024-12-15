@@ -1,8 +1,6 @@
 import { ObjectId } from "mongoose";
 import { userApi } from "../apis/axiosInstance";
 import { IFollow, IFollowService } from "./interfaces/IFollowService";
-import { resolve } from "path";
-
 
 export class FollowService implements IFollowService {
     async follow(data:IFollow): Promise<void> {

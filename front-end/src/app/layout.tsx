@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import {ThemeProvider} from './contexts/ThemeContext'
-import { Toaster } from "@/components/ui/toaster"
-import { ToastContainer } from 'react-toastify'
-import { Inter } from 'next/font/google'
-import ReduxProvider from "./contexts/ReduxProvider";
-import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
-import { SocketProvider } from "./contexts/socketContext";
 import CsFallBack from "@/components/cm/CsFallBack";
-import { SessionProvider } from 'next-auth/react'
+import { Toaster } from "@/components/ui/toaster";
+import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
+import { ToastContainer } from 'react-toastify';
 import { NotificationProvider } from "./contexts/notificationContext";
+import ReduxProvider from "./contexts/ReduxProvider";
+import { SocketProvider } from "./contexts/SocketContext";
+import TanStackQueryClientProvider from "./contexts/TanStackQueryClientProvider";
+import { ThemeProvider } from './contexts/ThemeContext';
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "loopster",

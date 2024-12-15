@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import unsplashService from '@/services/unsplash/unsplashService'
 import React, { forwardRef, useEffect, useState } from 'react'
 import {
@@ -17,7 +16,8 @@ interface IUnsplashProps {
 }
 
 
-const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps , ref) => {
+// eslint-disable-next-line react/display-name
+const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
     const [ imgData , setImgData ] = useState<null | object[]>(null)
     const [ query , setQuery ] = useState<string | 'nature'>('nature')
     const [ isLoading , setIsLoading ] = useState<boolean>(true)
@@ -42,6 +42,7 @@ const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps , ref) => {
         return () => {
             clearTimeout(Id)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[query])
 
     const selectImage = async(imageUrl:string) => {

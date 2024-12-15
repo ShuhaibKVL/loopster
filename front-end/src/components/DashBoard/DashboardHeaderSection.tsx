@@ -8,7 +8,7 @@ import usePosts from '@/hooks/customHooks/usePosts';
 export default function DashboardHeaderSection() {
     const [ getTotalAccountsCount , setTotalAccountsCounts ] = useState<number>(0)
     const currentPage = 1
-    const { posts, newReports, totalPosts, reported, unListed, totalPages, fetchPosts } = usePosts({currentPage})
+    const { newReports, totalPosts, fetchPosts } = usePosts({currentPage})
 
     const itemsData = [
         { title: "Accounts", value: getTotalAccountsCount},
@@ -27,11 +27,12 @@ export default function DashboardHeaderSection() {
     useEffect(() => {
         getTotalAccounts()
         fetchPosts(currentPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
   return (
     <section about='Box data showing area'>
-        <Boxes  items={itemsData} ratio='w-1/3'/>
+        <Boxes items={itemsData} ratio='w-1/3'/>
     </section>
   )
 }

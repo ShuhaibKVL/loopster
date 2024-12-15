@@ -34,8 +34,8 @@ export default function MostFollowedAccounts() {
         <h1 className='font-semibold space-x-2 absolute bg-[var(--secondary-bg)]'>Top followers accounts</h1>
         <div className='w-full mt-6 flex flex-col gap-2'>
             {users.length > 0 && (
-                users?.map((user) => (
-                    <div className='w-full flex items-center justify-between px-2'>
+                users?.map((user,index) => (
+                    <div key={index} className='w-full flex items-center justify-between px-2'>
                         <div className='flex gap-2'>
                         <AvatarComponent imgUrl={user?.userDetails[0]?.profileImage} />
                             <div>

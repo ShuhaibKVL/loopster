@@ -1,5 +1,5 @@
 import { INotificationResponse } from "@/lib/utils/interfaces/INotification";
-import { postApi, userApi } from "../apis/axiosInstance";
+import { userApi } from "../apis/axiosInstance";
 import { INotificationService } from "./interface/INotificationService";
 
 export class NotificationService implements INotificationService{

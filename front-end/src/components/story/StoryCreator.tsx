@@ -19,7 +19,7 @@ interface  StoryCreatorProps{
 }
 
 export default function StoryCreator({isOpen,setIsOpen}:StoryCreatorProps) {
-    const [ colorThemes , setColorThemes ] = useState(colorTheme)
+    const [ colorThemes ] = useState(colorTheme)
     const [note , setNot ] = useState<string | null>(null)
     const [ selecetedColor , setSelectedColor ] = useState<IColorTheme | null | string>(null)
     const [ error ,setError ] = useState<string | null>(null)
@@ -43,8 +43,9 @@ export default function StoryCreator({isOpen,setIsOpen}:StoryCreatorProps) {
             }
             setIsOpen(false)
             dispatch(fetchStories(userId))
-        } catch (error) {
-            setError('Try Agian..!')
+        } catch (error:unknown) {
+            console.log(error)
+            setError('Try Agian..!',)
         }
     }
 

@@ -1,12 +1,10 @@
-import { IMessage, Message } from "../../models/message";
+import { IMessage } from "../../models/message";
 import express from 'express'
-import http, { maxHeaderSize } from 'http'
+import http from 'http'
 import { Server } from 'socket.io'
-import { MessageService } from "../../services/chat/messageService";
 import { chatRepository, messageService } from "../../routes/user/chatRoutes";
 import { ObjectId } from "mongoose";
 import { S3Service } from "../../services/admin/S3Services.ts/S3Service";
-import FileType from 'file-type';
 
 const app = express()
 

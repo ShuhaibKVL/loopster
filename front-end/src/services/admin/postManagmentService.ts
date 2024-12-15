@@ -1,11 +1,12 @@
 import { ITopLikedPost } from "@/components/DashBoard/TopLikedPosts";
 import { adminApi } from "../apis/axiosInstance";
 import { IPostManagementService } from "./interfaces/IPostManagementService";
+import { IPostTable } from "@/hooks/customHooks/usePosts";
 
 export class PostMangementService implements IPostManagementService {
-    async fetchAllPosts(page:number): Promise<any> {
+    async fetchAllPosts(page:number): Promise<{posts:{posts :IPostTable[],totalPosts:number,newReported:number,unListed:number,reported:number,totalPages:number}}> {
         const response = await adminApi.get(`/post/all-posts?page=${page}`)
-        return response
+        return response.data
     }
 
     async listUnList(postId: string): Promise<unknown> {

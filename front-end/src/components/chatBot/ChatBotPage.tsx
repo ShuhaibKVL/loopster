@@ -1,6 +1,6 @@
 'use client'
 
-import chatBotService, { ChatBotService } from '@/services/gemini/chatBotService'
+import chatBotService from '@/services/gemini/chatBotService'
 import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { useAppSelector } from '@/hooks/typedUseDispatch'
@@ -13,7 +13,6 @@ import HistorySection from './HistorySection'
 import { GoSidebarExpand } from "react-icons/go";
 import { IChatBotHistory } from '@/lib/utils/interfaces/IChatBotHistory'
 import ReactMarkdown from "react-markdown";
-import { ObjectId } from 'mongoose'
 import { SiGooglegemini } from 'react-icons/si'
 
 export default function ChatBotPage() {
@@ -39,6 +38,7 @@ export default function ChatBotPage() {
 
   useEffect(() => {
     getHistroy()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userId])
 
 

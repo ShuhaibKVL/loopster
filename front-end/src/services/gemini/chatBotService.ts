@@ -1,5 +1,5 @@
 import { IChatBotHistory } from "@/lib/utils/interfaces/IChatBotHistory";
-import { chatApi, chatBotApi, userApi } from "../apis/axiosInstance";
+import { chatBotApi} from "../apis/axiosInstance";
 import { IChatBotService } from "./interfaces/IChatBotService";
 
 export class ChatBotService implements IChatBotService{
@@ -9,7 +9,7 @@ export class ChatBotService implements IChatBotService{
         userId:string,
         onStremaData: (chunk: string) => void, 
         onStreamEnd: () => void, 
-        onError: (error: Error) => void
+        onError: (error: unknown) => void
     ): Promise<unknown> {
         const controller = new AbortController()
         const signal = controller.signal
@@ -41,7 +41,7 @@ export class ChatBotService implements IChatBotService{
                 const chunkText = decoder.decode(value,{stream:true})
                 onStremaData(chunkText)
             }
-        } catch (error:any) {
+        } catch (error:unknown) {
             onError(error)
         }
         return controller // Retun controller to allow aborting.  

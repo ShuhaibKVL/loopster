@@ -1,7 +1,7 @@
 import { IUserWithCounts } from "@/lib/utils/interfaces/IUserWIthCounts"
 
 export interface IUserManagementService {
-    getAllUsers(page:number):Promise<any>
+    getAllUsers(page:number):Promise<unknown>
     handleBlockUnBlock(userId:string):Promise<void>
     handleListUnList(userId:string):Promise<void>
     findMostFollowedAccounts():Promise<unknown>

@@ -4,7 +4,7 @@ export interface adminState{
     accessToken:string,
     isAuthenticated:boolean,
     loading:boolean,
-    admin:any,
+    admin:null | string,
 }
 
 const initialState:adminState = {

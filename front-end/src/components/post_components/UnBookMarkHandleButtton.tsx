@@ -7,14 +7,14 @@ import { MdBookmark } from "react-icons/md";
 
 interface IUnBookMarkHandleButton{
     postId:string,
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function UnBookMarkHandleButtton({postId,refetchPosts}:IUnBookMarkHandleButton) {
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
 
     const handleDeleteBookMark = async() => {
-        const res = await bookMarkService.delete(userId,postId)
+        await bookMarkService.delete(userId,postId)
         await refetchPosts()
     }
   return (

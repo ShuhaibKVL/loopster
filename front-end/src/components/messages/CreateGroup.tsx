@@ -7,7 +7,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { activeChat, ISelectedGroupUser } from './ChatLayout'
 import SearchInput from '../cm/SearchInput'
@@ -45,6 +44,7 @@ export default function CreateGroup({isOpenCreateGroup,setIsOpenCreateGroup,setA
     if(groupSearchInput !== ''){
       SearchUsers(groupSearchInput,'group')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[groupSearchInput])
 
   const addUser = (userId:string,userName:string) => {
@@ -113,8 +113,8 @@ export default function CreateGroup({isOpenCreateGroup,setIsOpenCreateGroup,setA
                 </div>
 
                 <div className='w-full flex flex-wrap gap-2'>
-                  {groupUsers && groupUsers.length > 0 && groupUsers.map((user) => (
-                    <div className='relative flex gap-0 items-center justify-center p-3 bg-green-100 rounded-md'>
+                  {groupUsers && groupUsers.length > 0 && groupUsers.map((user,index) => (
+                    <div key={index} className='relative flex gap-0 items-center justify-center p-3 bg-green-100 rounded-md'>
                       <p>{user?.userName}</p>
                       <CiCircleRemove
                       onClick={() => removeGroupUser(user?.userId)}

@@ -1,16 +1,12 @@
 'use client'
 
-import React, { Suspense, use, useEffect, useState } from 'react'
-import { IoMdHeartEmpty } from "react-icons/io";
+import React, { useEffect, useState } from 'react'
 import { FaRegComment } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa6";
-import Modal from './PostCommentModal';
 import {
     Drawer,
     DrawerClose,
     DrawerContent,
     DrawerDescription,
-    DrawerFooter,
     DrawerHeader,
     DrawerTitle,
   } from "@/components/ui/drawer"
@@ -30,7 +26,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 
 interface IPostFooterProps{
@@ -44,7 +39,7 @@ interface IPostFooterProps{
     mediaUrl:string,
     content:string,
   },
-  refetchPosts: () => Promise<void>| (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+  refetchPosts: () => Promise<void>| (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 interface IUserData {
@@ -162,7 +157,7 @@ export default function PostFooter({postId,postData,isLiked,isBookMarked,likeCou
             <DialogDescription className='h-full space-y-2'>
                 {likedUsersData && likedUsersData?.length >0 ? (
                   likedUsersData.map((user) => (
-                    <div className='flex items-center gap-2 border-b hover:bg-[var(--color-bg)] duration-100'>
+                    <div key={user?._id} className='flex items-center gap-2 border-b hover:bg-[var(--color-bg)] duration-100'>
                     <AvatarComponent imgUrl={user?.userDetails?.profileImage} />
                     <p>{user?.userDetails?.userName}</p>
                     </div>

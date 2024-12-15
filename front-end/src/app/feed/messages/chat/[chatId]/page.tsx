@@ -10,12 +10,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { BiSolidSend } from "react-icons/bi";
 import { IoIosArrowRoundBack, IoMdClose } from "react-icons/io";
 
 export default function ChatPage({ params }: { params: { chatId: string } }) {
     const { chatId } = params; // Access chatId from params
-    const { activeChat, setActiveChat,messages,setMessages,sendMessage,chatContainerRef,message,handleMessageChange,typing,prevFileUrl,setPrevFileUrl} = useChat()
+    const { activeChat,messages,sendMessage,chatContainerRef,message,handleMessageChange,typing,prevFileUrl,setPrevFileUrl} = useChat()
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     const router = useRouter()
 
@@ -24,7 +23,8 @@ export default function ChatPage({ params }: { params: { chatId: string } }) {
         if(!chatId){
             router.replace('/feed/messages')
         }
-    },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[params])
 
     return (
      <div className="chat-container relative w-full h-screen scrollbar-hide p-1">

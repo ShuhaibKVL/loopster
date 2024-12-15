@@ -4,7 +4,7 @@ import { logout } from "@/lib/redux/features/auth/userSlice";
 import store, { RootState } from "@/lib/redux/store/store";
 import isTokenExpired from "@/lib/utils/isTokenExpired";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 
 
@@ -41,6 +41,7 @@ const RequiresAuth = (props: any) => {
             return;
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [accessToken, requiresAuth, router]);
 
     // If accessToken is not available and requires authentication, show nothing during redirection

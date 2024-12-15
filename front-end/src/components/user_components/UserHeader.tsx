@@ -20,13 +20,11 @@ export interface IUserHeader {
     imgUrl:string,
     fullName:string,
     userName:string,
-    follow:number,
-    followers:number,
     isFollowed:boolean,
     followedCount:number,
     followersCount:number,
     isRequestPending?:boolean
-    refetchPosts:() => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts:() => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function UserHeader({
@@ -34,8 +32,6 @@ export default function UserHeader({
     imgUrl,
     fullName,
     userName,
-    follow,
-    followers,
     isFollowed,
     followedCount,
     followersCount,

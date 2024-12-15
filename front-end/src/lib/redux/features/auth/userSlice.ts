@@ -5,7 +5,7 @@ export interface userState{
     accessToken:string;
     isAuthenticated:boolean;
     loading:boolean;
-    user:any;
+    user:string | null;
     userId:string;
     userProfile:string;
     totalUnReadMessages:number;

@@ -1,6 +1,5 @@
 'use client'
 
-import withAuth from '@/app/contexts/withAuth'
 import { confirmAction } from '@/components/cm/ConfirmationModal'
 import Form from '@/components/cm/Form'
 import { Button } from '@/components/ui/button'
@@ -18,7 +17,6 @@ import { editProfileSchema } from '../../../../lib/utils/validationSchemas'
 import defaultProfile from '../../../../../public/Images/user-profile-icon-in-flat-style-member-avatar-illustration-on-isolated-background-human-permission-sign-business-concept-vector.jpg'
 import DefaultPosts from '@/components/post_components/profile/DefaultPosts'
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch'
-import ProfileDropDown from '@/components/cm/ProfileDropDown'
 import { RiListSettingsLine } from "react-icons/ri";
 import Link from 'next/link'
 import { getProfileUserData } from '@/lib/redux/features/storySlice'
@@ -33,7 +31,6 @@ const Page = ({params}:{params:{userId:string}}) => {
     const userId = params?.userId || loginedUserId // to track the current profile opened userId
     
     const userData = useAppSelector((state:RootState) => state?.stories?.profileUserData)
-    const [ profileImage , setProfileImage ] = useState(userData?.profileImage || defaultProfile)
     const [ editProfileModal ,setEditProfileModal] = useState('hidden')
     const [ error , setError ] = useState('')
     const  { toast } = useToast()
@@ -53,13 +50,8 @@ const Page = ({params}:{params:{userId:string}}) => {
         if(userId){
             getUserData()    
         }
-    },[userId])
-
-    useEffect(() => {
-        if (userData?.profileImage) {
-            setProfileImage(userData.profileImage)
-        }
-    }, [userData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[userId,params])
 
     useEffect(() => {
         setTimeout(() => {
@@ -87,7 +79,7 @@ const Page = ({params}:{params:{userId:string}}) => {
                 if(willProceed){
                     const update = await userAuthService.uploadProfileImg(loginedUserId,formData)
                     console.log('update :',update)
-                if(update.status){
+                if(update?.status){
                     getUserData()
                     toast({
                         title: 'Success',
@@ -114,13 +106,13 @@ const Page = ({params}:{params:{userId:string}}) => {
             setEditProfileModal(editProfileModal === 'hidden' ? 'block' : 'hidden')
     }
 
-    async function handleModalSubmit(formData:any){
+    async function handleModalSubmit(formData:FormData){
         try {
             console.log('formData :',formData)
             await editProfileSchema.validate(formData, {abortEarly:true})
             const updateProfile = await userAuthService.editProfile(loginedUserId,formData)
             console.log(updateProfile)
-            if(updateProfile.status){
+            if(updateProfile?.status){
                 handleEditContainer()
                 getUserData()
                 toast({
@@ -137,8 +129,7 @@ const Page = ({params}:{params:{userId:string}}) => {
             }
         } catch (error) {
             if(error instanceof ValidationError) {
-                const validationErrors = error.inner.map((err:any) => err.message).join(', ')
-                console.log("validationErrors :",error,"<>",error.message)
+                error.inner.map((err:Error) => err.message).join(', ')
                 setError(error.message)
                 return
             }

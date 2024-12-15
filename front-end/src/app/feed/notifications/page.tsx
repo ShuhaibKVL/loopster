@@ -1,6 +1,5 @@
 // 'use client'
 
-import withAuth from '@/app/contexts/withAuth'
 import Notifications from '@/components/notification/Notifications'
 import React from 'react'
 

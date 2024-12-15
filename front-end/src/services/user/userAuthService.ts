@@ -7,14 +7,28 @@ import { IFollowedUser, IFollowers } from "@/components/user_components/FollowUn
 import { IUserData } from "@/components/post_components/Post";
 import { IUserDataSession } from "@/lib/utils/sessionHandler";
 
+interface signInResponse{
+    message:string,
+    accessToken:string,
+    userData:{
+        _id:string,
+        firstName:string,
+        userName:string,
+        profileImg:string
+    },
+    totalUnReadMessages:number,
+    status:true,
+    errors?:[]
+}
+
 class UserAuthService implements IUserAuthService{
     
-    async signUp(userData: ISignUp_user): Promise<any> {
+    async signUp(userData: ISignUp_user): Promise<{status:boolean,message:string,user:string,errors?:[]}> {
         const response = await user_publicApi.post('/register', userData);
         return response.data;
     }
 
-    async signIn(userData: IsignIn): Promise<any> {
+    async signIn(userData: IsignIn): Promise<signInResponse> {
         const response = await user_publicApi.post('/signIn',userData)
         return response.data
     }
@@ -24,17 +38,17 @@ class UserAuthService implements IUserAuthService{
         return response.data
     }
 
-    async user(user_id: string): Promise<any> {
+    async user(user_id: string): Promise<unknown> {
         const response = await userApi.get(`/user/${user_id}`)
         return response.data
     }
 
-    async uploadProfileImg(userId:string,formData: FormData): Promise<any> {
+    async uploadProfileImg(userId:string,formData: FormData): Promise<{status:boolean}> {
         const response = await userApi.post(`/user/${userId}/upload-profile-img`,formData)
         return response.data
     }
 
-    async editProfile(userId: string, formData: FormData): Promise<any> {
+    async editProfile(userId: string, formData: FormData): Promise<{status:boolean}> {
         const response = await userApi.post(`/${userId}/update-profile`,formData)
         return response
     }

@@ -1,4 +1,11 @@
+import { IsignIn } from "@/app/(auth)/signIn/page";
 
+export interface IAdminAuthServiceResponse{
+    message?:string,
+    status?:boolean,
+    email?:string,
+    accessToken?:string
+}
 export interface IAdminAuthService {
-    signIn(formData:{ [key: string]: any}):Promise<any>
+    signIn(formData:IsignIn):Promise<IAdminAuthServiceResponse>
 }

@@ -13,10 +13,9 @@ import { useDispatch } from 'react-redux'
 import logoWithTitle from '../../../../../public/Images/LogowithTitle.png'
 
 
-
 export interface IsignIn{
-    email:String,
-    password:String,
+    email:string,
+    password:string,
 }
 
 const Page =() => {
@@ -35,31 +34,34 @@ const Page =() => {
         },3000)
     })
 
-    const handleSubmit = async(formData:{ [key: string]: any; }):Promise<void> => {
+    const handleSubmit = async(formData:IsignIn):Promise<void> => {
         console.log("admin form data :",formData)
         await signInSchema.validate(formData , {abortEarly:true})
         try {
             const admin = await adminAuthService.signIn(formData)
-            console.log('admin Response :',admin.status,">>",admin.message)
 
-            if(admin.status){
+            if(admin?.status){
                 toast({
                     title:"Success",
                     description:admin.message,
                     className:'toast-success'
                 })
                 const payload = {
-                    email : admin.email,
-                    accessToken :admin.accessToken
+                    email : admin?.email,
+                    accessToken :admin?.accessToken
                 } 
                 dispatch(login(payload))
                 router.replace('/admin/dashboard')
                 return
             } 
-            setError(admin.message) 
-        } catch (error:any) {
-            console.log(error)
-            setError(error.message)
+            setError(admin?.message as string) 
+        } catch (error:unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+              } else {
+                console.log("An unknown error occurred.");
+                setError("An unknown error occurred.");
+              }
         }
     }
 

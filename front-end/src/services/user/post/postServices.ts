@@ -5,7 +5,7 @@ import { IReport } from "@/lib/utils/interfaces/IReport";
 import { IPostProps } from "@/lib/utils/interfaces/PostProps";
 export class PostService implements IPostServices {
 
-    async createPost(formData: IPost | FormData): Promise<any> {
+    async createPost(formData: IPost | FormData): Promise<{status:boolean}> {
         const res = await postApi.post('/create',formData ,{
             headers:{
                 'Content-Type': 'multipart/form-data',
@@ -14,7 +14,7 @@ export class PostService implements IPostServices {
         return res.data
     }
 
-    async deletePost(postId: string): Promise<any> {
+    async deletePost(postId: string): Promise<{status:boolean,message:string}> {
         const res = await postApi.delete(`/delete?postId=${postId}`)
         return res.data
     }
@@ -39,7 +39,7 @@ export class PostService implements IPostServices {
         return res.data
     }
 
-    async getBookMarkedPosts(userId: string, page?: number): Promise<{message:string,posts:IPostProps[]}> {
+    async getBookMarkedPosts(userId: string, page?: number): Promise<{message:string,posts:IPostProps[] }> {
         const res = await postApi.get(`/${userId}/book-mark/get_all?page=${page}`)
         return res.data
     }

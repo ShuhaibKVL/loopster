@@ -1,13 +1,13 @@
 // 'use client'
 
-import withAuth from '@/app/contexts/withAuth';
+// import withAuth from '@/app/contexts/withAuth';
 import CreatePostComponent from '@/components/post_components/CreatePost';
 import { Suspense } from 'react';
 import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
 import PostTabs from '@/components/post_components/Tabs';
 import StoryComponent from '@/components/story/StoryComponent';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+// import { getServerSession } from 'next-auth';
+// import { authOptions } from '../api/auth/[...nextauth]/route';
 import { cookies } from "next/headers";
 
 const Page = async () => {

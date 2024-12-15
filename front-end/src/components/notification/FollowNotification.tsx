@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { Button } from '../ui/button'
 import AvatarComponent from '../cm/Avatar'
 import { INotificationResponse } from '@/lib/utils/interfaces/INotification'
 import Link from 'next/link'

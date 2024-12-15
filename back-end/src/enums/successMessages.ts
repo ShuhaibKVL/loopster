@@ -20,6 +20,7 @@ export enum SuccessMessages {
 
     // Otp related success messages
     OTP_CREATED = 'Otp created successfully',
-    OTP_VERIFIED = 'Otp verified successfully'
+    OTP_VERIFIED = 'Otp verified successfully',
+    OTP_SEND = 'Otp Forwarded to your email'
 
 }

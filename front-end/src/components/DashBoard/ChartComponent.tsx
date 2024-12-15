@@ -46,6 +46,7 @@ export default function ChartComponent() {
     useEffect(() => {
         filterPosts()
         filterUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[byPeriod])
     // do a wat to pass the post , users data to chart
   return (

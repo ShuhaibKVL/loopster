@@ -2,13 +2,12 @@
 import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { useToast } from '@/hooks/use-toast';
 import { RootState } from '@/lib/redux/store/store';
-import { ICommentResponse, ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment';
+import { ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment';
 import commentService from '@/services/user/post/comment/commentService';
 import { CiHeart } from 'react-icons/ci';
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import AvatarComponent from '../cm/Avatar';
 import { confirmAction } from '../cm/ConfirmationModal';
-import { ObjectId } from 'mongoose';
 import { FaHeart } from 'react-icons/fa6';
 
 
@@ -118,7 +117,7 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
     <div className='max-h-40 overflow-y-scroll scrollbar-hide space-y-2'>
     {comment?.innerComments.length > 1 && (
       comment?.innerComments?.map((item) => (
-        <div className='flex gap-1 items-center justify-between w-[80%] relative left-10 overflow-hidden'>
+        <div key={item?._id} className='flex gap-1 items-center justify-between w-[80%] relative left-10 overflow-hidden'>
         <div className='flex gap-2'>
         <AvatarComponent
           imgUrl={item?.user?.profileImage}

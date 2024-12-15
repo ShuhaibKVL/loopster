@@ -11,7 +11,7 @@ export interface Account {
     access_token?: string;
     refresh_token?: string;
     expires_at?: number;
-    [key: string]: any; // Other provider-specific fields
+    [key: string]: unknown; // Other provider-specific fields
   }
   
 export interface User {

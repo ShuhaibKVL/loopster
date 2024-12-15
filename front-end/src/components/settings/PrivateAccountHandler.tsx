@@ -15,7 +15,7 @@ export default function PrivateAccountHandler() {
 
     const dispatch = useAppDispatch()
 
-    let isPrivate = userData?.isPrivateAccount
+    const isPrivate = userData?.isPrivateAccount
     console.log('is private account :',isPrivate)
 
     const handlePrivateAccount =async () => {

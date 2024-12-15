@@ -1,10 +1,10 @@
 import { IMostFollowedAccount } from "@/components/DashBoard/MostFollowedAccounts";
 import { adminApi} from "../apis/axiosInstance";
 import { IUserManagementService } from "./interfaces/IUsermanagementService";
-import { IUserWithCounts } from "@/lib/utils/interfaces/IUserWIthCounts";
+import { IUserWithCountsAdmin } from "@/lib/utils/interfaces/IUserWIthCounts";
 
 export class UserManagementService implements IUserManagementService{
-    async getAllUsers(page:number): Promise<any> {
+    async getAllUsers(page:number): Promise<unknown> {
         const response = await adminApi.get(`/users?page=${page}`)
         return response.data
     }
@@ -30,7 +30,7 @@ export class UserManagementService implements IUserManagementService{
         return response?.data
     }
 
-    async getUserData(userId: string): Promise<{ message: string; status: boolean; user:IUserWithCounts[]; }> {
+    async getUserData(userId: string): Promise<{ message: string; status: boolean; user:IUserWithCountsAdmin[]; }> {
         const respnse = await adminApi.get(`/user?userId=${userId}`)
         return respnse?.data
     }

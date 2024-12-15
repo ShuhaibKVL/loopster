@@ -5,7 +5,6 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import type { FilerobotImageEditorConfig } from 'react-filerobot-image-editor';
 import { RiImageEditFill } from "react-icons/ri";
 import base64ToFile from '@/lib/utils/base63ToFile';
-import { Inter } from 'next/font/google'
 
 const FilerobotImageEditor = dynamic(() => import('react-filerobot-image-editor'), { ssr: false });
 
@@ -14,17 +13,13 @@ interface IFileRobot {
     onSaveImage: (editedImageFile: File, editedImageBase64: string) => void;
 }
 
-const inter = Inter({
-    subsets:['latin'],
-    weight:['400','700']
-})
-
+// eslint-disable-next-line react/display-name
 const FileRobot = forwardRef(({ mediaUrl, onSaveImage }: IFileRobot, ref) => {
 
     const [isImgEditorShown, setIsImgEditorShown] = useState(false);
     const [editedImage, setEditedImage] = useState<string | null>(null);
 
-    
+    console.log(editedImage,"< edited image")
     useImperativeHandle(ref, () => ({
         openImgEditor() {
             console.log('image editor function invoked inside the editor >>>')
@@ -36,7 +31,7 @@ const FileRobot = forwardRef(({ mediaUrl, onSaveImage }: IFileRobot, ref) => {
         setIsImgEditorShown(false);
     };
 
-    const handleSave = (editedImageObject: any, designState: any) => {
+    const handleSave = (editedImageObject: {base64Image:string,imageBase64:string}) => {
         const base64Image = editedImageObject.imageBase64;
         setEditedImage(base64Image);
         if (base64Image) {
@@ -47,6 +42,7 @@ const FileRobot = forwardRef(({ mediaUrl, onSaveImage }: IFileRobot, ref) => {
         
     };
 
+    
     const config: FilerobotImageEditorConfig = {
         source: mediaUrl,
         onSave: handleSave,

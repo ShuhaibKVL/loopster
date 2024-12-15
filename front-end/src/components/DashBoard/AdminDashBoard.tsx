@@ -1,7 +1,4 @@
 import React from 'react'
-import Boxes from '../cm/Boxes'
-import LineChartComponent from './charts/LineChart';
-import PieChartComponent from './charts/PieChart'
 import TopLikedPosts from './TopLikedPosts';
 import MostFollowedAccounts from './MostFollowedAccounts';
 import { Suspense } from 'react';

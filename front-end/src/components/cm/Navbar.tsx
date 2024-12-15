@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import logo from '../../../public/Images/Loopster.png'
-import defaultProfile from '../../../public/Images/xxl-r-petal-pink-stoneberg-original-imageum8qmynhwnz.png'
 import Image from 'next/image'
 import {
     HoverCard,

@@ -21,6 +21,7 @@ export default function Suggestion() {
 
   useEffect(() => {
     fetchSuggestionUser()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userId])
 
   return (
@@ -30,9 +31,7 @@ export default function Suggestion() {
         users.map((user) => (
           <UserHeader
           _id={user?._id}
-          follow={user?.follow}
           followedCount={user?.followedCount}
-          followers={user?.followers}
           followersCount={user?.followersCount}
           isFollowed={user?.isFollowed}
           fullName={user?.fullName}

@@ -12,9 +12,7 @@ export const mailSender = async(email:string , title:string , body:string):Promi
             pass:process.env.MAIL_PSSS
         }
         })
-
         // Configure email content
-        
         let info = await transporter.sendMail({
             from:"www.mshuhabkvl.me - Muhammed Shuhaib",
             to:email,

@@ -5,6 +5,7 @@ interface EmojiPickerProps{
     message:string;
     handleMessageChange:React.ChangeEventHandler<HTMLInputElement>
 }
+
 export default function EmojiPickerComponent({message,handleMessageChange}:EmojiPickerProps) {
     const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 

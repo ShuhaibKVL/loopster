@@ -18,7 +18,7 @@ import Suggestion from "@/components/post_components/Suggestion";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { ChatProvider } from "../contexts/chatContext";
 
-export default function feedLayout({
+export default function FeedLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;

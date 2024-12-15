@@ -3,7 +3,6 @@ import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers'
 import isTokenExpired from './lib/utils/isTokenExpired';
 import { deleteCookie  } from 'cookies-next';
-import { signOut } from 'next-auth/react';
 
 const protectedRoutes = [
     '/feed',

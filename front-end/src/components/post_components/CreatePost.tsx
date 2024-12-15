@@ -18,7 +18,6 @@ import { ImageIcon, UploadIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaArrowUp } from "react-icons/fa6"
-import { RiAiGenerate } from "react-icons/ri"
 import { useSelector } from 'react-redux'
 import AvatarComponent from '../cm/Avatar'
 import { confirmAction } from '../cm/ConfirmationModal'
@@ -28,7 +27,6 @@ import './style.css'
 import TipTap from './TipTap'
 import TypeWriterComponent from '../Libraries/TypeWriterComponent'
 import { MdDelete } from "react-icons/md";
-import EmojiPickerComponent from '../Libraries/EmojiPicker'
 
 export default function CreatePostComponent() {
     const userProfileImg = useAppSelector((state:RootState) => state?.user?.userProfile)
@@ -59,6 +57,7 @@ export default function CreatePostComponent() {
     const openEditorFromParent = () => {
         console.log('openEditorFromParent invoked')
         if (fileRobotRef.current) {
+            console.log('fileReboot :',fileRobotRef.current)
             fileRobotRef.current.openImgEditor()
         }
         setIsHiddenPrevImag('hidden')
@@ -71,7 +70,6 @@ export default function CreatePostComponent() {
         const file = event.target.files?.[0]
 
         if(file){
-
             if(file.size > maxFileSize){
                 toast({
                     title: 'Over size..!',
@@ -114,11 +112,15 @@ export default function CreatePostComponent() {
             }
             const fileUrl = URL.createObjectURL(file)
             setPrevFileUrl(fileUrl)
-            console.log('set display editor to block')
-            setIsDisplayEditorContent('block')
             setFileBuffer(file)
-            openEditorFromParent()
-            setIsHiddenPrevImag('hidden')
+            setIsDisplayEditorContent('block')
+            if(fileMimeType.startsWith('image/')){
+                openEditorFromParent()
+                return
+            }else if(fileMimeType.startsWith('video/')){
+                setIsHiddenPrevImag('block')
+                return
+            }
         }else{
             toast({
                 title: 'File upload Filed !!!',
@@ -138,13 +140,12 @@ export default function CreatePostComponent() {
 
     const handleUnsplashSelectedImage = (unsplashImgFile:File,prevImageUrl:string) => {
         console.log('unsplash selected image reached on parent :',unsplashImgFile,"url",prevImageUrl)
-        setFileType('image')
         setIsOpen(false)
+        setFileType('image')
         setPrevFileUrl(prevImageUrl)
         setFileBuffer(unsplashImgFile)
-        setIsHiddenPrevImag('block')
+        setIsDisplayEditorContent('block')
         openEditorFromParent()
-        setIsHiddenPrevImag('hidden')
     }
 
     const deleteFile = async() => {
@@ -167,7 +168,6 @@ export default function CreatePostComponent() {
     }
     
     async function onSubmit() {
-        
         setIsDisplayEditorContent('hidden')
         if(!userId){
             toast({
@@ -198,7 +198,7 @@ export default function CreatePostComponent() {
             }
             const response = await postService.createPost(formData)
             setLoading(true)
-            if(response.status){
+            if(response?.status){
                 toast({
                     title: 'Success',
                     description: 'Post created successfully.',
@@ -215,12 +215,9 @@ export default function CreatePostComponent() {
                     className:"toast-failed"
                 })
             }
+            console.log('response :',response)
             setLoading(false)
         }
-    }
-
-    const setContentByEvent = (e:any) => {
-        SetEditorContent(e.target.value)
     }
 
     useEffect(()=>{
@@ -229,24 +226,30 @@ export default function CreatePostComponent() {
 
     return (
         <div className='w-full border-2 rounded-md p-2 flex flex-col gap-2 justify-between min-h-40 h-fit'>
-            
-            {loading && (
+            {/* for showing loading spinner while uploading post */}
+            {loading ? (
                 <p className='text-center text-[var(--color-bg)]'>
                 <TypeWriterComponent
-                cursorStyle='' 
-                words='posting your post ...' />
+                  cursorStyle='|' 
+                  words='posting your post ...' 
+                />haha
                 <span className="loading loading-spinner loading-xs"></span>
             </p>
-            )}
+            ) : (null)}
             <div className='w-full flex justify-between md:space-x-3'>
                 <div className='hidden md:block min-w-12'>
                     <AvatarComponent 
                     imgUrl={userProfileImg}
                     />
                 </div>
-                <Textarea onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')} className={`${isDisplayEditorContent === 'hidden' ? 'block' : 'hidden'}`} />
+                <Textarea 
+                    onClick={() => setIsDisplayEditorContent(isDisplayEditorContent === 'hidden' ? 'block' : 'hidden')} 
+                    className={`${isDisplayEditorContent === 'hidden' ? 'block' : 'hidden'}`} 
+                />
                 <div className={`${isDisplayEditorContent} w-full border-b rounded`}>
-                    <TipTap initialContent={editorContent} onContentChange={handleContentChange} />
+                    <TipTap 
+                        onContentChange={handleContentChange} 
+                    />
                     <div className={`relative w-full flex items-center justify-end`}>
                         {/* {fileType === 'image' && ( */}
                             <FileRobot
@@ -254,9 +257,9 @@ export default function CreatePostComponent() {
                             mediaUrl={prevFileUrl as string}
                             onSaveImage={handleEditedImage}
                         />
-                        {/* // )} */} bn 0
+                        {/* // )} */}
                         
-                        <div className={`${isHiddenPrevImg} relative w-full h-fit flex items-start`}>
+                        <div className={`${isHiddenPrevImg} relative w-full h-full flex items-start`}>
                         {fileType === 'image' ? (
                             prevFileUrl ? (
                                 <Image
@@ -264,11 +267,12 @@ export default function CreatePostComponent() {
                                 height={300}
                                 width={500}
                                 alt="Preview Image" 
+                                className='w-full h-full'
                                  />
                             ) : null
                             ) : fileType === 'video' ? (
                                 prevFileUrl ? (
-                                    <video src={prevFileUrl} controls />
+                                    <video className='w-full h-full object-contain ' src={prevFileUrl} controls />
                                 ) : null
                             ) : null}
                             <button
