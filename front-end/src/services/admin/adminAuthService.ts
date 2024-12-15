@@ -1,7 +1,7 @@
 import { IsignIn } from "@/app/admin/(auth)/signIn/page"
-import { IAdminAuthService } from "./interfaces/IAdminAuthServices";
+import { IAdminAuthService, IAdminAuthServiceResponse } from "./interfaces/IAdminAuthServices";
 
-export const signIn = async(formData:IsignIn):Promise<any> => {
+export const signIn = async(formData:IsignIn):Promise<unknown> => {
     try {
         const response = await fetch('http://localhost:5000/api/admin/signIn',{
             method:'POST',
@@ -14,14 +14,14 @@ export const signIn = async(formData:IsignIn):Promise<any> => {
         const res = await response.json()
         console.log("admin sign In response :",res)
         return res
-    } catch (error) {
-        
+    } catch (error:unknown) {
+        console.log(error)
     }
 }
 
 export class AdminAuthService implements IAdminAuthService {
 
-    async signIn(formData: { [key: string]: any; }): Promise<any> {
+    async signIn(formData: IsignIn): Promise<IAdminAuthServiceResponse> {
         try {
             const response = await fetch('http://localhost:5000/api/admin/signIn',{
                 method:'POST',
@@ -36,6 +36,7 @@ export class AdminAuthService implements IAdminAuthService {
             return res
         } catch (error) {
             console.log(error)
+            return {status:false}
         }
     }
 }

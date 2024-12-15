@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import ReusableDropdown, { DropdownOption } from './DropDownMenu'
+import { DropdownOption } from './DropDownMenu'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 

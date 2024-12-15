@@ -1,13 +1,13 @@
 'use client'
 
-import { IMessageResponse } from "@/lib/utils/interfaces/iMessages";
-import React , { createContext , useContext, useEffect, useRef, useState} from "react";
-import { SocketContext } from "./socketContext";
-import { useToast } from '@/hooks/use-toast'
 import { useAppDispatch, useAppSelector } from "@/hooks/typedUseDispatch";
-import { RootState } from "@/lib/redux/store/store";
+import { useToast } from '@/hooks/use-toast';
 import { updateTotalUnReadMsg, updateUnReadMsgPerChat } from "@/lib/redux/features/auth/userSlice";
+import { RootState } from "@/lib/redux/store/store";
+import { IMessageResponse } from "@/lib/utils/interfaces/iMessages";
 import messageService from "@/services/user/messages/messageService";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { SocketContext } from "./SocketContext";
 
 export interface ActiveChat{
     recipientId?:string,
@@ -17,6 +17,12 @@ export interface ActiveChat{
     profileImage?:string,
     userName?:string,
     chatName?:string
+}
+
+export interface IReceiveMessageResponse{
+  message:IMessageResponse[] | [],
+  activeMessage:string,
+  chatType:'individual' | 'group'
 }
 
 interface ChatContextType {
@@ -207,14 +213,14 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
       
     }
 
-    const markMsgAsReaded = () => {
-        const extractMsgIds = messages.map((message) => message?._id)
-        console.log('message id s :',extractMsgIds)
-        socket.emit('markmessagesAsReaded',{
-          extractMsgIds,
-          userId:userId
-        })
-    }
+    // const markMsgAsReaded = () => {
+    //     const extractMsgIds = messages.map((message) => message?._id)
+    //     console.log('message id s :',extractMsgIds)
+    //     socket.emit('markmessagesAsReaded',{
+    //       extractMsgIds,
+    //       userId:userId
+    //     })
+    // }
 
     const scrollToBottom = () => {
         if (chatContainerRef.current) {
@@ -232,6 +238,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     useEffect(() => {
       // Scroll to bottom when component mounts or new message is added
       scrollToBottom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messages,typing]);
 
     // Function to handle receiving a new message in real-time
@@ -245,7 +252,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           userId:userId
         })
 
-        socket.on('updated-online-users',(users) => {
+        socket.on('updated-online-users',(users:string[]) => {
           setOnlineUsers(users)
         })
 
@@ -280,7 +287,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
           }
         })
 
-        socket.on('type-ended',(data) => {
+        socket.on('type-ended',() => {
           console.log('on type ended ')
           setTyping(false)
         })
@@ -289,6 +296,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         return () => {
             socket.off('receiveMessage');
         };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       },[setMessages,activeChat]);
 
     // For sending message of chat

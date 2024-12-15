@@ -6,7 +6,6 @@ import followService from '@/services/folllow/followService'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from '@/hooks/typedUseDispatch'
-import { fetchLatestPosts } from '@/lib/redux/features/postSlice'
 import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 import { confirmAction } from '../cm/ConfirmationModal'
 import { getProfileUserData } from '@/lib/redux/features/storySlice'
@@ -15,7 +14,7 @@ interface IFollowUserIds{
     following:string,
     isButton?:boolean,
     isFromProfile?:boolean,
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 export default function FollowRequest({following,refetchPosts,isButton = true,isFromProfile=false}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state?.user?.userId)
@@ -34,7 +33,7 @@ export default function FollowRequest({following,refetchPosts,isButton = true,is
     
         if(willProceed){
             console.log('Go ahead..>>>')
-            let deleteDoc = {
+            const deleteDoc = {
                 follower:userId,
                 following:following
             }

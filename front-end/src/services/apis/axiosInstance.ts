@@ -1,8 +1,6 @@
 import axios from 'axios'
 import store from '@/lib/redux/store/store'
-import { error } from 'console'
 import { logout } from '@/lib/redux/features/auth/userSlice'
-import  Router from 'next/navigation'
 import { toast } from 'react-toastify'
 import { deleteCookie  } from 'cookies-next';
 import { redirect } from 'next/navigation'

@@ -4,7 +4,7 @@ import { logout } from "@/lib/redux/features/auth/userSlice";
 import store, { RootState } from "@/lib/redux/store/store";
 import isTokenExpired from "@/lib/utils/isTokenExpired";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 
 const restrictedRoutes = ['/admin/signIn'];
@@ -12,7 +12,7 @@ const restrictedRoutes = ['/admin/signIn'];
 const adminWithAuth = (WrappedComponent: React.ComponentType, requiresAuth: boolean) => {
     console.log("with auth invoked .......");
 
-const RequiresAuth = (props: any) => {
+const RequiresAuth = (props: unknown) => {
     const router = useRouter();
     const accessToken = useSelector((state: RootState) => state.admin?.accessToken);
 
@@ -40,6 +40,7 @@ const RequiresAuth = (props: any) => {
             return;
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [accessToken, requiresAuth, router]);
 
     // If accessToken is not available and requires authentication, show nothing during redirection

@@ -7,14 +7,14 @@ import { FaRegBookmark } from 'react-icons/fa'
 
 interface IBookMarkHandleButton{
     postId:string,
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function BookMarkHandleButton({postId,refetchPosts}:IBookMarkHandleButton) {
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     
     const handleCreateBookMark = async() => {
-       const res = await bookMarkService.create(userId,postId)
+       await bookMarkService.create(userId,postId)
        await refetchPosts()
     }
   return (

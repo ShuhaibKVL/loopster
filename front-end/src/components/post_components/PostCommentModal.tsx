@@ -4,8 +4,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogHeader,
-    DialogTitle,
 } from "@/components/ui/dialog";
 import Image from 'next/image';
 import { Dispatch, SetStateAction, } from 'react';

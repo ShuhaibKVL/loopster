@@ -5,7 +5,6 @@ import { Button } from '../ui/button'
 import EmojiPicker , { EmojiClickData} from 'emoji-picker-react'
 import { MdAttachFile } from "react-icons/md";
 import { useChat } from '@/app/contexts/chatContext'
-import Image from 'next/image'
 
 interface IMessageInputProp{
     sendMessage:(e: React.FormEvent<HTMLFormElement>) => void;

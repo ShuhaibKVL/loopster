@@ -1,18 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Bold, Italic, Underline, List, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
 
-// interface TipTapProps{
-//   initialContent?:HTMLInputElement | string;
-//   onContentChange:(content:string) => void;
-// }
 
-const TipTap = ({ initialContent, onContentChange }) => {
-  const [content, setContent] = useState(initialContent);
+const TipTap = ({ initialContent ='', onContentChange }) => {
   const editorRef = useRef(null);
-
-  useEffect(() => {
-    console.log('initial Content :',initialContent,"editor content :",editorRef.current.innerHTML,)
-  },[content,initialContent])
 
   useEffect(() => {
     if (editorRef.current) {
@@ -29,7 +20,6 @@ const TipTap = ({ initialContent, onContentChange }) => {
   const handleContentChange = () => {
     if (editorRef.current) {
       const newContent = editorRef.current.innerHTML;
-      setContent(newContent);
       onContentChange(newContent);
     }
   };

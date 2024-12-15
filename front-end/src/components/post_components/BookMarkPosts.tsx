@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
+import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import PostSkelton from '@/components/skeltons/PostSkelton';
@@ -10,14 +10,12 @@ import postService from '@/services/user/post/postServices';
 import { IPostProps } from '@/lib/utils/interfaces/PostProps';
 
 export default function BookMarkPosts() {
-  const dispatch = useAppDispatch();
   const userId = useAppSelector((state: RootState) => state?.user?.userId);
   const listRef = useRef(null)
   const [ isLoadingMore , setIsLoadingMore] = useState(false)
 
   const fetchPosts = async (userId: string, page: number) => {
     if (userId) {
-      
       const response = await postService.getBookMarkedPosts(userId,page)
       console.log('response :',response)
       const data : IPostProps[] = response?.posts

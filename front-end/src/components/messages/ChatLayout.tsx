@@ -1,6 +1,6 @@
 'use client'
 
-import React, { act, useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AvatarComponent from '../cm/Avatar'
 import UsersList from './UsersList'
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch'
@@ -42,6 +42,7 @@ export interface ISelectedGroupUser{
 
 export default function ChatLayout() {
     const [userListBySearch , setUserListBySearch] = useState<ISearchUsers[]>([])
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [userListByGroupSearch , setUserListByGroupSearch] = useState<ISearchUsers[]>([])
     const [userList , setUserList] = useState<IChatUsersList[]>([])
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
@@ -76,7 +77,6 @@ export default function ChatLayout() {
     const fetchAllChats = async (currentUserId:string) => {
         const response = await chatService.fetchALlChats(currentUserId)
         setUserList(response?.chats)
-        console.log('alll chats :',response)
         dispatch(updateUnReadMsgPerChat(response?.unReadMsgPerChat))
     }
 
@@ -150,6 +150,7 @@ export default function ChatLayout() {
 
   useEffect(() =>{
     fetchAllChats(userId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userId])
 
 
@@ -157,6 +158,7 @@ export default function ChatLayout() {
     if(searchInput !== ''){
       SearchUsers(searchInput,'individual')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[searchInput])
 
   useEffect(() => {
@@ -164,6 +166,7 @@ export default function ChatLayout() {
     if(activeChat){
       creatChat()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[activeChat])
 
   return (

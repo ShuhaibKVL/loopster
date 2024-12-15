@@ -27,7 +27,6 @@ export default function FollowedUsers({follow,profileUserId}:{follow:number,prof
 
     const getFollowedUsers = async() => {
         const response = await userAuthService.getFollowedUsers(profileUserId)
-        console.log('followed users :>>',response)
         setUsers(response?.data)
         setIsOpen(true)
         dispatch(getProfileUserData(profileUserId))
@@ -47,7 +46,7 @@ export default function FollowedUsers({follow,profileUserId}:{follow:number,prof
                     <DialogDescription className='overflow-y-scroll max-h-[70vh] scrollbar-hide'>
                         <div className='w-full p-2 flex flex-col'>
                             {users.map((user) => (
-                                <div className='flex w-full p-2 items-center justify-between'>
+                                <div key={user?._id} className='flex w-full p-2 items-center justify-between'>
                                     <Link href={`/feed/profile/${user?.following?._id}`} >
                                     <div className='flex items-center gap-3'>
                                         <AvatarComponent imgUrl={user?.following?.profileImage}/>

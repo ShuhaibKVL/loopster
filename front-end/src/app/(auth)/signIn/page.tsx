@@ -1,7 +1,6 @@
 'use client'
 
 import Form from '@/components/cm/Form';
-import withAuth from '@/app/contexts/withAuth';
 import { useToast } from "@/hooks/use-toast";
 import { login , setLoading } from '@/lib/redux/features/auth/userSlice';
 import userAuthService from '@/services/user/userAuthService';
@@ -9,15 +8,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { ValidationError } from 'yup';
 import "../../globals.css";
-import { signIn } from 'next-auth/react'
-import { Button } from '@/components/ui/button';
-import { FcGoogle } from "react-icons/fc";
+// import { signIn } from 'next-auth/react'
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
 import { setCookie } from "cookies-next";
+import { AxiosError } from 'axios';
 
 export interface IsignIn{
     email:string,
@@ -31,15 +28,14 @@ const signInFields = [
 const Page = () => {
     const router = useRouter()
     const { toast} = useToast()
-    const dispatch = useAppDispatch() //useDispatch()
+    const dispatch = useAppDispatch()
     
-    
-    const [ isLoadingGoogleSign , setIsLoadingGoogleSign] = useState<boolean>(false)
+    // const [ isLoadingGoogleSign , setIsLoadingGoogleSign] = useState<boolean>(false)
 
     const loading = useAppSelector((state:RootState) => state?.user?.loading)
     console.log('loading :',loading)
 
-    const [ error , setError ] = useState('')
+    const [ error , setError ] = useState<string>('')
 
     useEffect(() => {
         setTimeout(() => {
@@ -61,7 +57,7 @@ const Page = () => {
             dispatch(setLoading(true))
             const user =  await userAuthService.signIn(formData)
             console.log('user response :',user)
-            if(user.status){
+            if(user?.status){
                 toast({
                     title: 'Success',
                     description: user.message,
@@ -86,24 +82,24 @@ const Page = () => {
                 dispatch(login(userData))
                 router.replace('/feed')
 
-            }else if (user.errors) {
+            }else if (user?.errors) {
                 // Handle validation errors
-                user.errors.forEach((error:any) => {
+                user.errors.forEach(() => {
                     toast({
                     title: 'Validation Error',
                     description: user.message,
                     className:'toast-failed'
                 });
             })}
-        } catch (error:any) {
+        } catch (error:unknown) {
             dispatch(setLoading(false))
             if(error instanceof ValidationError) {
-                const validationErrors = error.inner.map((err:any) => err.message).join(', ')
+                const validationErrors = error.inner.map((err:Error) => err.message).join(', ')
                 setError(validationErrors)
             }
-            if (error.response) {
-                console.log(error,error.response)
-                const { status } = error.response;
+            if (error instanceof AxiosError && error?.response) {
+                console.log(error,error?.response)
+                const { status } = error?.response;
 
                 if (status === 401) {
                   // Incorrect credentials
@@ -118,10 +114,10 @@ const Page = () => {
         }
     }
 
-    const signInWithGoogle = () => {
-        setIsLoadingGoogleSign(true)
-        signIn('google')
-    }
+    // const signInWithGoogle = () => {
+    //     setIsLoadingGoogleSign(true)
+    //     signIn('google')
+    // }
 
     return (
         <div className='min-h-screen flex items-center justify-center bg-[var(--secondary-bg)]'>

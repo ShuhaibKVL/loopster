@@ -1,4 +1,5 @@
 import { adminApi } from "../apis/axiosInstance";
+import { IReportService } from "./interfaces/IReportService";
 
 class ReportManagementService implements IReportService{
 

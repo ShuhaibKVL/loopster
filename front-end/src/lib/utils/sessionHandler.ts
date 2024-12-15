@@ -1,11 +1,10 @@
 import { ObjectId } from "mongoose";
-import { JWT } from "next-auth/jwt";
 
 interface SessionUser {
     accessToken:string,
     isAuthenticated:boolean,
     loading:boolean,
-    user:any,
+    user:string,
     userId:string,
     userProfile:string,
     totalUnReadMessages:number,
@@ -30,7 +29,7 @@ export function handleSession(data:ISessionParams) : SessionUser {
         accessToken:data?.accessToken,
         isAuthenticated:true,
         userId:data?.user?._id,
-        user:data?.user,
+        user:data?.user?.userName,
         userProfile:data?.user?.profileImg,
         totalUnReadMessages:data?.totalUnReadMessages,
         loading:false

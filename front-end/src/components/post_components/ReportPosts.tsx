@@ -16,6 +16,7 @@ import PostDataDrawer from './PostDataDrawer'
 
 
 export default function ReportPosts() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ currentPage , setCurrentPage ] = useState(1)
     const [ repotes , setReports ] = useState<IReportResponse[] >([])
     const [ searchInput , setSearchInput ] = useState('')
@@ -87,6 +88,7 @@ export default function ReportPosts() {
         (
             repotes.map((report,index) => (
                 <Alert
+                key={index}
                 className={`w-full ${report?.isRead ? 'bg-[var(--color-bg)]' : 
                     (index % 2 === 0 ? 'bg-yellow-100 hover:bg-yellow-200' :
                     'bg-orange-100 hover:bg-orange-200')}

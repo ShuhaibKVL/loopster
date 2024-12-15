@@ -16,7 +16,7 @@ interface Field {
 
 interface FormProps {
   fields: Field[];
-  onSubmit: (data: any) => void;
+  onSubmit: (data: FormData) => void;
   fieldErrors?: { [key: string]: string };
 }
 

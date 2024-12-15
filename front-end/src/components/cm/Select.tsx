@@ -27,8 +27,8 @@ export default function SelectComponent({items,label,onSelect}:selectComponentPr
           <SelectValue placeholder={`${label}`} />
         </SelectTrigger>
         <SelectContent className='bg-[var(--secondary-bg)]'>
-            {items.map((item) => (
-                <SelectItem value={`${item}`}>{item}</SelectItem>
+            {items.map((item,index) => (
+                <SelectItem key={index} value={`${item}`}>{item}</SelectItem>
             ))}
         </SelectContent>
     </Select>

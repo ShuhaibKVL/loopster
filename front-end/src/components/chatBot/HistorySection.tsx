@@ -1,7 +1,5 @@
 import { IChatBotHistory } from '@/lib/utils/interfaces/IChatBotHistory'
-import chatBotService from '@/services/gemini/chatBotService'
-import { ObjectId } from 'mongoose';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { GoSidebarCollapse } from 'react-icons/go'
 import { IoMdArrowForward } from "react-icons/io";
 
@@ -31,8 +29,9 @@ export default function HistorySection({sidBar ,chatHistory,activeChatHistoryId,
 
        <div className='w-full h-auto overflow-y-auto scrollbar-hide sm:p-2 space-y-1'>
           {chatHistory?.length > 0 ? (
-            chatHistory?.map((chat) => (
+            chatHistory?.map((chat,index) => (
                 <div 
+                key={index}
                 onClick={() => handleSelect(chat)}
                 className={`sm:p-2 border-b shadow-sm text-start rounded-md flex justify-between cursor-pointer hover:bg-[var(--hover-card)] ${activeChatHistoryId === chat?._id && 'bg-[var(--hover-card)]'}`}>
                   <p className='font-semibold'>{chat?.question}</p>

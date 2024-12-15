@@ -10,5 +10,5 @@ export interface PostContentProps {
     isLiked?:boolean;
     likeCount?:number;
     isBookMarked?:boolean;
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }

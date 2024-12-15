@@ -1,21 +1,21 @@
 'use client'
 
 import { useNotifications } from '@/app/contexts/notificationContext'
-import React, { useEffect } from 'react'
+import React from 'react'
 import PostLikeNotification from './PostLikeNotification'
 import FollowNotification from './FollowNotification'
 import { INotificationResponse } from '@/lib/utils/interfaces/INotification'
 import FollowRequestNotification from './FollowRequestNotification'
 
 export default function Notifications() {
-    const { notifications ,markAsRead }= useNotifications()
+    const { notifications }= useNotifications()
     
     return (
       <div className='w-full min-h-full flex flex-col gap-2 md:p-2'>
        {notifications.length > 0 ? (
-        notifications?.map((item : INotificationResponse) => (
+        notifications?.map((item : INotificationResponse,index:number) => (
             item?.type === 'post' || item?.type === 'comment' ? (
-              <PostLikeNotification notification={item}/>
+              <PostLikeNotification key={index} notification={item}/>
             ) :item?.type === 'follow-request' ? (
               <FollowRequestNotification notification={item} />
             ) :

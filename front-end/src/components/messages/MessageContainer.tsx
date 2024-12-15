@@ -19,7 +19,7 @@ import { FaFilePdf } from 'react-icons/fa';
 
 export default function MessageContainer({messages,userId,typing=false}:{messages:IMessageResponse[],userId:string,typing:boolean}) { 
   const [isLongPress , setIsLongPress] = useState<boolean>(false)
-  let longPressTimeout = useRef<null | number>(null) 
+  const longPressTimeout = useRef<null | number>(null) 
 
   const handleTouchStart = () => {
     longPressTimeout.current = window.setTimeout(() => {
@@ -53,7 +53,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
             message?.sender?._id?.toString() === userId ? (
               !message?.deleteFromMe?.includes(userId) && (
               // user message section
-              <ContextMenu >
+              <ContextMenu key={message?._id} >
               <ContextMenuTrigger>
               <div
               id={`message-${message?._id}`} 
@@ -81,7 +81,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                           src={`${message?.mediaUrl}`}
                           className="w-full h-auto rounded-md max-h-80 max-w-80"
                           controls
-                          controlsList="nodownload"
+                          // controlsList="nodownload"
                           playsInline
                         />
                       ) : (
@@ -134,7 +134,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
               )
             ) : (
               // receiver message section
-              <div className="chat chat-start">
+              <div className="chat chat-start" key={message?._id}>
                 <div className="chat-header text-secondary">
                   {message?.chatType === 'group' ? message?.sender.userName : ''}
                 {/* Obi-Wan Kenobi */}
@@ -160,7 +160,7 @@ export default function MessageContainer({messages,userId,typing=false}:{message
                         <video
                           src={`${message?.mediaUrl}`}
                           className="w-full h-auto rounded-md max-h-80 max-w-80"
-                          controlsList="nodownload"
+                          // controlsList="nodownload"
                           controls
                           playsInline
                         />

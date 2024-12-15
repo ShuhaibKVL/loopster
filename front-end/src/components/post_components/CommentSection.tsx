@@ -3,13 +3,12 @@
 import { Button } from '@/components/ui/button'
 import { useAppSelector } from '@/hooks/typedUseDispatch'
 import { RootState } from '@/lib/redux/store/store'
-import { IComment, ICommentResponse, ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment'
+import { IComment, ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment'
 import commentService from '@/services/user/post/comment/commentService'
 import React, { Suspense, useEffect, useRef, useState } from 'react'
 import AvatarComponent from '../cm/Avatar'
 import CommentFeedSkeleton from '../skeltons/CommentFeedSkeleton'
 import PostComments from './PostComments'
-import { ObjectId } from 'mongoose'
 import { CiSquareRemove } from "react-icons/ci";
 import EmojiPickerComponent from '../Libraries/EmojiPicker'
 

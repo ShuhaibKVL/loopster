@@ -1,20 +1,19 @@
 'use client'
 
-import React, { ReactNode, useContext, useEffect, useState,} from 'react'
-import { usePathname, useRouter } from 'next/navigation'
-import { logout } from '@/lib/redux/features/auth/userSlice';
-import { logout as adminLogout } from '@/lib/redux/features/auth/adminSlice';
-import { useDispatch } from 'react-redux';
-import { Button } from '@/components/ui/button';
-import { ExitIcon } from '@radix-ui/react-icons';
-import { confirmAction } from './ConfirmationModal';
-import { useAppSelector } from '@/hooks/typedUseDispatch';
-import { RootState } from '@/lib/redux/store/store';
 import { useNotifications } from '@/app/contexts/notificationContext';
-import { SocketContext } from '@/app/contexts/socketContext';
-import { deleteCookie  } from 'cookies-next';
-import { redirect } from 'next/navigation'
+import { SocketContext } from '@/app/contexts/SocketContext';
+import { Button } from '@/components/ui/button';
+import { useAppSelector } from '@/hooks/typedUseDispatch';
+import { logout as adminLogout } from '@/lib/redux/features/auth/adminSlice';
+import { logout } from '@/lib/redux/features/auth/userSlice';
+import { RootState } from '@/lib/redux/store/store';
+import { ExitIcon } from '@radix-ui/react-icons';
+import { deleteCookie } from 'cookies-next';
 import { signOut } from 'next-auth/react';
+import { redirect, usePathname, useRouter } from 'next/navigation';
+import { ReactNode, useContext, useEffect, useState, } from 'react';
+import { useDispatch } from 'react-redux';
+import { confirmAction } from './ConfirmationModal';
 
 export interface INavItems {
     name: string,
@@ -32,7 +31,7 @@ export default function SideBar({ navItems ,type}: SideBarProps) {
     const currentPath = usePathname()
     const totalUnReadMessages = useAppSelector((state:RootState) => state?.user?.totalUnReadMessages)
     const [width , setWidth ] = useState(window?.innerWidth)
-    const {notifications , unReadedNotifications} = useNotifications()
+    const {unReadedNotifications} = useNotifications()
     const socket = useContext(SocketContext);
  
     

@@ -18,9 +18,9 @@ interface IFollowUserIds{
     isDisplay?:boolean,
     label?:string,// for accepting the remove follower also
     removeFollower?:IFollow | null,
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
-export default function UnFollowHandleButton({following,refetchPosts,isButton = true,isDisplay=false,label = 'UnFollow',removeFollower = null,isFromProfile=false}:IFollowUserIds) {
+export default function UnFollowHandleButton({following,refetchPosts,isButton = true,label = 'UnFollow',removeFollower = null,isFromProfile=false}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
     const dispatch = useAppDispatch()
 
@@ -52,7 +52,7 @@ export default function UnFollowHandleButton({following,refetchPosts,isButton = 
                 }
             }
             if(newFollowDoc){
-                const follow = await followService.unFollow(newFollowDoc)
+                await followService.unFollow(newFollowDoc)
                 await refetchPosts()
                 if(isFromProfile){
                     dispatch(getProfileUserData(userId))

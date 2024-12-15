@@ -10,26 +10,22 @@ import { IoIosArrowRoundForward } from 'react-icons/io'
 import Boxes from '../cm/Boxes'
 import { confirmAction } from '../cm/ConfirmationModal'
 import Pagination from '../cm/Pagination'
-import SearchInput from '../cm/SearchInput'
-import SelectComponent from '../cm/Select'
 import Content from './Content'
-
-const filterItems = ['Latest','Reported','Must Liked','views']
 
 export default function PostTable() {
     const [ currentPage , setCurrentPage ] = useState(1)
     const { posts, newReports, totalPosts, reported, unListed, totalPages, fetchPosts } = usePosts({currentPage})
-    const [ searchInput , setSearchInput ] = useState('')
-    const [ selectedFilter , setSelectedFilter ] = useState('')
+    // const [ searchInput , setSearchInput ] = useState('')
+    // const [ selectedFilter , setSelectedFilter ] = useState('')
     
 
-    const handleSearchInput = (value:string) => {
-        setSearchInput(value)
-    }
+    // const handleSearchInput = (value:string) => {
+    //     setSearchInput(value)
+    // }
 
-    const onSelectChange = (value:string) => {
-        setSelectedFilter(value)
-    }
+    // const onSelectChange = (value:string) => {
+    //     setSelectedFilter(value)
+    // }
 
     const itemsData = [
         { title: "Total Posts", value: totalPosts},
@@ -79,7 +75,7 @@ export default function PostTable() {
     {posts.length > 0 ?
         (
          posts.map((post) => (
-           <div className='relative w-full border p-5 grid gap-2 rounded-md overflow-hidden md:grid-cols-2 lg:grid-cols-3 hover:bg-[var(--hover-card)] duration-100 cursor-pointer'>
+           <div key={post?._id} className='relative w-full border p-5 grid gap-2 rounded-md overflow-hidden md:grid-cols-2 lg:grid-cols-3 hover:bg-[var(--hover-card)] duration-100 cursor-pointer'>
          {/* Media section */}
          <div className='min-h-40 max-w-52 max-h-52'>
            {post?.mediaType === 'image' ? (

@@ -3,7 +3,6 @@ import NextAuth,{NextAuthOptions} from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { ISignUp_user} from '@/app/(auth)/signUp/page' 
 import { ISessionParams } from '@/lib/utils/sessionHandler'
-import { redirect } from 'next/navigation'
 import { setCookie } from 'cookies-next';
 
 // next auth configuration

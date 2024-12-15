@@ -5,20 +5,20 @@ import Image from 'next/image'
 import {
     InputOTP,
     InputOTPGroup,
-    InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
 import Counter from '@/components/cm/Counter'
 import { useSearchParams , useRouter } from 'next/navigation'
 import { useToast } from "@/hooks/use-toast"
 import otpService from '@/services/authServices/otpService'
+import Link from 'next/link'
 
 
-export default function page() {
+export default function Page() {
     const searchParams = useSearchParams()
     const router = useRouter()
 
-    const [ otp , setOtp ] = useState('')
+    const [ otp , setOtp ] = useState<string>('')
     const [error, setError] = useState('')
     const [ email , setEmail ] = useState('')
     const [ resetCounterComponent , setResetCounterCp ] = useState(false)
@@ -37,18 +37,20 @@ export default function page() {
         if(emailParams){
             try {
                 setEmail(emailParams)
-            } catch (error) {
-                // router.push('/signUp')
+            } catch (error:unknown) {
+                console.log('error :',error)
                 toast({
                     variant:'destructive',
                     title: "Retry",
                     description: "UserData not get.Please signUp once more",
                 })
+                // router.push('/signUp')
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[searchParams, router])
 
-    async function handleSubmit():Promise<any> {
+    async function handleSubmit():Promise<unknown> {
         if(otp.length <6){
             setError("Please enter valid otp.")
         }
@@ -59,19 +61,20 @@ export default function page() {
             if(!result.status){
                 toast({
                     title: 'Failed',
-                    description: result.message,
+                    description: result?.message,
                     className:'toast-failed'
                 })
+                return
             }else{
                 toast({
                     title: 'Success',
-                    description: result.message,
+                    description: result?.message,
                     className:"toast-success"
                 })
                 router.push('/signIn')
             }
-        } catch (error:any) {
-            console.log(error.message)
+        } catch (error:unknown) {
+            console.log(error)
         }
     }
 
@@ -83,7 +86,7 @@ export default function page() {
             setResetCounterCp((prev) => !prev)
             toast({
                 title: 'Success',
-                description: response.message,
+                description: response?.message,
                 className:"toast-success"
             })
         } catch (error) {
@@ -107,7 +110,7 @@ export default function page() {
                     <div className='w-full flex justify-center min-h-20'>
                     
                     <InputOTP maxLength={6}
-                     onChange={(otp) => setOtp(otp)}
+                     onChange={(otp:string) => setOtp(otp)}
                     >
                         <InputOTPGroup>
                             <InputOTPSlot index={0} />
@@ -129,6 +132,9 @@ export default function page() {
                     <button onClick={handleSubmit} type="submit" className='w-full py-2 text-white px-4 rounded-md bg-primary hover:bg-secondary transition'>
                         Submit
                     </button>
+                    <p className='text-center w-full p-4 text-md opacity-50'>
+                        <Link href='/signUp'> Sign up again..!</Link>
+                    </p>
                     
                 </div>
                 {/* Image Section */}

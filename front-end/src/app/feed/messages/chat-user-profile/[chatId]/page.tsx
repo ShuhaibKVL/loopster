@@ -5,6 +5,7 @@ export default function Page({ params }: { params: { chatId: string }}) {
     const { chatId } = params; 
     return (
       <div className='w-full h-full'>
+        <p>::::{chatId}</p>
            <div className="relative w-[100px] h-[100px] sm:w-[150px] sm:h-[150px] m-auto group overflow-hidden rounded-full">
               <Image
               src=''

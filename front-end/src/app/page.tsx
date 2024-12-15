@@ -1,10 +1,7 @@
-import { Button } from '@/components/ui/button';
-import ThemToggle from '@/components/cm/ThemeToggle'
 import Link from 'next/link';
 import { BackgroundLines } from '@/components/ui/background-lines';
 import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
 import ThemeToggle from '@/components/cm/ThemeToggle';
-import Image from 'next/image';
 export default function Home() {
   return (
     <div className='min-h-screen w-full bg-[var(--secondary-bg)]'>

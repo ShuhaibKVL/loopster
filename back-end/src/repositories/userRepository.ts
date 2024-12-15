@@ -21,7 +21,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async verifyUser(_id: ObjectId): Promise<any> {
-        return await User.findByIdAndUpdate(_id,{isVerified:true})
+        return await User.findByIdAndUpdate(_id,{isVerified:true},{new:true})
     }
 
     async findById(_id: string): Promise<any> {

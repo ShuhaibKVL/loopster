@@ -14,7 +14,6 @@ import userAuthService from '@/services/user/userAuthService';
 import { IFollowers } from './FollowUnFollow';
 import { RootState } from '@/lib/redux/store/store';
 import AvatarComponent from '../cm/Avatar';
-import { Button } from '../ui/button';
 import Link from 'next/link';
 import UnFollowHandleButton from './UnFollowHandelButton';
 import { getProfileUserData } from '@/lib/redux/features/storySlice';
@@ -47,8 +46,8 @@ export default function Followers({followers,profileUserId}:{followers:number,pr
                     <DialogTitle className='text-center overflow-hidden'>Followers</DialogTitle>
                     <DialogDescription className='overflow-y-scroll max-h-[70vh] scrollbar-hide'>
                         <div className='w-full p-2 flex flex-col'>
-                            {users.map((user) => (
-                                <div className='flex w-full p-2 items-center justify-between'>
+                            {users.map((user,index) => (
+                                <div key={index} className='flex w-full p-2 items-center justify-between'>
                                     <Link href={`/feed/profile/${user?.follower?._id}`} >
                                     <div className='flex items-center gap-3'>
                                         <AvatarComponent imgUrl={user.follower?.profileImage}/>

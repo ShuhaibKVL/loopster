@@ -3,7 +3,6 @@
 import React from 'react'
 import AvatarComponent from '../cm/Avatar'
 import { activeChat } from './ChatLayout';
-import { ISearchUsers } from '@/lib/utils/interfaces/ISeacrchUsers';
 import { IChatResponse } from '@/lib/utils/interfaces/IChat';
 import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
@@ -101,10 +100,10 @@ export default function ChatUsers({chatList,setActiveChat,setPrevFileUrl}:ChatUs
                 </div>
               </div>
               
-              {unReadMsgPerChat?.map((item) => {
+              {unReadMsgPerChat?.map((item,index) => {
                 if(item._id.toString() === chat?._id){
                   return (
-                    <div className='p-1 bg-green-500 rounded-full flex items-center justify-center text-white absolute right-2 top-1 size-5'>
+                    <div key={index} className='p-1 bg-green-500 rounded-full flex items-center justify-center text-white absolute right-2 top-1 size-5'>
                       <p className='text-[8px] text-white'>{item?.unReadMsg}</p>
                     </div>
                   )

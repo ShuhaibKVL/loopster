@@ -1,6 +1,5 @@
 'use client'
 
-import { maxHeaderSize } from 'http';
 import React, { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 

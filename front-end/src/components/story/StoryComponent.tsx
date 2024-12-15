@@ -9,11 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Typewriter } from 'react-simple-typewriter';
 import Link from 'next/link';
-import {colorTheme , IStory, IStoryResponse} from '@/lib/utils/interfaces/IStory';
 import StoryCreator from './StoryCreator';
-import storyService from '@/services/story/storyService';
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
 import Image from 'next/image';
@@ -37,6 +34,7 @@ export default function StoryComponent() {
       dispatch(fetchStories(userId))
     }
     
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userId])
 
   return (
@@ -95,7 +93,7 @@ export default function StoryComponent() {
 
       {followedUsersStories?.length > 0 && (
         followedUsersStories.map((story) => (
-          <Link href={`/story-carasoll/${story?._id}`}>
+          <Link key={story?._id} href={`/story-carasoll/${story?._id}`}>
             <div className='flex flex-col items-center justify-center'>
             <div 
               className={`relative w-10 h-10 md:w-14 md:h-14 bg-[var(--color-bg)]

@@ -1,23 +1,23 @@
-"use client";
+// "use client";
 
-import { useEffect } from "react";
-import { initializeSocket } from "@/lib/utils/socket"; 
+// import { useEffect } from "react";
+// import { initializeSocket } from "@/lib/utils/socket"; 
 
-const SocketInitializer = () => {
+// const SocketInitializer = () => {
    
-    useEffect(() => {
-        const socket = initializeSocket();
+//     useEffect(() => {
+//         const socket = initializeSocket();
 
-        socket.on("connection", () => {
-            console.log("Connected to Socket.IO server",socket.id);
-        });
+//         socket.on("connection", () => {
+//             console.log("Connected to Socket.IO server",socket.id);
+//         });
 
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
+//         return () => {
+//             socket.disconnect();
+//         };
+//     }, []);
 
-    return null;
-};
+//     return null;
+// };
 
-export default SocketInitializer;
+// export default SocketInitializer;

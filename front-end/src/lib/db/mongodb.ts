@@ -5,8 +5,8 @@ const connectDB = async ():Promise<void> => {
         console.log('mongo db URL in next.env',process.env.NEXT_PUBLIC_MONGO_URI)
         await mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URI as string)
         console.log('Mongodb connected...')
-    } catch (error :any) {
-        console.error("Error connecting to MongoDB :",error.message)
+    } catch (error :unknown) {
+        console.error("Error connecting to MongoDB :",error)
     }
 }
 

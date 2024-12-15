@@ -5,7 +5,7 @@ export interface IChatBotService{
         userId:string,
         onStremaData:(chunk:string) => void,
         onStreamEnd:() => void,
-        onError:(error:Error) => void
+        onError:(error:unknown) => void
     ):Promise<unknown>
 
     getHistory(userId:string):Promise<unknown>

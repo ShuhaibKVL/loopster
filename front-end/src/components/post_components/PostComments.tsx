@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import CommentFeed from './CommentFeed'
-import { ICommentResponse, ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment'
-import { ObjectId } from 'mongoose'
+import { ICommentResponseWInnerComment } from '@/lib/utils/interfaces/IComment'
 
 interface IPostCommentsProps{
   comments:ICommentResponseWInnerComment[]
@@ -17,6 +16,7 @@ export default function PostComments({comments,getComments,commentInputRef,selec
     (
       comments.map((item) => (
         <CommentFeed
+        key={item?._id}
         comment={item}
         userName={item?.user?.userName}
         userProfileImg={item?.user?.profileImage}

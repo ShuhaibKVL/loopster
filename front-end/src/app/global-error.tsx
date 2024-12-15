@@ -15,6 +15,7 @@ export default function GlobalError({
             <div className='flex items-center justify-center'>
                 <p>Global Error</p>
                 <h2>Something went wrong!</h2>
+                <p>{error?.toString()}</p>
                 <button onClick={() => reset()}>Try again</button>
             </div>
         </body>

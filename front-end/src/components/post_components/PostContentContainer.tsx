@@ -10,9 +10,10 @@ import PostFooter from './PostFooter';
 
 const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType, content, time ,postId,userId,isLiked,likeCount,isBookMarked,refetchPosts}) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isInViewPort, setIsInViewport] = useState(false);
   const [imgError, setImageError] = useState<boolean>(false);
-  const postData = {
+  const postData = {  
     content:content as string,
     mediaType:mediaType as string,
     mediaUrl:`${mediaUrl}`,

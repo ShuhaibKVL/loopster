@@ -4,7 +4,6 @@ import followService from '@/services/folllow/followService'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from '@/hooks/typedUseDispatch'
-import { fetchLatestPosts } from '@/lib/redux/features/postSlice'
 import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 import { getProfileUserData } from '@/lib/redux/features/storySlice'
 
@@ -12,7 +11,7 @@ interface IFollowUserIds{
     following:string,
     isButton?:boolean,
     isFromProfile?:boolean,
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 export default function FollowHandleButton({following,refetchPosts,isButton = true,isFromProfile=false}:IFollowUserIds) {
     const userId = useSelector((state:RootState) => state.user.userId)
@@ -26,7 +25,7 @@ export default function FollowHandleButton({following,refetchPosts,isButton = tr
             follower : userId,
             following: following
         }
-        const follow = await followService.follow(newFollowDoc)
+        await followService.follow(newFollowDoc)
         await refetchPosts()
         if(isFromProfile){
             dispatch(getProfileUserData(userId))

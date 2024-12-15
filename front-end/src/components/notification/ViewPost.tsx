@@ -12,17 +12,18 @@ interface ViewPostProps{
 }
 
 export default function ViewPost({ postId }:ViewPostProps) {
-    const [post , setPost] = useState<IPostProps | {}>({})
+    const [post , setPost] = useState<IPostProps | null>(null)
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
 
     const getPost =async () => {
         const response = await postService.getPost(postId,userId)
         console.log('post >>',response)
-        setPost(response?.posts[0])
+        setPost(response?.posts[0] as IPostProps)
     }
 
     useEffect(() => {
         getPost()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[userId,postId])
 
   return (

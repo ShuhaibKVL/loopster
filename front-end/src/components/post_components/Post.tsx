@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
+import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { useToast } from '@/hooks/use-toast';
 import { RootState } from '@/lib/redux/store/store';
 import { IReport, reportTypes } from '@/lib/utils/interfaces/IReport';
@@ -41,13 +41,12 @@ import { confirmAction } from "../cm/ConfirmationModal";
 
 export interface PostProps {
     postData: IPostProps;
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: any; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function Post({postData ,refetchPosts}:PostProps){
     
     const { toast } = useToast()
-    const dispatch = useAppDispatch()
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
     const [ isOpen , setIsOpen ] = useState<boolean>(false)
     const [ currentPost , setCurrentPost ] = useState<IPostResponse | null>(null)
@@ -145,9 +144,8 @@ export default function Post({postData ,refetchPosts}:PostProps){
             />
             </div>
             <UserHeader imgUrl={postData?.user?.profileImage} fullName={postData?.user?.fullName}
-            userName={postData?.user?.userName} follow={postData?.followedCount} followers={postData?.followersCount}
-            _id={postData?.userId} isFollowed={postData?.isFollowed} followedCount={postData?.followedCount}
-            followersCount={postData?.followersCount}
+            userName={postData?.user?.userName}  _id={postData?.userId} isFollowed={postData?.isFollowed} 
+            followedCount={postData?.followedCount}followersCount={postData?.followersCount}
             refetchPosts={refetchPosts}
             />
             

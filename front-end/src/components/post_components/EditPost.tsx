@@ -27,10 +27,7 @@ export default function EditPost({isOpen,setIsOpen,postData,userId,getUserData}:
     const [ editedContent , setEditedContent ] = useState('')
     const { toast } = useToast()
     const [ error , setError ] = useState<string>('')
-    const editUserFields = [
-        {name:'content',type:"text",label:"content",placeHolder:`${postData?.content}`, value:`${postData?.content}`},
-    ]
-
+    
     async function handleModalSubmit(){
        console.log('edited content :',editedContent)
        if(editedContent.length <= 0){

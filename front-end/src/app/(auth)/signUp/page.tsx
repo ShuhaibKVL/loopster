@@ -10,6 +10,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ValidationError } from 'yup';
+import { useAppDispatch } from '@/hooks/typedUseDispatch';
+import { setLoading } from '@/lib/redux/features/auth/userSlice';
+import { ValidationErrorResponse } from '@/lib/utils/interfaces/validationResponseError';
 
 export interface ISignUp_user {
   fullName: string;
@@ -34,6 +37,7 @@ const Page = () => {
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (error) {
@@ -58,10 +62,10 @@ const Page = () => {
       } else {
 
         await signUpSchema.validate(formData, { abortEarly: false });
-
+        dispatch(setLoading(true))
         const response = await userAuthService.signUp(formData);
         console.log("response :", response);
-
+        dispatch(setLoading(true))
         if (response.status === true) {
           toast({
             title: response.message,
@@ -71,10 +75,10 @@ const Page = () => {
 
           router.push(`/signUp/otp/?email=${response.user}`);
 
-        } else if (response.errors) {
+        } else if (response?.errors) {
           // Handle validation errors
           const errors: { [key: string]: string } = {};
-          response.errors.forEach((error: any) => {
+          response.errors.forEach((error: ValidationErrorResponse) => {
             // Assuming error contains { field: string, message: string }
             errors[error.field] = error.message;
             toast({
@@ -83,7 +87,7 @@ const Page = () => {
               description: error.message,
             });
           });
-          setFieldErrors(errors); // Set the field-specific errors
+          setFieldErrors(errors); 
 
           // Clear errors after 4 seconds
           setTimeout(() => {
@@ -100,10 +104,10 @@ const Page = () => {
         }
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof ValidationError) {
-        const validationErrors = error.inner.reduce((acc: any, err: any) => {
-          acc[err.path] = err.message; // Set error message by field name
+        const validationErrors = error.inner.reduce((acc: { [key: string]: string }, err:unknown) => {
+          acc[err?.path] = err?.message; // Set error message by field name
           return acc;
         }, {});
 
