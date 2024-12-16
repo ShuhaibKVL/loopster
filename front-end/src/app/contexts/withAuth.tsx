@@ -11,10 +11,10 @@ import { useSelector } from "react-redux";
 
 const restrictedRoutes = ['/signIn', '/signUp', '/signUp/otp', '/'];
 
-const withAuth = (WrappedComponent: React.ComponentType, requiresAuth: boolean) => {
+const withAuth = <P extends object>(WrappedComponent: React.ComponentType<P>, requiresAuth: boolean) => {
     console.log("with auth invoked .......");
 
-const RequiresAuth = (props: any) => {  
+const RequiresAuth = (props: P) => {  
     const router = useRouter();
     const accessToken = useSelector((state: RootState) => state.user?.accessToken);
     const pathname = usePathname()

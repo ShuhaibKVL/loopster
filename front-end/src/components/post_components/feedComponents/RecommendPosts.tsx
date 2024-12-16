@@ -37,6 +37,7 @@ export default function RecommendPosts() {
 
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleIntersection = (entries:IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
       setIsLoadingMore(true);
@@ -45,29 +46,30 @@ export default function RecommendPosts() {
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
-
-    if (listRef.current) {
-      observer.observe(listRef.current);
-    }
-
-    return () => {
-      if (listRef.current) {
-        observer.unobserve(listRef.current);
+      const currrentRef = listRef.current
+      const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
+  
+      if (currrentRef) {
+        observer.observe(currrentRef);
       }
-    };
-  }, [listRef, handleIntersection]);
-
-  useEffect(() => {
-    if (!isFetching) {
-      setIsLoadingMore(false);
-    }
-  }, [isFetching]);
+  
+      return () => {
+        if (currrentRef) {
+          observer.unobserve(currrentRef);
+        }
+      };
+    }, [listRef, handleIntersection]);
+  
+    useEffect(() => {
+      if (!isFetching) {
+        setIsLoadingMore(false);
+      }
+    }, [isFetching]);
 
   return (
     <div>
-      {posts.map((post) => (
-        <Post key={post?._id} postData={post} refetchPosts={refetch} />
+      {posts.map((post,index) => (
+        <Post key={index} postData={post} refetchPosts={refetch} />
       ))}
       <div ref={listRef} className='w-full h-2 flex flex-col items-center justify-center'>
       {!hasNextPage &&

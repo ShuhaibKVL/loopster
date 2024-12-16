@@ -6,8 +6,6 @@ import { Suspense } from 'react';
 import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
 import PostTabs from '@/components/post_components/Tabs';
 import StoryComponent from '@/components/story/StoryComponent';
-// import { getServerSession } from 'next-auth';
-// import { authOptions } from '../api/auth/[...nextauth]/route';
 import { cookies } from "next/headers";
 
 const Page = async () => {

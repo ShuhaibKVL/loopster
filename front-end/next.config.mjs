@@ -8,6 +8,6 @@ const nextConfig = withBundleAnalyzer({
 export default {
     ...nextConfig,
     images: {
-    domains: ['loopster1.s3.amazonaws.com'],  // Allow images from your S3 bucket
+    domains: ['loopster1.s3.amazonaws.com','images.unsplash.com'],  // Allow images from your S3 bucket
     },
 };

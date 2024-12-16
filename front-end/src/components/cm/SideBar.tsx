@@ -1,7 +1,7 @@
 'use client'
 
 import { useNotifications } from '@/app/contexts/notificationContext';
-import { SocketContext } from '@/app/contexts/SocketContext';
+import { SocketContext } from '@/app/contexts/socketContext';
 import { Button } from '@/components/ui/button';
 import { useAppSelector } from '@/hooks/typedUseDispatch';
 import { logout as adminLogout } from '@/lib/redux/features/auth/adminSlice';

@@ -50,7 +50,7 @@ class UserAuthService implements IUserAuthService{
 
     async editProfile(userId: string, formData: FormData): Promise<{status:boolean}> {
         const response = await userApi.post(`/${userId}/update-profile`,formData)
-        return response
+        return response?.data
     }
 
     async updateIsPrivateAccount(userId: string): Promise<{status:boolean,message:string}> {

@@ -5,7 +5,7 @@ import { RootState } from "@/lib/redux/store/store";
 import { INotificationResponse } from "@/lib/utils/interfaces/INotification";
 import notificationService from "@/services/notification/notificationService";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "./socketContext";
 
 interface NotificationContextProps {
     notifications: INotificationResponse[] | [];

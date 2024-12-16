@@ -41,6 +41,7 @@ export default function BookMarkPosts() {
 
   const posts = data?.pages.flatMap(page => page.posts) || [];
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleIntersection = (entries:IntersectionObserverEntry[]) => {
     if (entries[0].isIntersecting && hasNextPage && !isFetching && !isLoadingMore) {
       setIsLoadingMore(true);
@@ -49,15 +50,16 @@ export default function BookMarkPosts() {
   };
 
   useEffect(() => {
+    const currrentRef = listRef.current
     const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
 
-    if (listRef.current) {
-      observer.observe(listRef.current);
+    if (currrentRef) {
+      observer.observe(currrentRef);
     }
 
     return () => {
-      if (listRef.current) {
-        observer.unobserve(listRef.current);
+      if (currrentRef) {
+        observer.unobserve(currrentRef);
       }
     };
   }, [listRef, handleIntersection]);

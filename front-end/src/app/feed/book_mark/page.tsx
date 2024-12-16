@@ -1,7 +1,5 @@
-'use client'
 
 import BookMarkPosts from '@/components/post_components/BookMarkPosts'
-import withAuth from '@/app/contexts/withAuth'
 import React from 'react'
 
 const Page =() => {
@@ -12,4 +10,4 @@ const Page =() => {
   )
 }
 
-export default withAuth(Page,true)
+export default Page

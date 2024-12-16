@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast'
 import messageService from '@/services/user/messages/messageService'
 import MessageContainer from './MessageContainer'
 import { MdGroupAdd } from "react-icons/md";
-import { SocketContext } from '@/app/contexts/SocketContext'
+import { SocketContext } from '@/app/contexts/socketContext'
 import CreateGroup from './CreateGroup'
 import MessageInput from './MessageInput'
 import { updateUnReadMsgPerChat } from '@/lib/redux/features/auth/userSlice'

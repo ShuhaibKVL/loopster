@@ -11,8 +11,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { IoIosArrowRoundBack, IoMdClose } from "react-icons/io";
+import withAuth from "@/app/contexts/withAuth";
 
-export default function ChatPage({ params }: { params: { chatId: string } }) {
+const ChatPage = ({ params }: { params: { chatId: string } }) => {
     const { chatId } = params; // Access chatId from params
     const { activeChat,messages,sendMessage,chatContainerRef,message,handleMessageChange,typing,prevFileUrl,setPrevFileUrl} = useChat()
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
@@ -78,3 +79,5 @@ export default function ChatPage({ params }: { params: { chatId: string } }) {
     </div>
     );
 }
+
+export default withAuth(ChatPage,true)

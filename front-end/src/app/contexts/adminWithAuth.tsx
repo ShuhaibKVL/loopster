@@ -9,10 +9,10 @@ import { useSelector } from "react-redux";
 
 const restrictedRoutes = ['/admin/signIn'];
 
-const adminWithAuth = (WrappedComponent: React.ComponentType, requiresAuth: boolean) => {
+const adminWithAuth = <P extends object>(WrappedComponent: React.ComponentType<P>, requiresAuth: boolean) => {
     console.log("with auth invoked .......");
 
-const RequiresAuth = (props: unknown) => {
+const RequiresAuth = (props: P) => {
     const router = useRouter();
     const accessToken = useSelector((state: RootState) => state.admin?.accessToken);
 

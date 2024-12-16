@@ -14,7 +14,7 @@ import { RootState } from '@/lib/redux/store/store';
 import { IReport, reportTypes } from '@/lib/utils/interfaces/IReport';
 import { IPostProps } from '@/lib/utils/interfaces/PostProps';
 import postService from '@/services/user/post/postServices';
-import { QueryObserverResult } from '@tanstack/react-query';
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 import DropdownMenu from '../cm/DropDownMenu';
 import UserHeader from "../user_components/UserHeader";
@@ -41,7 +41,7 @@ import { confirmAction } from "../cm/ConfirmationModal";
 
 export interface PostProps {
     postData: IPostProps;
-    refetchPosts: () => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> | ((options?: RefetchOptions) => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function Post({postData ,refetchPosts}:PostProps){

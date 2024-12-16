@@ -45,8 +45,10 @@ const PostContentContainer: React.FC<PostContentProps> = ({ mediaUrl, mediaType,
     }
 
     return () => {
-      if (videoRef.current) {
-        observer.unobserve(videoRef.current);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const videoref = videoRef.current
+      if (videoref) {
+        observer.unobserve(videoref);
       }
     };
   }, []);
