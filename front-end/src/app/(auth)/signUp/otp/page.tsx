@@ -33,7 +33,6 @@ export default function Page() {
 
     useEffect(() => {
         const emailParams = searchParams.get('email')
-        console.log("emailParams :",emailParams)
         if(emailParams){
             try {
                 setEmail(emailParams)
@@ -54,10 +53,8 @@ export default function Page() {
         if(otp.length <6){
             setError("Please enter valid otp.")
         }
-        console.log("otp :",otp,"userData :",email)
         try {
             const result = await otpService.verifyOtp(email,otp)
-            console.log("result :",result)
             if(!result.status){
                 toast({
                     title: 'Failed',
@@ -79,17 +76,15 @@ export default function Page() {
     }
 
     async function handleResendOtp():Promise<void> {
-        console.log("invoked")
         try {
             const response = await otpService.resendOtp(email)
-            console.log("resend otp response :",response)
             setResetCounterCp((prev) => !prev)
             toast({
                 title: 'Success',
                 description: response?.message,
                 className:"toast-success"
             })
-        } catch (error) {
+        } catch (error:unknown) {
             console.log(error)
             setError('Otp resend failed.')
         }

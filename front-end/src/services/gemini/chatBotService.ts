@@ -23,7 +23,6 @@ export class ChatBotService implements IChatBotService{
                   Authorization: `Bearer ${token}`, // Add the token here
                 }
               })
-              console.log('response :',response)
         
               if (!response.body) {
                 throw new Error('ReadableStream not supported in the response.');

@@ -13,6 +13,7 @@ import { ValidationError } from 'yup';
 import { useAppDispatch } from '@/hooks/typedUseDispatch';
 import { setLoading } from '@/lib/redux/features/auth/userSlice';
 import { ValidationErrorResponse } from '@/lib/utils/interfaces/validationResponseError';
+import { AxiosError } from 'axios';
 
 export interface ISignUp_user {
   fullName: string;
@@ -51,8 +52,6 @@ const Page = () => {
 
   const handleSubmit = async (formData: ISignUp_user) => {
     try {
-      console.log("Handle submit function invoked...!", formData.password);
-
       // Reset field errors
       setFieldErrors({});
 
@@ -64,7 +63,6 @@ const Page = () => {
         await signUpSchema.validate(formData, { abortEarly: false });
         dispatch(setLoading(true))
         const response = await userAuthService.signUp(formData);
-        console.log("response :", response);
         dispatch(setLoading(true))
         if (response.status === true) {
           toast({
@@ -105,13 +103,23 @@ const Page = () => {
       }
 
     } catch (error: unknown) {
-      if (error instanceof ValidationError) {
-        const validationErrors = error.inner.reduce((acc: { [key: string]: string }, err:unknown) => {
-          acc[err?.path] = err?.message; // Set error message by field name
-          return acc;
-        }, {});
-
-        setFieldErrors(validationErrors); // Update field errors
+      if(error instanceof ValidationError) {
+        const validationErrors = error.inner.map((err:Error) => err.message).join(', ')
+        setError(validationErrors)
+      }
+                  
+      if (error instanceof AxiosError && error?.response) {
+          const { status } = error?.response;
+  
+          if (status === 401) {
+            // Incorrect credentials
+            setError("Email or password is incorrect.");
+          } else if (status === 403) {
+            // Account blocked
+            setError("Your account has been blocked. Please contact support.");
+          } else {
+            setError('---')
+          }
       }
     }
     }

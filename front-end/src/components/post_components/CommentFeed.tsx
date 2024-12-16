@@ -24,7 +24,6 @@ interface ICommendFeedProps{
 export default function CommentFeed({userProfileImg,userName,comment,getComments,commentInputRef,selectedComment}:ICommendFeedProps) {
   const loggedUserId = useAppSelector((state:RootState) => state?.user?.userId)
   const { toast } = useToast()
-  console.log('comments inside the Comment Feed :',comment)
 
   const deleteComment = async(commentId:string) => {
     const willProceed = await confirmAction({
@@ -35,7 +34,6 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
 
     if(willProceed){
       const response = await commentService.deleteComment(commentId)
-      console.log('response :',response)
       if(!response?.status){
         toast({
           title: 'File upload Filed !!!',
@@ -67,14 +65,12 @@ export default function CommentFeed({userProfileImg,userName,comment,getComments
   }
 
   const likeComment = async(commentId:string,postId:string) => {
-    const like = await commentService.likeComment(commentId,loggedUserId,postId,)
-    console.log('response :',like)
+   await commentService.likeComment(commentId,loggedUserId,postId,)
     getComments(comment?.postId)
   }
 
   const unLikeComment = async(commentId:string) => {
-    const unLike = await commentService.unlikeComment(commentId,loggedUserId)
-    console.log('response :',unLike)
+    await commentService.unlikeComment(commentId,loggedUserId)
     getComments(comment?.postId)
   }
     

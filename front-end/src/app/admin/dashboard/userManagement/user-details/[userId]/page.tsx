@@ -14,7 +14,6 @@ const Page = ({params}:{params:{userId:string}}) => {
     const [user , setUser ] = useState<IUserWithCountsAdmin | null>(null)
     const fertchUser = async() => {
         const response = await userManagementService.getUserData(params?.userId)
-        console.log('user data :',response)
         if(response?.status){
             setUser(response?.user[0])
         }

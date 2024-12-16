@@ -75,10 +75,14 @@ export default function FollowersPosts() {
       }
     }, [isFetching]);
 
+    const refetchWrapper = async() => {
+      refetch()
+    }
+
   return (
     <div className=''>
       {posts.map((post,index) => (
-        <Post key={index} postData={post} refetchPosts={refetch} />
+        <Post key={index} postData={post} refetchPosts={refetchWrapper} />
       ))}
       <div ref={listRef} className='w-full h-2 flex flex-col items-center justify-center'>
       {!hasNextPage &&

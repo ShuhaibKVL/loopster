@@ -5,7 +5,6 @@ import { INotificationService } from "./interface/INotificationService";
 export class NotificationService implements INotificationService{
     async fetchNotification(userId: string): Promise<{notifications:INotificationResponse[]}> {
         const response = await userApi.get(`/get-notifications?userId=${userId}`)
-        console.log('response inside service :',response)
         return response.data
     }
 

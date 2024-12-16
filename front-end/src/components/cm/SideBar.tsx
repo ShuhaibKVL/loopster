@@ -72,10 +72,6 @@ export default function SideBar({ navItems ,type}: SideBarProps) {
         }
     },[])
 
-    useEffect(() => {
-        console.log('inner width :',width)
-    },[width])
-
     return (
         <div className='w-full h-full flex sm:flex-col gap-2 p-2 bg-[var(--secondary-bg)]'>
             <div className="flex-row flex sm:flex-none sm:flex-col sm:flex-grow justify-evenly sm:justify-normal w-full">

@@ -5,7 +5,7 @@ import {
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { RootState } from '@/lib/redux/store/store'
-import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
+// import { InfiniteData, QueryObserverResult } from '@tanstack/react-query'
 import { BiSolidUserCircle } from "react-icons/bi"
 import { useSelector } from 'react-redux'
 import FollowHandleButton from './FollowHandleButton'
@@ -24,7 +24,8 @@ export interface IUserHeader {
     followedCount:number,
     followersCount:number,
     isRequestPending?:boolean
-    refetchPosts:() => Promise<void> | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
+    refetchPosts:() => Promise<void> 
+    // | (() => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
 }
 
 export default function UserHeader({

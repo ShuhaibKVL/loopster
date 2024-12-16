@@ -14,13 +14,11 @@ const initialState:adminState = {
     admin:null,
 }
 
-console.log("Before : state on admin Slice :",initialState)
 const adminAuthReducer = createSlice({
     name:'adminAuth',
     initialState,
     reducers:{
         login : (state , action) =>{
-            console.log('inside login in admin slice :',action.payload)
             state.accessToken = action.payload.accessToken
             state.isAuthenticated = true
             state.admin = action.payload.email
@@ -33,8 +31,6 @@ const adminAuthReducer = createSlice({
         }
     },
 })
-
-console.log("After : state on userSlice :",initialState)
 
 export const { login, logout } = adminAuthReducer.actions
 export default adminAuthReducer.reducer

@@ -17,9 +17,9 @@ export default function BookMarkPosts() {
   const fetchPosts = async (userId: string, page: number) => {
     if (userId) {
       const response = await postService.getBookMarkedPosts(userId,page)
-      console.log('response :',response)
+
       const data : IPostProps[] = response?.posts
-      console.log('data :>>>>>>>>>>>>>>>>>>>>>>',data)
+      
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return { posts: data, hasMore: data.length > 0 };
     }
@@ -70,11 +70,15 @@ export default function BookMarkPosts() {
     }
   }, [isFetching]);
 
+  const wrapperRefetch = async() => {
+    refetch()
+  }
+
   return (
     <>
     <h1 className='w-full text-center'>Saved Posts</h1>
       {posts.map((post) => (
-        <Post key={post?._id} postData={post} refetchPosts={refetch} />
+        <Post key={post?._id} postData={post} refetchPosts={wrapperRefetch} />
       ))}
       <div ref={listRef} className='w-full h-2 flex flex-col items-center justify-center'>
       {!hasNextPage &&

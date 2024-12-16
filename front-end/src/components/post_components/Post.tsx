@@ -14,7 +14,7 @@ import { RootState } from '@/lib/redux/store/store';
 import { IReport, reportTypes } from '@/lib/utils/interfaces/IReport';
 import { IPostProps } from '@/lib/utils/interfaces/PostProps';
 import postService from '@/services/user/post/postServices';
-import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
+// import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 import DropdownMenu from '../cm/DropDownMenu';
 import UserHeader from "../user_components/UserHeader";
@@ -34,14 +34,15 @@ export interface IUserData {
     isRequestPending?:boolean,
 }
 
-import { InfiniteData } from '@tanstack/react-query';
+// import { InfiniteData } from '@tanstack/react-query';
 import EditPost from "./EditPost";
 import { IPostResponse } from "@/lib/utils/interfaces/IPost";
 import { confirmAction } from "../cm/ConfirmationModal";
 
 export interface PostProps {
     postData: IPostProps;
-    refetchPosts: () => Promise<void> | ((options?: RefetchOptions) => Promise<QueryObserverResult<InfiniteData<{ posts: unknown; hasMore: boolean }>, Error>> );
+    refetchPosts: () => Promise<void> 
+    //  ((options?: RefetchOptions) => Promise<QueryObserverResult<InfiniteData<{ posts: IPostProps[]; hasMore: boolean }>, Error>> );
 }
 
 export default function Post({postData ,refetchPosts}:PostProps){
@@ -75,7 +76,6 @@ export default function Post({postData ,refetchPosts}:PostProps){
                 }
 
                 const response = await postService.report(newReport)
-                console.log('response :',response)
                 if(response){
                     toast({
                         title: 'Sussessfull',
@@ -109,7 +109,6 @@ export default function Post({postData ,refetchPosts}:PostProps){
         });
         if(willProceed){
             const response = await postService.deletePost(postId)
-            console.log('post delete response :',response)
             if(response?.status){
                 toast({
                     title: 'Failed',

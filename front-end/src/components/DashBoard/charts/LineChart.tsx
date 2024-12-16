@@ -5,7 +5,6 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function LineChartComponent({data,dataType}:{data:IChartDataPosts[] | IChartDataUsers[],dataType:'users' | 'posts'}) {
-  console.log('chart data inside the LinearCharComponent :',data,"dataType :",dataType)
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart

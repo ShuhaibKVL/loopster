@@ -86,7 +86,6 @@ export default function ChatBotPage() {
   }
 
   const handleSideBar = () => {
-    console.log('handel side bar function invoked')
     setSideBar(true)
   }
 

@@ -82,22 +82,17 @@ export default function ChatLayout() {
 
     const fetchMessages = async(chatId:string) => {
       const response = await messageService.findMessages(chatId)
-      console.log('messages :',response)
       setMessages(response?.chats)
     }
 
   const creatChat = async() => {
-    console.log('create chat invoked :>',activeChat)
     if(activeChat?.chatType === 'individual' && activeChat?.recipientId){
-      console.log('it is a individual chat')
       const newChat : IChat = {
         isGroupChat:false,
         users:[userId,activeChat?.recipientId as string],
       }
-      const createNewChat = await chatService.create(newChat)
-      console.log('created new individual Chat :',createNewChat)
+      await chatService.create(newChat)
     }else if(activeChat?.chatType === 'group' && activeChat.chatId === ''){
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",activeChat)
       if(activeChat?.groupId && activeChat?.groupId?.length < 2 ){
         toast({
           title:'Failed',
@@ -114,7 +109,6 @@ export default function ChatLayout() {
       }
 
       const createNewChat = await chatService.create(newGroupChat)
-      console.log('created new groupChat Chat :',createNewChat)
       if(createNewChat?.status){
         toast({
           title:'Success',
@@ -132,7 +126,6 @@ export default function ChatLayout() {
     }
     // if chat is existed, fetch the messages
     if(activeChat?.chatId){
-      console.log('fetch messages :',activeChat?.chatId)
       fetchMessages(activeChat?.chatId as string)
       markMsgAsReaded()
     } 
@@ -141,7 +134,6 @@ export default function ChatLayout() {
   
   const markMsgAsReaded = () => {
     const extractMsgIds = messages.map((message) => message?._id)
-    console.log('message id s :',extractMsgIds)
     socket.emit('markmessagesAsReaded',{
       extractMsgIds,
       userId:userId
@@ -162,7 +154,6 @@ export default function ChatLayout() {
   },[searchInput])
 
   useEffect(() => {
-    console.log('active chat :',activeChat)
     if(activeChat){
       creatChat()
     }

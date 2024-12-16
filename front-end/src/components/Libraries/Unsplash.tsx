@@ -36,7 +36,6 @@ const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
 
     const fetchUnsplashImages = async() => {
         const result = await unsplashService.searchImages(1,query,10)
-        console.log('unsplash result :',result)
         setImgData(result?.result as UnsplashImage[] || [])
         setIsLoading(false)
     }
@@ -56,14 +55,12 @@ const Unsplash = forwardRef(({onSaveImage} : IUnsplashProps ) => {
     },[query])
 
     const selectImage = async(imageUrl:string) => {
-        console.log('imageUrl :',imageUrl)
         try {
             const response = await fetch(imageUrl)
             const blob = await response.blob()
 
             //Creating a File Object
             const file = new File([blob],"image.jpg",{type:blob.type})
-            console.log('file created :',file)
             const localImgUrl = URL.createObjectURL(file)
             setOpenDialog(false)
             onSaveImage(file,localImgUrl)

@@ -20,7 +20,6 @@ const ChatPage = ({ params }: { params: { chatId: string } }) => {
     const router = useRouter()
 
     useEffect(() => {
-        console.log('chat id :>',chatId)
         if(!chatId){
             router.replace('/feed/messages')
         }

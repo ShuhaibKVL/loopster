@@ -12,7 +12,6 @@ export const signIn = async(formData:IsignIn):Promise<unknown> => {
         });
 
         const res = await response.json()
-        console.log("admin sign In response :",res)
         return res
     } catch (error:unknown) {
         console.log(error)
@@ -32,10 +31,8 @@ export class AdminAuthService implements IAdminAuthService {
             });
             
             const res = await response.json()
-            console.log("admin sign In response :",res)
             return res
-        } catch (error) {
-            console.log(error)
+        } catch {
             return {status:false}
         }
     }

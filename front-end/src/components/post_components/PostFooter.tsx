@@ -85,7 +85,6 @@ export default function PostFooter({postId,postData,isLiked,isBookMarked,likeCou
     }
     const likedUsers = async(postId:string) => {
        const response = await likeService.findLikedUsers(postId)
-       console.log('response of liked users :',response)
        setLikedUsersData(response?.users)
     }
 
@@ -93,11 +92,6 @@ export default function PostFooter({postId,postData,isLiked,isBookMarked,likeCou
       setIsOpenLikedUsersDrawer(!isOpenLikedUsersDrawer)
       likedUsers(postId)
     }
-
-    useEffect(() =>{
-      console.log("likedUsersData :",likedUsersData)
-    },[likedUsersData])
-
     return (
       <>
         <div className='flex items-start justify-between w-full pt-1 bg-[var(--secondary)]'>

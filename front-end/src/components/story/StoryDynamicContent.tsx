@@ -25,7 +25,6 @@ export default function StoryDynamicContent({story}:StoryDynamicContentProps) {
 
     // Handel story delete
     const handleDelete = async (storyId:string) => {
-        console.log('the story id is :',storyId)
         const willProceed = await confirmAction({
             title: `Are you sure to delete ?`,
             text: `Once deleted, you are not able to return..!`,
@@ -33,7 +32,6 @@ export default function StoryDynamicContent({story}:StoryDynamicContentProps) {
         });
         if(willProceed){
             const response = await storyService.delteStory(storyId)
-            console.log('post delete response :',response)
             if(!response?.status){
                 toast({
                     title: 'Failed',

@@ -18,7 +18,6 @@ export default function ChartComponent() {
 
     const getChartData =async () => {
         const response = await dashBoardService.getChartData()
-        console.log('response of chat data :',response)
         if(response.status){
             setUsers(response?.data?.users)
             setPosts(response?.data?.posts)
@@ -32,14 +31,12 @@ export default function ChartComponent() {
     },[])
 
      function filterUsers() {
-        const data = aggregateData({data:users as IChartDataUsers[],groupBy:byPeriod,dataType:seletctedData})
-        console.log('filterd data users :',data)
+        const data = aggregateData({data:users as IChartDataUsers[],groupBy:byPeriod,dataType:seletctedData}) as IChartDataUsers[]
         setFilteredUsers(data)
     }
 
     function filterPosts() {
-        const data = aggregateData({data:posts as IChartDataPosts[],groupBy:byPeriod,dataType:seletctedData})
-        console.log('filterd data posts :',data)
+        const data = aggregateData({data:posts as IChartDataPosts[],groupBy:byPeriod,dataType:seletctedData}) as IChartDataPosts[]
         setFilteredPosts(data)
     }
 

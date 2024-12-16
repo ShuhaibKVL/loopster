@@ -6,21 +6,8 @@ import { Suspense } from 'react';
 import CreatePostSkelton from '@/components/skeltons/CreatePostSkelton';
 import PostTabs from '@/components/post_components/Tabs';
 import StoryComponent from '@/components/story/StoryComponent';
-import { cookies } from "next/headers";
 
 const Page = async () => {
-
-    const cookieStore = cookies();
-
-    const session = cookieStore.get("session");
-    console.log('session in feed server component :',session)
-    
-    if(session){
-    const sessionData = JSON.parse(session?.value as string);
-
-    console.log('session data on feed :',sessionData)
-    }
- 
 
     return (
         <div className='h-fit flex flex-col gap-2 '>

@@ -1,7 +1,7 @@
 import PostIMageSkelton from '@/components/skeltons/PostIMageSkelton'
 import { IUserWithCounts } from '@/lib/utils/interfaces/IUserWIthCounts'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { IoImages } from "react-icons/io5";
 import { MdOutlineSlowMotionVideo } from "react-icons/md";
@@ -12,10 +12,6 @@ import Link from 'next/link'
 
 export default function DefaultPosts({userData}:{userData:IUserWithCounts}) {
     const [type , setType ] = useState<'image' | 'video' | 'none'>('image')
-
-    useEffect(() =>{
-        console.log('type is updated')
-    },[type])
   return (
     <>
     <ToggleGroup 

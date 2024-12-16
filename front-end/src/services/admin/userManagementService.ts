@@ -2,22 +2,20 @@ import { IMostFollowedAccount } from "@/components/DashBoard/MostFollowedAccount
 import { adminApi} from "../apis/axiosInstance";
 import { IUserManagementService } from "./interfaces/IUsermanagementService";
 import { IUserWithCountsAdmin } from "@/lib/utils/interfaces/IUserWIthCounts";
+import { IsignupUserInterface } from "@/lib/utils/interfaces/IsignupUserInterface";
 
 export class UserManagementService implements IUserManagementService{
-    async getAllUsers(page:number): Promise<unknown> {
+    async getAllUsers(page:number): Promise<{userData:{users:IsignupUserInterface[],totalPages:number}}> {
         const response = await adminApi.get(`/users?page=${page}`)
         return response.data
     }
 
     async handleBlockUnBlock(userId: string): Promise<void> {
-        console.log('handle block fn invoked')
-        const response = await adminApi.patch(`/user/${userId}/block`)
-        console.log("response :",response)
+        await adminApi.patch(`/user/${userId}/block`)
     }
 
     async handleListUnList(userId: string): Promise<void> {
-        const response = await adminApi.patch(`/user/${userId}/unlist`)
-        console.log('response :',response)
+        await adminApi.patch(`/user/${userId}/unlist`)
     }
 
     async findMostFollowedAccounts(): Promise<{status:boolean,data:IMostFollowedAccount[]}> {

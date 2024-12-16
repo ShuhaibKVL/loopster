@@ -20,7 +20,6 @@ export default function MostFollowedAccounts() {
     
     const fetchPosts =async () => {
         const users =await userManagementService.findMostFollowedAccounts()
-        console.log('accounts on the basis of follows :',users)
         if(users?.status){
             setUsers(users?.data)
         }

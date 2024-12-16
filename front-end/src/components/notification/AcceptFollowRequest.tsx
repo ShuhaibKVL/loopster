@@ -10,8 +10,7 @@ export default function AcceptFollowRequest({followId,notificationId}:{followId:
         if(!followId && !notificationId){
             alert('followId && !notificationId is missing')
         }
-        const accept = await followService.acceptFollowRequest(followId,notificationId)
-        console.log('follow request acceptence :',accept)
+        await followService.acceptFollowRequest(followId,notificationId)
         fetchNotifications()
     }
 

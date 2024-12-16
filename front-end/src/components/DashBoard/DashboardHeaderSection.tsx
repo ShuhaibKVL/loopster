@@ -18,7 +18,6 @@ export default function DashboardHeaderSection() {
     ];
     const getTotalAccounts = async() => {
         const getTotalAccounts = await userManagementService.getTotalAccounts()
-        console.log('getTotalAccounts :',getTotalAccounts)
         if(getTotalAccounts?.status){
             setTotalAccountsCounts(getTotalAccounts?.totalUsers)
         }

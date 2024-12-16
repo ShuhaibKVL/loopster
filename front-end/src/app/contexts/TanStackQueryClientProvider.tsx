@@ -7,7 +7,6 @@ export default function TanStackQueryClientProvider({children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    console.log('Tan stack query client invoked...')
     const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient} >

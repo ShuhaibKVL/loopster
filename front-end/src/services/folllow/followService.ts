@@ -8,7 +8,6 @@ export class FollowService implements IFollowService {
     }
 
     async unFollow(data:IFollow): Promise<void> {
-        console.log('delete data :',data)
         return await userApi.delete('/unfollow-user',{data:data})
     }
 

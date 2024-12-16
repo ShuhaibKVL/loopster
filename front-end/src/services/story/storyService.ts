@@ -14,7 +14,6 @@ export class StoryService implements IStoryService{
     }
 
     async delteStory(storyId:string):Promise<{message:string,status:boolean}>{
-        console.log('story id in service :',storyId)
         const response = await userApi.delete(`/story/delete?storyId=${storyId}`)
         return response?.data
     }

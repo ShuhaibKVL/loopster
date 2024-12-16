@@ -15,7 +15,6 @@ export class PostMangementService implements IPostManagementService {
     }
 
     async reportPost(postId: string,reportId:string): Promise<unknown> {
-        console.log('postIs:,',postId,"reportId:",reportId)
         const response = await adminApi.patch(`/post/report-post?postId=${postId}&reportId=${reportId}`)
         return response.data
     }

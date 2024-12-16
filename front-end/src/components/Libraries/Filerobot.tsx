@@ -18,11 +18,9 @@ const FileRobot = forwardRef(({ mediaUrl, onSaveImage }: IFileRobot, ref) => {
 
     const [isImgEditorShown, setIsImgEditorShown] = useState(false);
     const [editedImage, setEditedImage] = useState<string | null>(null);
-
-    console.log(editedImage,"< edited image")
+    console.log(editedImage)
     useImperativeHandle(ref, () => ({
         openImgEditor() {
-            console.log('image editor function invoked inside the editor >>>')
             setIsImgEditorShown(true);
         }
     }));
@@ -43,7 +41,7 @@ const FileRobot = forwardRef(({ mediaUrl, onSaveImage }: IFileRobot, ref) => {
     };
 
     
-    const config: FilerobotImageEditorConfig = {
+    const config:typeof FilerobotImageEditorConfig = {
         source: mediaUrl,
         onSave: handleSave,
         onClose: closeImgEditor,

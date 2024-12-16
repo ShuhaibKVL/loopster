@@ -15,15 +15,10 @@ export default function TopLikedPosts() {
     const [ posts ,setPosts ] = useState<ITopLikedPost[] | []>([])
     const fetchPosts = async() => {
         const posts = await postManagementService.findMostLikedPost()
-        console.log('post on the basis of likes :',posts)
         if(posts?.status){
             setPosts(posts?.data)
         }
     }
-
-    useEffect(() => {
-        console.log('posts set to state : >>>>>>>>>>>>>>',posts)
-    },[posts])
 
     useEffect(() => {
         fetchPosts()

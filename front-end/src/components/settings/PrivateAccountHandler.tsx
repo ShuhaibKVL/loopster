@@ -16,10 +16,8 @@ export default function PrivateAccountHandler() {
     const dispatch = useAppDispatch()
 
     const isPrivate = userData?.isPrivateAccount
-    console.log('is private account :',isPrivate)
 
     const handlePrivateAccount =async () => {
-      console.log('handle private account')
         if(!userId){
             alert('userId is missing')
             return
@@ -32,7 +30,6 @@ export default function PrivateAccountHandler() {
 
         if(willProceed){
           const update = await userAuthService.updateIsPrivateAccount(userId)
-          console.log('update is private account :',update)
           if(update?.status){
               dispatch(getProfileUserData(userId))
           }

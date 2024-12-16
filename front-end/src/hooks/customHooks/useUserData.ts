@@ -21,5 +21,3 @@ const useUserData =() => {
     return { users , fetchUsers }
 }
 export default useUserData;
-
-//  i want to supporate the comment fetching function to custome hook  or centralize

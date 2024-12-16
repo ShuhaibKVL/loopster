@@ -27,7 +27,6 @@ export default function Followers({followers,profileUserId}:{followers:number,pr
 
     const getFollowers = async() => {
         const response = await userAuthService.getFollowers(profileUserId)
-        console.log('response :',response)
         setUsers(response?.data)
         setIsOpen(true)
         dispatch(getProfileUserData(profileUserId))

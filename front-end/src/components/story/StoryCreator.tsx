@@ -37,7 +37,6 @@ export default function StoryCreator({isOpen,setIsOpen}:StoryCreatorProps) {
                 userId:userId
             }
             const response = await storyService.create(newStory)
-            console.log('response :',response)
             if(!response.status){
                 setError(response?.message)
             }
