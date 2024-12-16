@@ -13,6 +13,7 @@ import postService from '@/services/user/post/postServices'
 import { useState } from 'react'
 import { confirmAction } from '../cm/ConfirmationModal'
 import TipTap from './TipTap'
+import Image from 'next/image'
 
 interface IPostDataDrawerProps{
     isOpen:boolean,
@@ -86,7 +87,9 @@ export default function EditPost({isOpen,setIsOpen,postData,userId,getUserData}:
                                 {postData?.mediaType === 'image' ? 
                                 (
                                     postData?.mediaUrl && (
-                                        <img 
+                                        <Image
+                                        width={200} 
+                                        height={200}
                                         src={`${postData?.mediaUrl}`} 
                                         alt="Post Image" 
                                         className='w-full h-auto rounded-md mb-4' />

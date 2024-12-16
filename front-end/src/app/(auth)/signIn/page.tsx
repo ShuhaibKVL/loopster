@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ValidationError } from 'yup';
 import "../../globals.css";
-// import { signIn } from 'next-auth/react'
 import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
 import { RootState } from '@/lib/redux/store/store';
 import { setCookie } from "cookies-next";

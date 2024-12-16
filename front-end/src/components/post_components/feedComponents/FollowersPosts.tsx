@@ -55,24 +55,25 @@ export default function FollowersPosts() {
   //   );
 
   useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
-
-    if (listRef.current) {
-      observer.observe(listRef.current);
-    }
-
-    return () => {
-      if (listRef.current) {
-        observer.unobserve(listRef.current);
+      const currrentRef = listRef.current
+      const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
+  
+      if (currrentRef) {
+        observer.observe(currrentRef);
       }
-    };
-  }, [listRef, handleIntersection]);
-
-  useEffect(() => {
-    if (!isFetching) {
-      setIsLoadingMore(false);
-    }
-  }, [isFetching]);
+  
+      return () => {
+        if (currrentRef) {
+          observer.unobserve(currrentRef);
+        }
+      };
+    }, [listRef, handleIntersection]);
+  
+    useEffect(() => {
+      if (!isFetching) {
+        setIsLoadingMore(false);
+      }
+    }, [isFetching]);
 
   return (
     <div className=''>

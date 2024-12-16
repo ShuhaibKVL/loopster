@@ -50,15 +50,16 @@ export default function BookMarkPosts() {
   };
 
   useEffect(() => {
+    const currrentRef = listRef.current
     const observer = new IntersectionObserver(handleIntersection, { threshold: 1.0 });
 
-    if (listRef.current) {
-      observer.observe(listRef.current);
+    if (currrentRef) {
+      observer.observe(currrentRef);
     }
 
     return () => {
-      if (listRef.current) {
-        observer.unobserve(listRef.current);
+      if (currrentRef) {
+        observer.unobserve(currrentRef);
       }
     };
   }, [listRef, handleIntersection]);
