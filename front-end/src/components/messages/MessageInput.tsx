@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react'
 import { Button } from '../ui/button'
-import EmojiPicker , { EmojiClickData} from 'emoji-picker-react'
+import EmojiPicker from 'emoji-picker-react'
 import { MdAttachFile } from "react-icons/md";
 import { useChat } from '@/app/contexts/chatContext'
 
@@ -12,13 +12,17 @@ interface IMessageInputProp{
     handleMessageChange:React.ChangeEventHandler<HTMLInputElement>
 }
 
+interface IEmojiClickData {
+  emoji:string;
+}
+
 export default function MessageInput({sendMessage,message,handleMessageChange}:IMessageInputProp) {
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   const {handleFileChange , prevFileUrl} = useChat()
 
-  const handleEmojiClick = (emojiData:EmojiClickData) => {
+  const handleEmojiClick = (emojiData:IEmojiClickData) => {
 
     //Append the selected emoji to the message input
     handleMessageChange({
@@ -71,7 +75,7 @@ export default function MessageInput({sendMessage,message,handleMessageChange}:I
             {/* Conditional rendering of Emoji Picker */}
             {isEmojiPickerOpen && (
               <div className="absolute bottom-16 right-2 z-50">
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
+                <EmojiPicker reactionsDefaultOpen={true} onEmojiClick={handleEmojiClick} />
               </div>
             )}
           

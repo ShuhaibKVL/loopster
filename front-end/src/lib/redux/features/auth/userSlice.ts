@@ -28,7 +28,6 @@ const userAuthReducer = createSlice({
     initialState,
     reducers:{
         login : (state , action) =>{
-            console.log('login slice : >>>>>>>>>',action.payload)
             state.accessToken = action.payload.accessToken
             state.isAuthenticated = true
             state.user = action.payload.user.userName
@@ -36,7 +35,6 @@ const userAuthReducer = createSlice({
             state.userProfile = action.payload.user.profileImg
             state.totalUnReadMessages = action.payload.totalUnReadMessages
             state.loading = false
-            console.log('slice updated currectly',state)
         },
         logout : (state) => {
             state.accessToken = ''
@@ -49,11 +47,9 @@ const userAuthReducer = createSlice({
             state.totalUnReadMessages = 0
         },
         updateTotalUnReadMsg : (state,action) => {
-            console.log('update total un readed messages :',action.payload.totalUnreadMessage)
             state.totalUnReadMessages = action.payload.totalUnReadMessages
         },
         updateUnReadMsgPerChat : (state,action) => {
-            console.log('update Unreaded messages iniside slice :',action.payload)
             state.unReadMsgPerChat = action.payload
         },
         setLoading : (state, action) => {

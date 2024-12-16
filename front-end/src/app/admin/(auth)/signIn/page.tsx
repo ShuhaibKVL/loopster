@@ -35,7 +35,6 @@ const Page =() => {
     })
 
     const handleSubmit = async(formData:IsignIn):Promise<void> => {
-        console.log("admin form data :",formData)
         await signInSchema.validate(formData , {abortEarly:true})
         try {
             const admin = await adminAuthService.signIn(formData)
@@ -59,7 +58,6 @@ const Page =() => {
             if (error instanceof Error) {
                 setError(error.message);
               } else {
-                console.log("An unknown error occurred.");
                 setError("An unknown error occurred.");
               }
         }

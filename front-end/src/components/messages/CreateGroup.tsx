@@ -68,7 +68,6 @@ export default function CreateGroup({isOpenCreateGroup,setIsOpenCreateGroup,setA
   }
 
   const createGroup = () => {
-    console.log('groupUsers :',groupUsers,groupUsers.length)
       if(groupUsers.length < 2){
         toast({
           title: 'Failed',
@@ -87,10 +86,8 @@ export default function CreateGroup({isOpenCreateGroup,setIsOpenCreateGroup,setA
       }
 
         const usersId = groupUsers.map((user) => user.userId); 
-        console.log('the usersId :',usersId)
-        usersId.push(userId)
-        console.log('after added the logged id :',usersId)
 
+        usersId.push(userId)
         const data :activeChat = {
           chatType:'group',
           groupId:usersId,

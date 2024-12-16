@@ -6,6 +6,7 @@ import { ISearchUsers } from "@/lib/utils/interfaces/ISeacrchUsers";
 import { IFollowedUser, IFollowers } from "@/components/user_components/FollowUnFollow";
 import { IUserData } from "@/components/post_components/Post";
 import { IUserDataSession } from "@/lib/utils/sessionHandler";
+import { IUserWithCounts } from "@/lib/utils/interfaces/IUserWIthCounts";
 
 interface signInResponse{
     message:string,
@@ -38,7 +39,7 @@ class UserAuthService implements IUserAuthService{
         return response.data
     }
 
-    async user(user_id: string): Promise<unknown> {
+    async user(user_id: string): Promise<{message:string,userData:IUserWithCounts[],status:true}> {
         const response = await userApi.get(`/user/${user_id}`)
         return response.data
     }

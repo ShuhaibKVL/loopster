@@ -35,7 +35,6 @@ export default function CommentSection({postId}:ICommentSectionProps) {
 
     // handle create comment
     const handleCommentInput =(e:React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value)
         setCommmentInput(e.target.value)
     }
   

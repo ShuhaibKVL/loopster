@@ -25,11 +25,9 @@ export default function ReportPosts() {
   
     const handleSearchInput = (value:string) => {
         setSearchInput(value)
-        console.log('search input on parent :',searchInput)
     }
-
+    console.log(searchInput)
     async function fetchReports() {
-        console.log('fertch Reports invoked')
         const res = await reprtedManagementService.fetchReports()
         setReports(res?.data)
     }
@@ -37,10 +35,6 @@ export default function ReportPosts() {
     useEffect(() => {
         fetchReports()
     },[])
-
-    useEffect(() => {
-        console.log('reports  >>',repotes)
-    },[repotes])
 
     function onSelectPage(page:number){
         setCurrentPage(page)
@@ -52,7 +46,6 @@ export default function ReportPosts() {
     }
 
     async function handleActions(postId:string,reportId:string,type:string){
-        console.log('reportId :',postId)
         const willProceed = await confirmAction({
             title: `Confirm your action`,
             text: `Are you sure you want to list / Unlist this posts?`,
@@ -61,12 +54,9 @@ export default function ReportPosts() {
     
           if(willProceed){
             if(type === 'report'){
-                console.log(postId,reportId)
-                const res = await postManagementService.reportPost(postId,reportId)
-                console.log('res :',res)
+                await postManagementService.reportPost(postId,reportId)
             }else if(type === 'Later'){
-                const res = await reprtedManagementService.markAsReaded(reportId)
-                console.log('res :',res)
+                await reprtedManagementService.markAsReaded(reportId)
             }
             fetchReports()
           }

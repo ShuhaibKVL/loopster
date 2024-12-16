@@ -37,7 +37,6 @@ export default function ChatUsers({chatList,setActiveChat,setPrevFileUrl}:ChatUs
 
     if(!chatId) 
       return alert('user id is missing!!!')
-    console.log('chatType >>>>>>>',chatType)
     let data :activeChat ;
     if(groupName){
       data  = {

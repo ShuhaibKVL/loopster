@@ -30,7 +30,6 @@ export default function EditPost({isOpen,setIsOpen,postData,userId,getUserData}:
     const [ error , setError ] = useState<string>('')
     
     async function handleModalSubmit(){
-       console.log('edited content :',editedContent)
        if(editedContent.length <= 0){
         setError('Content cannot be empty..!')
         return
@@ -42,9 +41,7 @@ export default function EditPost({isOpen,setIsOpen,postData,userId,getUserData}:
         });
     
         if(willProceed){
-            console.log(typeof editedContent,editedContent)
             const update = await postService.update(editedContent,postData?._id)
-            console.log('update :',update)
             if(update?.status){
                 toast({
                     title: 'Success',

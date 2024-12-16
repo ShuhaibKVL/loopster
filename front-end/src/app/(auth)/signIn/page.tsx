@@ -10,8 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ValidationError } from 'yup';
 import "../../globals.css";
-import { useAppDispatch, useAppSelector } from '@/hooks/typedUseDispatch';
-import { RootState } from '@/lib/redux/store/store';
+import { useAppDispatch} from '@/hooks/typedUseDispatch';
 import { setCookie } from "cookies-next";
 import { AxiosError } from 'axios';
 
@@ -29,11 +28,6 @@ const Page = () => {
     const { toast} = useToast()
     const dispatch = useAppDispatch()
     
-    // const [ isLoadingGoogleSign , setIsLoadingGoogleSign] = useState<boolean>(false)
-
-    const loading = useAppSelector((state:RootState) => state?.user?.loading)
-    console.log('loading :',loading)
-
     const [ error , setError ] = useState<string>('')
 
     useEffect(() => {
@@ -55,7 +49,6 @@ const Page = () => {
         try {
             dispatch(setLoading(true))
             const user =  await userAuthService.signIn(formData)
-            console.log('user response :',user)
             if(user?.status){
                 toast({
                     title: 'Success',
@@ -69,14 +62,11 @@ const Page = () => {
                     totalUnReadMessages:user?.totalUnReadMessages
                 }
 
-                console.log('user data :',userData)
-
                 setCookie("session", JSON.stringify(userData), {
                     httpOnly: false,
                     secure: process.env.NODE_ENV === "production",
                     sameSite: "strict",
                 });
-                console.log('next set slice login')
 
                 dispatch(login(userData))
                 router.replace('/feed')
@@ -98,7 +88,6 @@ const Page = () => {
             }
             
             if (error instanceof AxiosError && error?.response) {
-                console.log(error,error?.response)
                 const { status } = error?.response;
 
                 if (status === 401) {
@@ -108,7 +97,7 @@ const Page = () => {
                   // Account blocked
                   setError("Your account has been blocked. Please contact support.");
                 } else {
-                  console.log('erororoor')
+                    setError('---')
                 }
             }
         }

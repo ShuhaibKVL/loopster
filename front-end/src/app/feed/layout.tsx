@@ -25,15 +25,10 @@ export default function FeedLayout({
 }>) {
 
     const path = usePathname()
-    console.log('path >',path,path.includes('messages'))
     const isMessagePage = path.includes('messages') || path.includes('profile')
     const isGeminiChat = path.includes('gemini_bot')
     const isChatPage = path.includes('chat')
     const userId = useAppSelector((state:RootState) => state?.user?.userId)
-
-    console.log("isMessagePage :",isMessagePage)
-    console.log("isGeminiChat :",isGeminiChat)
-    console.log("isChatPage :",isChatPage)
 
     const navItems :INavItems[] = [
         {name:'feed',icon:<HomeIcon /> , path:'/feed'},

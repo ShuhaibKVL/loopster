@@ -76,8 +76,6 @@ const Page = () => {
         findUsers(page)
         setCurrentPage(page)
     }
-
-    console.log('users :',users)
     
     return (
     <div className='w-full p-5 min-h-[90vh] flex flex-col justify-between'>

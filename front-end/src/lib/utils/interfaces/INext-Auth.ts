@@ -1,9 +1,16 @@
+import { IUserDataSession } from "../sessionHandler";
+
 export interface IToken_Next_Auth {
-    name?: string;
-    email?: string;
-    picture?: string;
-    sub?: string;
-  }
+  name?: string;
+  email?: string;
+  picture?: string;
+  sub?: string;
+  session?: {
+      user: IUserDataSession;
+      accessToken: string;
+      totalUnReadMessages: number;
+  };
+}
   
 export interface IAccount_Next_Auth {
     provider: string;

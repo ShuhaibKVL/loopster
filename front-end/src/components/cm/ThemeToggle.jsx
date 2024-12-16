@@ -8,13 +8,11 @@ export default function ThemeToggle() {
     );
 
     useEffect(() => {
-        console.log('>>>>>> Theme useEffect invoked',)
         document.documentElement.setAttribute('data-theme', theme);
         document.documentElement.style.transition = 'background-color 0.3s'
     }, [theme]);
 
     const toggleTheme = () => {
-        console.log('theme setting invoked',theme ,"set to opposite ")
         setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
     };
 

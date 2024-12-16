@@ -28,7 +28,6 @@ export const fetchStories = createAsyncThunk('story/fetch' , async(userId:string
     // for user data in profile page
 export const getProfileUserData = createAsyncThunk('profile/get-user-data',async(userId:string) => {
     const user = await userAuthService.user(userId)
-    console.log('user data in user Slice :',user)
     return user?.userData[0]
 })
 

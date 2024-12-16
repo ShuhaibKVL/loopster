@@ -73,7 +73,6 @@ postApi.interceptors.request.use(
     (config) => {
         const state = store.getState()
         const token = state?.user?.accessToken
-        console.log('token inside axios interceptor :',token)
 
         if(token){
             config.headers.Authorization = `Bearer ${token}`
@@ -88,7 +87,6 @@ chatApi.interceptors.request.use(
     (config) => {
         const state = store.getState()
         const token = state?.user?.accessToken
-        console.log('token inside axios interceptor :',token)
 
         if(token){
             config.headers.Authorization = `Bearer ${token}`
@@ -103,7 +101,6 @@ chatBotApi.interceptors.request.use(
     (config) => {
         const state = store.getState()
         const token = state?.user?.accessToken
-        console.log('token inside axios interceptor :',token)
 
         if(token){
             config.headers.Authorization = `Bearer ${token}`
@@ -118,11 +115,9 @@ chatBotApi.interceptors.request.use(
 // handel backend middle ware authorisation
 userApi.interceptors.response.use(
     (response) => {
-        console.log('response > interceptor :',response)
         return response;
     },
     (error) => {
-        console.log('error on interceptor :',error)
         const { response } = error;
 
         //If the server return 401 0r 403 , handle unauthorized access
@@ -147,7 +142,6 @@ adminApi.interceptors.response.use(
     },
     (error) => {
         const { response } = error;
-        console.log('error on admin interceptor',response)
         //If the server return 401 0r 403 , handle unauthorized access
         if(response?.status === 401 || response?.status === 403) {
             //Logout the user from Redux and clear token

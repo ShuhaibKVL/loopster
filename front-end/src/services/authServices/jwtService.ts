@@ -1,7 +1,5 @@
 
 export const isVerifiedJwt = async():Promise<unknown> => {
-    console.log("inside middleware")
-
     try {
         const res = await fetch('http://localhost:5000/api/user/verifyjwt',{
             method:'POST',

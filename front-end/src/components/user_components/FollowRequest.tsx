@@ -32,14 +32,12 @@ export default function FollowRequest({following,refetchPosts,isButton = true,is
         });
     
         if(willProceed){
-            console.log('Go ahead..>>>')
             const deleteDoc = {
                 follower:userId,
                 following:following
             }
 
-            const follow = await followService.cancleFollowRequest(deleteDoc)
-            console.log('request cancle response :',follow)
+            await followService.cancleFollowRequest(deleteDoc)
             await refetchPosts()
             if(isFromProfile){
                 dispatch(getProfileUserData(userId))

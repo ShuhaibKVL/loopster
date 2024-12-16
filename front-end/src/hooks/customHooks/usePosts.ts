@@ -20,7 +20,6 @@ export default function usePosts({currentPage}:UsePostsProps) {
     
     async function fetchPosts(page:number) {
         const res = await postManagementService.fetchAllPosts(page)
-        console.log('res in fetchPosts :',res)
         setPosts(res?.posts?.posts)
         setTotalPosts(res?.posts?.totalPosts)
         setNewReports(res?.posts?.newReported)

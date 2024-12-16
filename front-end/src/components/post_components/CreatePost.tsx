@@ -16,7 +16,7 @@ import { RootState } from '@/lib/redux/store/store'
 import postService from '@/services/user/post/postServices'
 import { ImageIcon, UploadIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'  
 import { FaArrowUp } from "react-icons/fa6"
 import { useSelector } from 'react-redux'
 import AvatarComponent from '../cm/Avatar'
@@ -46,7 +46,6 @@ export default function CreatePostComponent() {
     const { toast} = useToast()
 
     const invokeLocalFileInput = () => {    
-        console.log('Trigger the file input ')
         if(localFileInput.current){
             localFileInput.current.value = ''
         }
@@ -55,16 +54,13 @@ export default function CreatePostComponent() {
     }
 
     const openEditorFromParent = () => {
-        console.log('openEditorFromParent invoked')
         if (fileRobotRef.current) {
-            console.log('fileReboot :',fileRobotRef.current)
             fileRobotRef.current.openImgEditor()
         }
         setIsHiddenPrevImag('hidden')
     }
 
     const handleFileChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
-        console.log('local file upload handleFileChange function invoked')
         const maxVideoDuration = 120
         const maxFileSize = 20 * 1024 * 1024
         const file = event.target.files?.[0]
@@ -80,13 +76,10 @@ export default function CreatePostComponent() {
             }
 
             const fileMimeType = file.type
-            console.log('file MimeType :',fileMimeType)
 
             if(fileMimeType.startsWith('image/')){
-                console.log('file type set to image')
                 setFileType('image')
             }else if(fileMimeType.startsWith('video/')){
-                console.log('file type set to video')
                 const video = document.createElement('video')
                 video.src = URL.createObjectURL(file)
                 video.onloadedmetadata = () => {
@@ -132,14 +125,12 @@ export default function CreatePostComponent() {
     }
 
     const handleEditedImage = (editedImageFile:File,editedImageBase64:string) => {
-        console.log('edited image got in parent :',editedImageFile,editedImageBase64)
         setPrevFileUrl(editedImageBase64)
         setFileBuffer(editedImageFile)
         setIsHiddenPrevImag('block')
     }
 
     const handleUnsplashSelectedImage = (unsplashImgFile:File,prevImageUrl:string) => {
-        console.log('unsplash selected image reached on parent :',unsplashImgFile,"url",prevImageUrl)
         setIsOpen(false)
         setFileType('image')
         setPrevFileUrl(prevImageUrl)
@@ -215,14 +206,9 @@ export default function CreatePostComponent() {
                     className:"toast-failed"
                 })
             }
-            console.log('response :',response)
             setLoading(false)
         }
     }
-
-    useEffect(()=>{
-        console.log('edtore content updating :',editorContent)
-    },[editorContent])
 
     return (
         <div className='w-full border-2 rounded-md p-2 flex flex-col gap-2 justify-between min-h-40 h-fit'>

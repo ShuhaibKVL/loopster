@@ -12,10 +12,7 @@ export default function useSyncReduxFromCookie() {
 
     useEffect(() => {
         const sessionCookie = getCookie('session');
-        console.log('session cookie inside the useSyncReduxFormCookie hook :',sessionCookie)
-        console.log('userId :',userId)
         if (sessionCookie && !userId) {
-            console.log('if session cookie have and userId is not ')
             const sessionData = JSON.parse(sessionCookie);
             dispatch(login(sessionData));
         }

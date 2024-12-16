@@ -12,8 +12,7 @@ export default function CancleFollowRequest({followId,notificationId}:{followId:
         if(!followId && !notificationId){
             alert('followId && !notificationId is missing')
         }
-        const cancle = await followService.rejectFollowRequest(followId.toString(),notificationId)
-        console.log('cancel request :',cancle)
+        followService.rejectFollowRequest(followId.toString(),notificationId)
         fetchNotifications()
     }
   return (

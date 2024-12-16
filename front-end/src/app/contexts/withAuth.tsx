@@ -12,7 +12,6 @@ import { useSelector } from "react-redux";
 const restrictedRoutes = ['/signIn', '/signUp', '/signUp/otp', '/'];
 
 const withAuth = <P extends object>(WrappedComponent: React.ComponentType<P>, requiresAuth: boolean) => {
-    console.log("with auth invoked .......");
 
 const RequiresAuth = (props: P) => {  
     const router = useRouter();
@@ -23,7 +22,6 @@ const RequiresAuth = (props: P) => {
         if (accessToken) {  
             const isExpired = isTokenExpired(accessToken);
             if (isExpired) {
-            console.log("Token expired, logging out and redirecting to signIn");
             store.dispatch(logout());
             router.push("/signIn");
             return;
@@ -46,7 +44,6 @@ const RequiresAuth = (props: P) => {
 
     // If accessToken is not available and requires authentication, show nothing during redirection
     if (!accessToken && requiresAuth) {
-        console.log("Redirecting, returning null");
         return null;
     }
 

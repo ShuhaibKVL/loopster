@@ -13,7 +13,6 @@ export default function Suggestion() {
   
   const fetchSuggestionUser = async() => {
     const response = await userAuthService.getLatestUsers(userId)
-    console.log('suggestion response :',response)
     if(response.status){
       setUsers(response?.data)
     }

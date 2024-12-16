@@ -79,10 +79,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     const [ fileBuffer , setFileBuffer ] = useState<File | null>(null)
     const [fileName , setFileName] = useState<null | string>(null)
 
-    useEffect(() => {
-      console.log('messages :',messages)
-    },[messages])
-
     const socket = useContext(SocketContext);
 
     const handleMessageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -99,14 +95,12 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     };
 
     const handleFileChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
-      console.log('local file upload handleFileChange function invoked')
       const maxVideoDuration = 120
       const maxFileSize = 20 * 1024 * 1024
       const file = event.target.files?.[0]
 
       if(file){
         if(file.size > maxFileSize){
-          console.log('file size :',file.size)
           toast({
               title: 'Over size..!',
               description:`Please upload a file under ${maxFileSize / (1024 * 1024)}MB `,
@@ -118,10 +112,8 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         const fileMimeType = file?.type
         
         if(fileMimeType?.startsWith('image/')){
-          console.log('file type set to image')
           setFileType('image')
         }else if(fileMimeType?.startsWith('video/')){
-          console.log('file type set to video')
           const video = document.createElement('video')
           video.src = URL.createObjectURL(file as Blob)
             video.onloadedmetadata = () => {
@@ -153,7 +145,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         setPrevFileUrl(fileUrl)
         setFileBuffer(file)
         setFileName(file?.name)
-        console.log('file uploading is currect.')
       }else{
         toast({
             title: 'File upload Filed !!!',
@@ -163,10 +154,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         return
       }
     }
-
-    useEffect(() => {
-      console.log('file prev :',prevFileUrl , "fileBuffer :",fileBuffer , "file type :",fileType)
-    },[fileType,fileBuffer,prevFileUrl])
 
     const delte_from_me = async(messageId:string) => {
       if(!messageId && !userId){
@@ -178,7 +165,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
       return
       }
       const response = await messageService.delteFromMe(messageId, userId)
-      console.log('response of delte message from me :',response)
       if(response?.status){
         // remove the message from messages to quick remove
         const updatedMessages = messages.map((message) => 
@@ -188,7 +174,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         )
         
         setMessages(updatedMessages)
-        console.log('the filter updated data updated to messages')
       }
     }
 
@@ -202,13 +187,11 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
       return
       }
       const response = await messageService.deleteFromEveryone(messageId)
-      console.log('response of delete from everu one :',response)
 
       if(response?.status){
         // remove the message from messages to quick remove
         const updatedMessages = messages.filter((message) => message?._id?.toString() !== response?.messageId)
         setMessages(updatedMessages)
-        console.log('the filter updated data updated to messages')
       }
       
     }
@@ -260,17 +243,12 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         // Listen for receiveMessage event
         socket.on('receiveMessage', (data) => {
             // Only update if the message belongs to the active chat
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>')
-            console.log('Message received:', data);
-            console.log('Expected messageId:',data?.activeMessage ,"chatId :",activeChat?.chatId);
             if (data.activeMessage === activeChat?.chatId) {
-              console.log('<<<<<<<<<<<<<<<<<<<< message adding',data.message)
                 setMessages((prevMessages) => [...prevMessages, data.message]);
             }
         });
   
         socket.on('updatedUnReadMessage',(data) => {
-          console.log('the updated data reached here :>>>>>>>>>>  >>>>>>>>>  >>>>>>>>>>>  >>>>>>> >>>>>>',data)
           dispatch(updateUnReadMsgPerChat(data?.unReadMessagesPerChat))
           const payload = {
             totalUnreadMessage:data?.totalUnreadMessage
@@ -279,16 +257,13 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
         })
 
         socket.on('typing...',(data) => {
-          console.log('the chat is somthing typing.....................',data)
           const { senderId } = data
           if(senderId !== userId){
-            console.log('typing true')
             setTyping(true)
           }
         })
 
         socket.on('type-ended',() => {
-          console.log('on type ended ')
           setTyping(false)
         })
   
@@ -302,7 +277,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     // For sending message of chat
     const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log('sendMessage invoked :',message,"<>",activeChat,"<>",message.trim())
         if ((!message.trim() || !fileBuffer )&& !activeChat){
             toast({
               title: 'caution',
@@ -330,9 +304,7 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
                 fileBuffer:fileBuffer,
                 filename:fileName
             })
-            console.log('message emitted :')
         }else{
-          console.log('sendGroupMessage :',activeChat)
             socket.emit('sendGroupMessage',{
                 senderId:userId,
                 chatId:activeChat?.chatId,
@@ -350,7 +322,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     }
 
     const onType = () => {
-      console.log('ontype event called')
       if (!activeChat){
         toast({
           title: 'caution',
@@ -366,7 +337,6 @@ export const ChatProvider : React.FC<ChatProviderProps> = ({children}) => {
     }
 
     const onTypeEnd = () => {
-      console.log('on type end invoked.....')
       socket.emit('on-type-end',{
         senderId:userId,
         chatId:activeChat?.chatId,

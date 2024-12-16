@@ -11,7 +11,7 @@ const socket = io('http://localhost:5000',{
 const SocketContext = createContext<Socket>(socket);
 
   socket.on('connect', () =>{
-      console.log('connected to socket');
+    
   })
 
   interface SocketProviderProps {

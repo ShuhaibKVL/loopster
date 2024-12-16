@@ -39,13 +39,11 @@ export default function UnFollowHandleButton({following,refetchPosts,isButton = 
             let newFollowDoc ;// the unfollow / remove follower is same functionality. so to dynamically use this component for unfollow and remove follower
 
             if(!removeFollower){
-                console.log('unfollow')
                 newFollowDoc = {
                     follower : userId,
                     following: following
                 }
             }else {
-                console.log('remove follower')
                 newFollowDoc = {
                     follower:following,
                     following:userId

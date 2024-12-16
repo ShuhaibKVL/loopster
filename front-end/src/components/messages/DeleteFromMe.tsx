@@ -8,7 +8,6 @@ export default function DeleteFromMe({messageId}:{messageId:string}) {
     const {delte_from_me} = useChat()
 
     const handleDelete = async() => {
-        console.log('delte from me')
         const willProceed = await confirmAction({
             title: `Are you sure to delete ?`,
             text: `Once deleted, you are not able to return..!`,
@@ -17,7 +16,6 @@ export default function DeleteFromMe({messageId}:{messageId:string}) {
 
         if(willProceed){
             if(!messageId){
-                console.log('userid or messageId is missing..!')
                 return 
             }
             delte_from_me(messageId)

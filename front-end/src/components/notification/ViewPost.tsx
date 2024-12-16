@@ -17,7 +17,6 @@ export default function ViewPost({ postId }:ViewPostProps) {
 
     const getPost =async () => {
         const response = await postService.getPost(postId,userId)
-        console.log('post >>',response)
         setPost(response?.posts[0] as IPostProps)
     }
 

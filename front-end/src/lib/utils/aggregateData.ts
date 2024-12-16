@@ -55,10 +55,10 @@ export default function aggregateData({
     }, {} as Record<string, number>);
     
     // Convert the accumulator to an array to maintain consistency of the output format
-        return Object.keys(aggregatedData).map(group => ({
-            _id: group,
-            [dataType]: aggregatedData[group] // For posts or users, depending on the data type
-        }));
+   return Object.keys(aggregatedData).map(group => ({
+    _id: group,
+    ...(dataType === 'users' ? { users: aggregatedData[group] } : { posts: aggregatedData[group] }) // Dynamically add 'users' or 'posts'
+} as IChartDataUsers | IChartDataPosts));
 } 
     
     

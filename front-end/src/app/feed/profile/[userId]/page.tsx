@@ -78,7 +78,6 @@ const Page = ({params}:{params:{userId:string}}) => {
             
                 if(willProceed){
                     const update = await userAuthService.uploadProfileImg(loginedUserId,formData)
-                    console.log('update :',update)
                 if(update?.status){
                     getUserData()
                     toast({
@@ -95,7 +94,7 @@ const Page = ({params}:{params:{userId:string}}) => {
                 }
                 }
 
-            } catch (error) {
+            } catch (error:unknown) {
                 console.log(error)
             }
         }
@@ -108,10 +107,8 @@ const Page = ({params}:{params:{userId:string}}) => {
 
     async function handleModalSubmit(formData:FormData){
         try {
-            console.log('formData :',formData)
             await editProfileSchema.validate(formData, {abortEarly:true})
             const updateProfile = await userAuthService.editProfile(loginedUserId,formData)
-            console.log(updateProfile)
             if(updateProfile?.status){
                 handleEditContainer()
                 getUserData()
@@ -133,7 +130,6 @@ const Page = ({params}:{params:{userId:string}}) => {
                 setError(error.message)
                 return
             }
-            console.log(error)
         }
     }
 

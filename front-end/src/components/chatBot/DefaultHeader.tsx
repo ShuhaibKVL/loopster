@@ -11,7 +11,7 @@ export default function DefaultHeader() {
           <div className="typing-animation text-center">
             <h1 className='text-md font-bold'>
               <Typewriter
-                words={[`Hello Mr. ${user.toUpperCase()} 🙌😉`]}
+                words={[`Hello Mr. ${user?.toUpperCase()} 🙌😉`]}
                 loop={2}
                 cursor
                 cursorStyle="|"
