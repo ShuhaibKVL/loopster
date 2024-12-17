@@ -1,27 +1,62 @@
-import { Router } from 'express'
+import { NextFunction, Router } from 'express'
 import FollowController from '../../controllers/followController'
+import { NotificationController } from '../../controllers/notification/notificationController'
 import { OtpController } from '../../controllers/otpController'
+import { StoryController } from '../../controllers/story/storyController'
 import { UserController } from '../../controllers/userController'
 import upload from '../../middleware/multer'
-import { authorize } from '../../middleware/userAuthMiddleware'
+// import { authorize } from '../../middleware/userAuthMiddleware'
+import { Request, Response } from 'express'
+import jwt, { JwtPayload } from "jsonwebtoken"
+import { ErrorMessages } from '../../enums/errorMessages'
+import { HttpStatus } from '../../enums/httpStatus'
+import { MessageRepository } from '../../repositories/chat/messageRepository'
 import { FollowRespository } from '../../repositories/follow/followRepository'
+import { NotificationRepository } from '../../repositories/notification/notificationRepository'
 import { OtpRepository } from '../../repositories/otpRepository'
+import { StoryRepository } from '../../repositories/story/storyRepository'
 import { UserRepository } from '../../repositories/userRepository'
 import { S3Service } from '../../services/admin/S3Services.ts/S3Service'
 import { AuthService } from '../../services/AuthService'
+import { MessageService } from '../../services/chat/messageService'
 import { EmailService } from '../../services/EmailService'
 import { FollowService } from '../../services/follow/FollowService'
-import { OtpService } from '../../services/OtpService'
-import { userServices } from '../../services/userServices'
-import { MessageRepository } from '../../repositories/chat/messageRepository'
-import { MessageService } from '../../services/chat/messageService'
-import { NotificationRepository } from '../../repositories/notification/notificationRepository'
 import { NotificationService } from '../../services/notification/notificationService'
-import { NotificationController } from '../../controllers/notification/notificationController'
-import { StoryRepository } from '../../repositories/story/storyRepository'
+import { OtpService } from '../../services/OtpService'
 import { StoryService } from '../../services/story/IStoryService'
-import { StoryController } from '../../controllers/story/storyController'
+import { userServices } from '../../services/userServices'
 
+export const authorize = async (req:Request , res:Response , next:NextFunction) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        // console.log("authHeader :",authHeader)
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: ErrorMessages.TOKEN_NOT_FONT});
+        }
+        const token = authHeader.split(' ')[1]
+        const claims = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
+
+        if(!claims){
+            res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})
+            return;
+        }
+
+        const user = await userService.findUserById(claims?.userId)
+        console.log('user is Blocked :',user[0].isBlocked,)
+        if(!user && user[0]?.isBlocked){
+            console.log('blocked ')
+            res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.BLOCKED})
+            return
+        }
+        console.log('middleware > next')
+        next()
+        
+    } catch (error : any) {
+        console.log(error.message)
+        res.status(HttpStatus.FORBIDDEN).json({message:ErrorMessages.TOKEN_VERIFIED_FAILED})
+    }
+}
 
 const router:Router = Router()
 
@@ -59,7 +94,9 @@ router.post('/resendotp',otpController.resendOtp.bind(otpController))
 router.post('/signIn',userController.signIn.bind(userController))
 router.post('/signin-with-next-auth',userController.signInWithGoogle.bind(userController))
 
+console.log(typeof authorize)
 router.use(authorize)
+
 router.get('/user/:userId',userController.getUser.bind(userController))
 router.post('/user/:userId/upload-profile-img',upload.single('profileImage'),userController.uploadProfileImage.bind(userController))
 router.post('/:userId/update-profile',userController.updateProfile.bind(userController))
