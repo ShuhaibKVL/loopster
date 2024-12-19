@@ -6,7 +6,7 @@ import { deleteCookie  } from 'cookies-next';
 import { redirect } from 'next/navigation'
 
 // Base URL
-export const BASE_URL = 'http://localhost:5000'
+export const BASE_URL = 'https://veloxattir.online'
 
 // Public URL for unauthenticated user request (signIn/ signUp)
 export const user_publicApi = axios.create({
