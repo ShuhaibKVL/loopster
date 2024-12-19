@@ -13,12 +13,14 @@ import postRoutes from './routes/user/postRoutes'
 import unsplashRoutes from './routes/user/unsplashRoutes'
 import userRoutes from './routes/user/userRoutes'
 
+
+
 dotenv.config()
 
 const port = 5000
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
 };
 
