@@ -65,10 +65,11 @@ const Page = () => {
 
                 setCookie("session", JSON.stringify(userData), {
                     httpOnly:true,
-                    secure:process.env.NEXT_PUBLIC_CORS_SECURE==="production",
-                    sameSite:"none",
-                    domain:'loopster.vercel.app',
-                    path:'/'
+                    secure:true, // process.env.NEXT_PUBLIC_CORS_SECURE==="production",
+                    sameSite:"lax",
+                    // domain:'loopster.vercel.app',
+                    path:'/',
+                    maxAge: 3 * 24 * 60 * 60
                 });
 
                 dispatch(login(userData))
