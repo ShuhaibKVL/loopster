@@ -143,7 +143,7 @@ const Page = () => {
                     <span className='opacity-50'>
                         You have not a account ?
                     </span>
-                        <Link href='/signUp'> Create account</Link>
+                        <Link href='/signUp' prefetch={false}> Create account</Link>
                     </p>
                 </div>  
                 {/* Image Section */}
