@@ -64,11 +64,11 @@ const Page = () => {
                 console.log('process.env.NEXT_PUBLC_CORS_SECURE :',process.env.NEXT_PUBLC_CORS_SECURE)
 
                 setCookie("session", JSON.stringify(userData), {
-                    httpOnly: true,
-                    secure: process.env.NEXT_PUBLC_CORS_SECURE==="production",
-                    sameSite: "none",
+                    httpOnly:true,
+                    secure:process.env.NEXT_PUBLC_CORS_SECURE==="production",
+                    sameSite:"none",
                     domain:'loopster.vercel.app',
-                    path:'/' 
+                    path:'/'
                 });
 
                 dispatch(login(userData))
