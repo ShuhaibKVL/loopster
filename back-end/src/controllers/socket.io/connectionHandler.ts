@@ -16,6 +16,7 @@ const io = new Server(server,{
       methods: ["GET", "POST",'PUT', 'DELETE']
     },
     maxHttpBufferSize: 25 * 1024 * 1024,
+    transports: ['websocket', 'polling'],
 });
 
 export interface IChatResponse{

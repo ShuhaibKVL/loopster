@@ -9,9 +9,7 @@ const socket = io('https://veloxattir.online',{
 })
 
 const SocketContext = createContext<Socket>(socket);
-
-  socket.on('connect', () =>{
-    
+  socket.on('connect', () =>{  
   })
 
   interface SocketProviderProps {
