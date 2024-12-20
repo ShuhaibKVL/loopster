@@ -61,11 +61,12 @@ const Page = () => {
                     accessToken:user?.accessToken,
                     totalUnReadMessages:user?.totalUnReadMessages
                 }
+                console.log('process.env.NEXT_PUBLC_CORS_SECURE :',process.env.NEXT_PUBLC_CORS_SECURE)
 
                 setCookie("session", JSON.stringify(userData), {
                     httpOnly: true,
                     secure: process.env.NEXT_PUBLC_CORS_SECURE === "production",
-                    sameSite: "strict",
+                    sameSite: "lax",
                 });
 
                 dispatch(login(userData))
