@@ -1,7 +1,8 @@
+import { userApi } from "../apis/axiosInstance";
 
 export const isVerifiedJwt = async():Promise<unknown> => {
     try {
-        const res = await fetch('http://localhost:5000/api/user/verifyjwt',{
+        const res = await fetch(`${userApi}/verifyjwt`,{
             method:'POST',
             credentials:'include',
             // headers:{

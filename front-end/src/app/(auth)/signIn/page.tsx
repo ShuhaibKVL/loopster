@@ -63,8 +63,8 @@ const Page = () => {
                 }
 
                 setCookie("session", JSON.stringify(userData), {
-                    httpOnly: false,
-                    secure: process.env.NODE_ENV === "production",
+                    httpOnly: true,
+                    secure: process.env.NEXT_PUBLC_CORS_SECURE === "production",
                     sameSite: "strict",
                 });
 

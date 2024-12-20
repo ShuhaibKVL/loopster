@@ -1,9 +1,10 @@
 import { IsignIn } from "@/app/admin/(auth)/signIn/page"
 import { IAdminAuthService, IAdminAuthServiceResponse } from "./interfaces/IAdminAuthServices";
+import { adminApi } from "../apis/axiosInstance";
 
 export const signIn = async(formData:IsignIn):Promise<unknown> => {
     try {
-        const response = await fetch('http://localhost:5000/api/admin/signIn',{
+        const response = await fetch(`${adminApi}/signIn`,{
             method:'POST',
             headers:{
                 'Content-Type':'application/json'
@@ -22,7 +23,7 @@ export class AdminAuthService implements IAdminAuthService {
 
     async signIn(formData: IsignIn): Promise<IAdminAuthServiceResponse> {
         try {
-            const response = await fetch('http://localhost:5000/api/admin/signIn',{
+            const response = await fetch(`${adminApi}/signIn`,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
