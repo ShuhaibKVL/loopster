@@ -91,7 +91,7 @@ export class UserController{
 
             res.cookie('accessToken', token, {
                 httpOnly: true,      // Helps prevent XSS attacks
-                secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+                secure: process.env.NODE_ENV==='production', // Only send over HTTPS in production
                 maxAge: 60 * 60 * 1000, // 1 hour
                 sameSite: 'strict', // CSRF protection
             });
