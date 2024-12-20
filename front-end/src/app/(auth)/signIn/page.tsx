@@ -68,7 +68,7 @@ const Page = () => {
                     secure: process.env.NEXT_PUBLC_CORS_SECURE==="production",
                     sameSite: "none",
                     domain:'loopster.vercel.app',
-                    path:'/'
+                    path:'/' 
                 });
 
                 dispatch(login(userData))
