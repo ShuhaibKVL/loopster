@@ -63,7 +63,7 @@ const Page = () => {
         await signUpSchema.validate(formData, { abortEarly: false });
         dispatch(setLoading(true))
         const response = await userAuthService.signUp(formData);
-        dispatch(setLoading(true))
+        
         if (response.status === true) {
           toast({
             title: response.message,
@@ -71,9 +71,11 @@ const Page = () => {
             className: "toast-success"
           });
 
+          dispatch(setLoading(false))
           router.push(`/signUp/otp/?email=${response.user}`);
-
+          
         } else if (response?.errors) {
+          dispatch(setLoading(false))
           // Handle validation errors
           const errors: { [key: string]: string } = {};
           response.errors.forEach((error: ValidationErrorResponse) => {
