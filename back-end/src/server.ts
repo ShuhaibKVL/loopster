@@ -13,8 +13,6 @@ import postRoutes from './routes/user/postRoutes'
 import unsplashRoutes from './routes/user/unsplashRoutes'
 import userRoutes from './routes/user/userRoutes'
 
-
-
 dotenv.config()
 
 const port = 5000
