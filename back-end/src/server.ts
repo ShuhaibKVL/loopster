@@ -20,7 +20,7 @@ dotenv.config()
 const port = 5000
 
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
+    origin:"https://loopster.vercel.app",
     credentials: true,
 };
 
