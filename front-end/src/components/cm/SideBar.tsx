@@ -9,7 +9,7 @@ import { logout } from '@/lib/redux/features/auth/userSlice';
 import { RootState } from '@/lib/redux/store/store';
 import { ExitIcon } from '@radix-ui/react-icons';
 import { deleteCookie } from 'cookies-next';
-import { signOut } from 'next-auth/react';
+// import { signOut } from 'next-auth/react';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import { ReactNode, useContext, useEffect, useState, } from 'react';
 import { useDispatch } from 'react-redux';
@@ -50,9 +50,9 @@ export default function SideBar({ navItems ,type}: SideBarProps) {
                 dispatch(logout())
                  // Remove session cookies
                 deleteCookie ('session');
-
-                // Sign out from next-auth
-                await signOut({ redirect: true ,callbackUrl: '/signIn'});
+                router.replace('/signIn')
+                // // Sign out from next-auth
+                // await signOut({ redirect: true ,callbackUrl: '/signIn'});
                 return
             }else if(type === 'admin'){
                 dispatch(adminLogout())

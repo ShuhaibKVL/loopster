@@ -27,6 +27,7 @@ const Page = () => {
     const router = useRouter()
     const { toast} = useToast()
     const dispatch = useAppDispatch()
+    dispatch(setLoading(false))
     
     const [ error , setError ] = useState<string>('')
 
@@ -61,19 +62,22 @@ const Page = () => {
                     accessToken:user?.accessToken,
                     totalUnReadMessages:user?.totalUnReadMessages
                 }
-                console.log('process.env.NEXT_PUBLC_CORS_SECURE :',process.env.NEXT_PUBLC_CORS_SECURE)
 
                 setCookie("session", JSON.stringify(userData),{
                     httpOnly:false,
                     secure:true, // process.env.NEXT_PUBLIC_CORS_SECURE==="production",
                     sameSite:"lax",
-                    // domain:'loopster.vercel.app',
                     path:'/',
                     maxAge: 3 * 24 * 60 * 60
                 });
 
                 dispatch(login(userData))
-                router.replace('/feed')
+                // using a time dalay due to middleware not getting sesstion
+                setTimeout(() => {
+                    router.replace('/feed');
+                    dispatch(setLoading(false))
+                }, 100);
+                
 
             }else if (user?.errors) {
                 // Handle validation errors
