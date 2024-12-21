@@ -15,6 +15,7 @@ export class ChatBotService implements IChatBotService{
         const signal = controller.signal
 
         try {
+          console.log('chat boat api :',chatBotApi,)
             const response = await fetch(`${chatBotApi}/create-prompt?prompt=${encodeURIComponent(prompt)}&userId=${userId}`,{
                 method:'GET',
                 signal:signal,
