@@ -20,28 +20,38 @@ export class ChatBotController{
                 return
             }
             
-            res.setHeader('Content-Type', 'text/plain'); // Stream plain text
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
             res.setHeader('Transfer-Encoding', 'chunked'); // Enable chunked transfer
 
             let fullResponse = ''
             const response =  await model.generateContentStream(prompt as string)
 
-            // Print text as it comes in.
-            for await (const chunk of response.stream) {
-                 const chunkText = chunk.text();
-                 if(!chunkText.includes('Creating')){
-                    fullResponse += chunkText
-                    console.log(">>>>",fullResponse)
-                    res.write(chunkText)
-                    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
-                 }
-                 console.log('>>',chunkText)  
-            }
-            // if the response is completed , store it in database for history.
-            const store = await this.chatBotHistoryService.create(userId as string,fullResponse,prompt as string)
-            console.log('store :',store)
+            try {
+                     // Print text as it comes in.
+                 for await (const chunk of response.stream) {
+                     const chunkText = chunk.text();
+                     if(!chunkText.includes('Creating')){
+                        fullResponse += chunkText
+                        console.log(">>>>",fullResponse)
+                        res.write(`data: ${JSON.stringify({ text: chunkText })}\n\n`)
+                        // await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate delay
+                     }
+                     console.log('>>',chunkText)  
+                }
+                // if the response is completed , store it in database for history.
+                const store = await this.chatBotHistoryService.create(userId as string,fullResponse,prompt as string)
+                console.log('store :',store)
 
-            res.end()   
+                res.write('data: [DONE]\n\n');
+                res.end() 
+            } catch (error) {
+                // Handle stream errors
+                res.write(`data: ${JSON.stringify({ error: 'Stream error' })}\n\n`);
+                res.end();
+            }
+              
         } catch (error:any) {
             console.log(error)
             res.status(HttpStatus.BAD_REQUEST).json({message:error.message,status:false})
