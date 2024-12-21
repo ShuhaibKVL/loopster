@@ -37,8 +37,8 @@ const messageSchema = new mongoose.Schema({
     },
     mediaUrl:{type:String},
     fileName:{type:String},
-    deleteFromMe:{type:Array,unique:true},
-    isRead:{type:Array,unique:true }
+    deleteFromMe:{type:Array},
+    isRead:{type:Array}
 },{timestamps:true});
 
 export const Message = mongoose.model('Message', messageSchema);
