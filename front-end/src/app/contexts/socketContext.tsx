@@ -4,7 +4,7 @@ import React, { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const socket = io('https://veloxattir.online',{ 
-  transports: ['websocket'],
+  transports: ['websocket', 'polling'],
   reconnection: true,  
 })
 
