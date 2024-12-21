@@ -19,7 +19,7 @@ export class ChatBotService implements IChatBotService{
                 method:'GET',
                 signal:signal,
                 headers:{
-                  'Content-Type': 'application/json',
+                  'Accept': 'text/event-stream',
                   Authorization: `Bearer ${token}`, // Add the token here
                 }
               })
@@ -29,7 +29,7 @@ export class ChatBotService implements IChatBotService{
               }
     
               const reader = response.body.getReader();
-              const decoder = new TextDecoder('utf-8');
+              const decoder = new TextDecoder();
     
               while (true) {
                 const { done, value } = await reader.read();
@@ -37,8 +37,29 @@ export class ChatBotService implements IChatBotService{
                   onStreamEnd()
                   break;
                 }
-                const chunkText = decoder.decode(value,{stream:true})
-                onStremaData(chunkText)
+                const chunk = decoder.decode(value)
+                // onStremaData(chunkText)
+                const lines = chunk.split('\n');
+
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                      const data = line.slice(6);
+                      
+                      if (data === '[DONE]') {
+                          onStreamEnd();
+                          return;
+                      }
+  
+                      try {
+                          const parsedData = JSON.parse(data);
+                          if (parsedData.text) {
+                            onStremaData(parsedData.text);
+                          }
+                      } catch (e:unknown) {
+                          console.warn('Failed to parse chunk:', data,e);
+                      }
+                  }
+              }
             }
         } catch (error:unknown) {
             onError(error)

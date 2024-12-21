@@ -1,0 +1,12 @@
+{
+    "headers": [
+      {
+        "source": "/api/(.*)",
+        "headers": [
+          { "key": "Connection", "value": "keep-alive" },
+          { "key": "Cache-Control", "value": "no-cache" },
+          { "key": "Transfer-Encoding", "value": "chunked" }
+        ]
+      }
+    ]
+  }
