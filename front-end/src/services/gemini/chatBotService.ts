@@ -1,5 +1,5 @@
 import { IChatBotHistory } from "@/lib/utils/interfaces/IChatBotHistory";
-import { chatBotApi} from "../apis/axiosInstance";
+import { BASE_URL, chatBotApi} from "../apis/axiosInstance";
 import { IChatBotService } from "./interfaces/IChatBotService";
 
 export class ChatBotService implements IChatBotService{
@@ -15,8 +15,9 @@ export class ChatBotService implements IChatBotService{
         const signal = controller.signal
 
         try {
-          console.log('chat boat api :',chatBotApi,)
-            const response = await fetch(`${chatBotApi}/create-prompt?prompt=${encodeURIComponent(prompt)}&userId=${userId}`,{
+          const url = `${BASE_URL}/api/chat-boat/create-prompt?prompt=${encodeURIComponent(prompt)}&userId=${userId}`;
+          console.log('chat boat api :',BASE_URL,url)
+            const response = await fetch(url,{
                 method:'GET',
                 signal:signal,
                 headers:{
